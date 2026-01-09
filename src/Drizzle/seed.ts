@@ -1,18 +1,20 @@
 import 'dotenv/config';
 import db from '.';
-import { userTable } from './models/User';
 import { dialectWordTable } from './models/DialectWord';
 import { nationalWordTable } from './models/NationalWord';
 import { soundFileTable } from './models/SoundFile';
+import { user } from './models/auth-schema';
 
 
 async function main() {
-  const user: typeof userTable.$inferInsert = {
+  const userData: typeof user.$inferInsert = {
+    id: crypto.randomUUID(),
     name: 'John',
-    age: 30,
     email: 'john@example.com',
+    emailVerified: true,
+    image: 'http://example.com/john.png'
   };
-  const insertedUser = await db.insert(userTable).values(user).returning();
+  const insertedUser = await db.insert(user).values(userData).returning();
   
   const nationalWord: typeof nationalWordTable.$inferInsert = {
     word: 'Fågel',
@@ -42,7 +44,7 @@ async function main() {
   // console.log(`${soundFile.fileName} New sound file created!`)
   // console.log(`${dialectWord.word} New dialect word created!`)
 
-  const users = await db.select().from(userTable);
+  const users = await db.select().from(user);
   const nationalWords = await db.select().from(nationalWordTable);
   const soundFiles= await db.select().from(soundFileTable);
   const dialectWords = await db.select().from(dialectWordTable);
