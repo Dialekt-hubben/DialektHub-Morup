@@ -1,7 +1,7 @@
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nationalWordTable } from "./NationalWord";
 import { soundFileTable } from "./SoundFile";
-import { userTable } from "./user";
+import { userTable } from "./User";
 
 export const dialectWordTable = sqliteTable("dialect_word_table", {
   id: int().primaryKey({ autoIncrement: true }),
