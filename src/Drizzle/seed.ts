@@ -3,14 +3,20 @@ import db from '.';
 import { dialectWordTable } from './models/DialectWord';
 import { nationalWordTable } from './models/NationalWord';
 import { soundFileTable } from './models/SoundFile';
-import { user } from './models/auth-schema';
+import { account, session, user, verification } from './models/auth-schema';
 
 
 async function reset() {
   console.log('Resetting database...');
+  // Delete tables with foreign keys first
   await db.delete(dialectWordTable);
+  await db.delete(session);
+  await db.delete(account);
+  
+  // Delete independent tables
   await db.delete(nationalWordTable);
   await db.delete(soundFileTable);
+  await db.delete(verification);
   await db.delete(user);
   console.log('Database reset complete!');
 }
