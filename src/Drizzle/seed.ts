@@ -6,7 +6,18 @@ import { soundFileTable } from './models/SoundFile';
 import { user } from './models/auth-schema';
 
 
+async function reset() {
+  console.log('Resetting database...');
+  await db.delete(dialectWordTable);
+  await db.delete(nationalWordTable);
+  await db.delete(soundFileTable);
+  await db.delete(user);
+  console.log('Database reset complete!');
+}
+
 async function main() {
+  await reset();
+
   const userData: typeof user.$inferInsert = {
     id: crypto.randomUUID(),
     name: 'John',
