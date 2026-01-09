@@ -6,10 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate",
+    "db:seed": "tsx src/Drizzle/seed.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",
+    "better-auth": "^1.4.10",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "next": "16.1.1",
