@@ -7,9 +7,9 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
-  // "nextCookies" is always need to be lasted last in the plugins array
-  plugins: [nextCookies()],
   emailAndPassword: {
     enabled: true,
   },
+  // "nextCookies" is always need to be lasted last in the plugins array
+  plugins: [nextCookies()],
 });
