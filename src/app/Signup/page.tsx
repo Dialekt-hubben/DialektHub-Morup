@@ -1,0 +1,66 @@
+"use client";
+import { InputGroup } from "@/components/InputGroup";
+import { Signup } from "@/types/auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { signUp } from "@/actions/auth";
+import { useRouter } from "next/navigation";
+
+function Page() {
+    const { push } = useRouter();
+    const { register, handleSubmit, formState: { errors }, setError } = useForm<Signup>({
+        resolver: zodResolver(Signup),
+    })
+
+    const onSubmit = async (data: Signup) => {
+        try {
+            const response = await signUp(data);
+            console.log({response});
+            push("/dashboard");
+        } catch (error) {
+            console.log({error});
+            
+            setError("root", { type: "manual", message: "Invalid email or password" });
+        }
+    };
+    
+
+    return (
+    <div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <InputGroup
+                label="Name"
+                type="text"
+                id="name"
+                {...register("name")}
+                errorMessage={errors.name?.message}
+            />
+            <InputGroup
+                label="Email"
+                type="email"
+                id="email"
+                {...register("email")}
+                errorMessage={errors.email?.message}
+            />
+            <InputGroup
+                label="Password"
+                type="password"
+                id="password"
+                {...register("password")}
+                errorMessage={errors.password?.message}
+            />
+            <InputGroup
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                {...register("confirmPassword")}
+                errorMessage={errors.confirmPassword?.message}
+            />
+            <p>{errors.root?.message}</p>
+            <button type="submit">Signup</button>
+        </form>
+        <p>Already have an account? <Link href="/Login">Login here</Link></p>
+    </div>);
+}
+export default Page;
