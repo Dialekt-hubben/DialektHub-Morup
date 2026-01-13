@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const Login = z.object({
-    email: z.string().email({ message: "Email är inte giltig" }),
+    email: z.email({ message: "Email är inte giltig" }),
     password: z.string().min(8, { message: "Lösenordet måste vara minst 8 tecken långt" }),
 });
 
