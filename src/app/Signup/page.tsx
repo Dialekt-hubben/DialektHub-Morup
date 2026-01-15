@@ -15,12 +15,9 @@ function Page() {
 
     const onSubmit = async (data: Signup) => {
         try {
-            const response = await signUp(data);
-            console.log({response});
+            await signUp(data);
             push("/dashboard");
-        } catch (error) {
-            console.log({error});
-            
+        } catch {
             setError("root", { type: "manual", message: "Invalid email or password" });
         }
     };

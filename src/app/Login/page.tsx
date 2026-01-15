@@ -15,9 +15,8 @@ function Page() {
 
     const onSubmit = async (data: Login) => {
         try {
-            const response = await signIn(data);
+            await signIn(data);
             push("/dashboard");
-            console.log({response});
         } catch {
             setError("root", { message: "Invalid email or password" });
         }
