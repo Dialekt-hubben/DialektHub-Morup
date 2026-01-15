@@ -1,3 +1,4 @@
+import { user } from "@/Drizzle/models/auth-schema";
 import { z } from "zod";
 
 export const Login = z.object({
@@ -17,3 +18,4 @@ export const Signup = z.object({
 
 export type Login = z.infer<typeof Login>;
 export type Signup = z.infer<typeof Signup>;
+export type AuthUser = typeof user.$inferSelect;

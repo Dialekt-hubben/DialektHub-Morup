@@ -1,4 +1,5 @@
 import db from "@/Drizzle";
+import { AuthUser } from "@/types/auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
@@ -23,10 +24,10 @@ export const auth = betterAuth({
  * If a valid session with a user object is found, it returns the user object.
  * If no session or user is found, it automatically redirects the client to the `/Login` page.
  *
- * @returns {Promise<User>} A promise that resolves to the authenticated user object.
+ * @returns {Promise<AuthUser>} A promise that resolves to the authenticated user object.
  * @throws {never} This function does not throw but will interrupt execution via a redirect if authentication fails.
  */
-export async function getActiveUserSession() {
+export async function getActiveUserSession(): Promise<AuthUser> {
   const session = await auth.api.getSession({
     headers: await headers()
   });
