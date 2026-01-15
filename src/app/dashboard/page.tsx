@@ -1,21 +1,12 @@
 import { signOut } from "@/actions/auth";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { getActiveUserSession } from "@/lib/auth";
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
-  // If no session, redirect to login
-  if (!session?.user) {
-    redirect("/Login");
-  }
+  const session = await getActiveUserSession();
   
   return (
     <main>
-      <h1>Hej {session.user.name}</h1>
+      <h1>Hej {session.name}</h1>
       <form action={signOut}>
         <button type="submit">Sign Out</button>
       </form>
