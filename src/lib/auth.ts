@@ -10,6 +10,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  // "nextCookies" is always need to be lasted last in the plugins array
+  // "nextCookies" is always need to be placed last in the plugins array
   plugins: [nextCookies()],
 });

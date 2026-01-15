@@ -8,7 +8,7 @@ interface InputGroupProps extends InputHTMLAttributes<HTMLInputElement> {
 export const InputGroup = forwardRef<HTMLInputElement, InputGroupProps>(
   ({ label, id, errorMessage, className, ...props }, ref) => {
     return (
-      <div className={`formGrope ${className || ''}`}>
+      <div className={`formGroup ${className || ''}`}>
         <label htmlFor={id}>{label}</label>
         <input id={id} ref={ref} {...props} />
         <p className="error-message">{errorMessage}</p>
