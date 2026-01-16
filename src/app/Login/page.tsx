@@ -40,8 +40,13 @@ function Page() {
                 {...register("password")}
                 errorMessage={errors.password?.message}
             />
-            <p>{errors.root?.message}</p>
-            <button type="submit">Login</button>
+            {
+                errors.root?.message && (
+                    <p>{errors.root.message}</p>
+                )
+            }
+            <button type="submit" className="btn primary">Login</button>
+            <Link href="/" className="btn">Avbryt</Link>
             </form>
             <p>Don&apos;t have an account? <Link href="/Signup">Sign up here</Link></p>
         </div>
