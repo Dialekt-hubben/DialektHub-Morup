@@ -17,8 +17,8 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  /* color: var(--foreground); */
+  /* background: var(--background); */
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,8 +35,26 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+.btn {
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+
+  background-color: #F8FAFC;
+
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  
+  &.primary {
+    background-color: #1B9EE4;
+    color: white;
   }
 }
+
+/* @media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark; 
+  }
+}
+  */
