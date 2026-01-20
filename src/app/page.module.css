@@ -139,3 +139,14 @@ a.secondary {
     --button-secondary-border: #1a1a1a;
   }
 }
+
+.db-list {
+  box-sizing: border-box;
+  background-color: rgb(103, 185, 195);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 700px;
+  height: 500px;
+  margin: 20px auto 0 auto;
+}
