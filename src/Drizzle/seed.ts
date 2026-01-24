@@ -16,6 +16,8 @@ async function main() {
   await db.insert(userTable).values(userData);
 
   
+
+  
   //national word
   const nationalWordSeed = fs.readFileSync(
     "src/Drizzle/SeedData/NationalWord_seed.json",
