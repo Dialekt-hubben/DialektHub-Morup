@@ -1,75 +1,47 @@
-import 'dotenv/config';
-import db from '.';
-import { dialectWordTable } from './models/DialectWord';
-import { nationalWordTable } from './models/NationalWord';
-import { soundFileTable } from './models/SoundFile';
-import { account, session, user, verification } from './models/auth-schema';
-
-
-async function reset() {
-  console.log('Resetting database...');
-  // Delete tables with foreign keys first
-  await db.delete(dialectWordTable);
-  await db.delete(session);
-  await db.delete(account);
-  
-  // Delete independent tables
-  await db.delete(nationalWordTable);
-  await db.delete(soundFileTable);
-  await db.delete(verification);
-  await db.delete(user);
-  console.log('Database reset complete!');
-}
+import fs from "fs";
+import "dotenv/config";
+import db from ".";
+import { dialectWordTable } from "./models/DialectWord";
+import { nationalWordTable } from "./models/NationalWord";
+import { soundFileTable } from "./models/SoundFile";
+import { user } from "./models/auth-schema";
 
 async function main() {
-  await reset();
+  //user seed
+  const userSeed = fs.readFileSync(
+    "src/Drizzle/SeedData/user_seed.json",
+    "utf-8",
+  );
+  const userData: typeof user.$inferInsert = JSON.parse(userSeed);
+  await db.insert(user).values(userData);
 
-  const userData: typeof user.$inferInsert = {
-    id: crypto.randomUUID(),
-    name: 'John',
-    email: 'john@example.com',
-    emailVerified: true,
-    image: 'http://example.com/john.png'
-  };
-  const insertedUser = await db.insert(user).values(userData).returning();
   
-  const nationalWord: typeof nationalWordTable.$inferInsert = {
-    word: 'Fågel',
-    description: 'En vanlig fågel'
-  }
-  const insertednationalWord = await db.insert(nationalWordTable).values(nationalWord).returning();
-
-  const soundFile: typeof soundFileTable.$inferInsert = {
-    fileName: 'fagel.mp3',
-    url: 'http://example.com/fagel.mp3'
-  } 
-  const insertedsoundFile = await db.insert(soundFileTable).values(soundFile).returning();
+  //national word
+  const nationalWordSeed = fs.readFileSync(
+    "src/Drizzle/SeedData/NationalWord_seed.json",
+    "utf-8",
+  );
+  const nationalWordData: typeof nationalWordTable.$inferInsert =
+  JSON.parse(nationalWordSeed);
+  await db.insert(nationalWordTable).values(nationalWordData);
   
-  const dialectWord: typeof dialectWordTable.$inferInsert = {
-    word: 'Ful',
-    phrase: 'En ful ful flyger i luften',
-    pronunciation: 'Fuul',
-    status: 1,
-    userId: insertedUser[0].id,
-    nationalWordId: insertednationalWord[0].id,
-    soundFileId: insertedsoundFile[0].id,
-  }
-  await db.insert(dialectWordTable).values(dialectWord);
-   
-  // console.log(`${user.name} New user created!`)
-  // console.log(`${nationalWord.word} New national word created!`)
-  // console.log(`${soundFile.fileName} New sound file created!`)
-  // console.log(`${dialectWord.word} New dialect word created!`)
+  //sound file
+  const soundFileSeed = fs.readFileSync(
+    "src/Drizzle/SeedData/Soundfile_seed.json",
+    "utf-8",
+  );
+  const soundFileData: typeof soundFileTable.$inferInsert =
+    JSON.parse(soundFileSeed);
+  await db.insert(soundFileTable).values(soundFileData);
 
-  const users = await db.select().from(user);
-  const nationalWords = await db.select().from(nationalWordTable);
-  const soundFiles= await db.select().from(soundFileTable);
-  const dialectWords = await db.select().from(dialectWordTable);
-
-  console.log('All users:', users);
-  console.log('All national words:', nationalWords);
-  console.log('All sound files:', soundFiles);
-  console.log('All dialect words:', dialectWords);
+  //dialect word
+  const dialectWord = fs.readFileSync(
+    "src/Drizzle/SeedData/DialectWord_seed.json",
+    "utf-8",
+  );
+  const dialectWordData: typeof dialectWordTable.$inferInsert =
+    JSON.parse(dialectWord);
+  await db.insert(dialectWordTable).values(dialectWordData);
 
 }
 
