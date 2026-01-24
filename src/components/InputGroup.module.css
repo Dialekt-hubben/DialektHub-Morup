@@ -19,4 +19,9 @@
         border-radius: 0.25em;
         transition: border-color 0.2s;
     }
+    .errorMessage {
+        color: #FF4D4F;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
 }
