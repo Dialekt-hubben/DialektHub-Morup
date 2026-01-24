@@ -6,18 +6,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signIn } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { BetterAuthError } from "better-auth";
 
 function Page() {
     const { push } = useRouter();
     const { register, handleSubmit, formState: { errors }, setError } = useForm<Login>({
-        resolver: zodResolver(Login)
+        resolver: zodResolver(Login),
+        defaultValues: {
+            email: "Josef@forkman.dev",
+            password: "Password1!"
+        }
     })
 
     const onSubmit = async (data: Login) => {
         try {
             await signIn(data);
             push("/dashboard");
-        } catch {
+        } catch(error) {
+            // Handle BetterAuthError specifically
+            if (error instanceof BetterAuthError) {                
+                setError("root", { message: error.message });
+                return;
+            }
+            
+            // Handle generic Error instances
+            if (error instanceof Error) {                
+                setError("root", { message: error.message });
+                return;
+            }
+
+            // Fallback error message
             setError("root", { message: "Invalid email or password" });
         }
     };

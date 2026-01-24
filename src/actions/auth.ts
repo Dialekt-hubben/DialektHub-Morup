@@ -5,23 +5,29 @@ import { Login, Signup } from "@/types/auth";
 import { headers } from "next/headers";
 
 export async function signUp(data: Signup) {
+    const parsedData = Signup.safeParse(data);
+
+    if (!parsedData.success) {
+        throw new Error("Inkrokt registrerings uplifter");
+    }
+
     const response = await auth.api.signUpEmail({
-        body: {
-            name: data.name,
-            email: data.email,
-            password: data.password
-        }
+        body: parsedData.data
     });
     return response;
 }
 
 export async function signIn(data: Login) {
+    const parsedData = Login.safeParse(data);
+    
+    if (!parsedData.success) {
+        throw new Error("Inkrokt login uplifter");
+    }
+
     const response = await auth.api.signInEmail({
-        body: {
-            email: data.email,
-            password: data.password
-        }
+        body: parsedData.data
     });
+    
     return response;
 }
 
