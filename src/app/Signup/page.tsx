@@ -38,7 +38,7 @@ function Page() {
     
 
     return (
-    <div>
+    <main>
         <form onSubmit={handleSubmit(onSubmit)}>
             <InputGroup
                 label="Name"
@@ -68,10 +68,14 @@ function Page() {
                 {...register("confirmPassword")}
                 errorMessage={errors.confirmPassword?.message}
             />
-            <p>{errors.root?.message}</p>
+            {
+                errors.root?.message && (
+                    <p aria-live="polite">{errors.root.message}</p>
+                )
+            }
             <button type="submit">Signup</button>
         </form>
         <p>Already have an account? <Link href="/Login">Login here</Link></p>
-    </div>);
+    </main>);
 }
 export default Page;

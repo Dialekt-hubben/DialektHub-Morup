@@ -42,7 +42,8 @@ function Page() {
     
 
     return (
-        <div>
+        <main>
+            <h1>Login</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
             <InputGroup
                 label="Email"
@@ -60,14 +61,14 @@ function Page() {
             />
             {
                 errors.root?.message && (
-                    <p>{errors.root.message}</p>
+                    <p aria-live="polite">{errors.root.message}</p>
                 )
             }
             <button type="submit" className="btn primary">Login</button>
             <Link href="/" className="btn">Avbryt</Link>
             </form>
             <p>Don&apos;t have an account? <Link href="/Signup">Sign up here</Link></p>
-        </div>
+        </main>
     );
 }
 export default Page;
