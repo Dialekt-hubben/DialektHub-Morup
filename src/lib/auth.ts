@@ -12,6 +12,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 8,
   },
   // "nextCookies" is always need to be placed last in the plugins array
   plugins: [nextCookies()],
@@ -24,7 +25,7 @@ export const auth = betterAuth({
  * If a valid session with a user object is found, it returns the user object.
  * If no session or user is found, it automatically redirects the client to the `/Login` page.
  *
- * @returns {Promise<AuthUser>} A promise that resolves to the authenticated user object.
+ * @returns {Promise<object>} A promise that resolves to the authenticated user object.
  * @throws {never} This function does not throw but will interrupt execution via a redirect if authentication fails.
  */
 export async function getActiveUserSession(): Promise<AuthUser> {
@@ -36,5 +37,5 @@ export async function getActiveUserSession(): Promise<AuthUser> {
   if (!session?.user) {
     redirect("/Login");
   }
-  return session.user;
+  return session.user as AuthUser;
 }
