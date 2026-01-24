@@ -8,7 +8,7 @@ export async function signUp(data: Signup) {
     const parsedData = Signup.safeParse(data);
 
     if (!parsedData.success) {
-        throw new Error("Inkrokt registrerings uplifter");
+        throw new Error("Ogiltiga registreringsuppgifter");
     }
 
     const response = await auth.api.signUpEmail({
@@ -21,7 +21,7 @@ export async function signIn(data: Login) {
     const parsedData = Login.safeParse(data);
     
     if (!parsedData.success) {
-        throw new Error("Inkrokt login uplifter");
+        throw new Error("Ogiltiga inloggningsuppgifter");
     }
 
     const response = await auth.api.signInEmail({
