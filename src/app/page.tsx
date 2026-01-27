@@ -1,34 +1,46 @@
-import db from "@/Drizzle";
+"use client";
+import { useState, useEffect } from "react";
 import styles from "./page.module.css";
-import { dialectWordTable } from "@/Drizzle/models/DialectWord"; 
+import Pagination from "../components/Pagination";
+import Table from "@/components/Table";
 
-export default async function Home() {
-  const data = await db.select().from(dialectWordTable);
-  const dialectWord = JSON.stringify(data);
+const headers = [
+  "Ord",
+  "Ljudfil",
+  "Uttal",
+  "Användare",
+  "Svenska",
+];
 
+const PAGE_SIZE = 10; // Antal poster per sida
 
-  let dataObject = data.map(item => ({
-    id: item.id,
-    word: item.word,
-    pronunciation: item.pronunciation,
-    phrase: item.phrase,
-    status: item.status,
-    userId: item.userId,
-    nationalWordId: item.nationalWordId,
-    soundFileId: item.soundFileId
-  }));
-  console.log("Filtered Data:", dataObject);
-  
+export default function Home() {
+  const [data, setData] = useState([]); // Data för den aktuella sidan
+  const [total, setTotal] = useState(0); // Totalt antal poster, används för att beräkna totala sidor
+  const [page, setPage] = useState(1); // börjar på sida 1
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
-  return (    
-      <body>
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(`/api/dialectwords?page=${page}&pageSize=${PAGE_SIZE}`);
+      const result = await res.json();
+      setData(result.data || []);
+      setTotal(result.total || 0);
+    }
+    fetchData();
+  }, [page]);
+
+  return (
+    <main>
+      <div className={styles.tableContainerWrapper}>
         <div>
-          <div className={styles["header"]}></div>
-          <div className={styles["db-list"]}>
-          {JSON.stringify(dataObject)}
-          </div>      
-          <div className={styles["footer"]}></div>      
+          <div className={styles.tableContainer}>
+            <h2 className={styles.tableHeader}>Ordlista</h2>
+            <Table headers={headers} data={data} />
+          </div>
+          <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         </div>
-      </body>
+      </div>
+    </main>
   );
 }
