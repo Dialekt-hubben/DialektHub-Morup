@@ -1,13 +1,10 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /*Sweden palette*/
+  --color-yellow: #fecb00;
+  --color-light-yellow: #f9f9c5;
+  --color-blue: #1E90FF;
+  --color-light-blue: #ADD8E6;
 }
 
 html,
@@ -17,8 +14,7 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,8 +31,3 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
