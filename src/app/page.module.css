@@ -1,3 +1,5 @@
+/* -- Pagination -- */
+
 .page {
   --background: #fafafa;
   --foreground: #fff;
@@ -140,13 +142,101 @@ a.secondary {
   }
 }
 
-.db-list {
-  box-sizing: border-box;
-  background-color: rgb(103, 185, 195);
+/* -- Table Container -- */
+
+
+/* Centrera tabellen med wrapper */
+.tableContainerWrapper {
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 700px;
-  height: 500px;
-  margin: 20px auto 0 auto;
+  justify-content: center;
+  min-height: 100vh;
+  min-width: 100vw;
+  /* padding: 1px; */
+}
+
+.tableContainer {
+  display: grid;
+  grid-template-columns:
+    minmax(100px, 0.2fr)
+    minmax(100px, 0.2fr)
+    minmax(250px, 1fr)
+    minmax(100px, 0.2fr)
+    minmax(100px, 0.2fr);
+  /* gap: 0; */
+  /* min-width: 50vw; */
+  /* width: 650px; */
+  /* min-height:650px; */
+  border: 1px solid var(--color-yellow);
+}
+
+
+/* -- Table Header Style -- */
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  font-size: x-large;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 10px 20px;
+  grid-column: 1 / -1;
+  text-align: start;
+  background: var(--color-light-yellow);
+}
+
+/* -- Table Header -- */
+.tableHeaderCell {
+  border: 1px solid var(--color-yellow);
+  padding: 10px 15px;
+  text-align: start;
+  font-weight: 600;
+  background: var(--color-light-yellow);
+  font-size: medium;
+}
+
+/* -- Table Data -- */
+.tableCell {
+  border: 1px solid var(--color-yellow);
+  padding: 10px 15px;
+  max-width: 50vw;
+  text-align: start;
+  font-weight: 600;
+  font-size: small;
+}
+
+/* --- Pagination styling --- */
+
+.paginationContainer {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.paginationButton {
+  padding: 6px 14px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #222;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginationButtonActive {
+  padding: 6px 14px;
+  border: 1px solid var(--color-yellow);
+  background: var(--color-yellow, #fecb00);
+  color: #000;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 16px;
 }
