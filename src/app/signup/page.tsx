@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signUp } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { BetterAuthError } from "better-auth";
 
 function Page() {
     const { push } = useRouter();
@@ -17,14 +18,27 @@ function Page() {
         try {
             await signUp(data);
             push("/dashboard");
-        } catch {
-            setError("root", { type: "manual", message: "Invalid email or password" });
+        } catch(error) {
+            // Handle BetterAuthError specifically
+            if (error instanceof BetterAuthError) {
+                setError("root", { message: error.message });
+                return;
+            }
+
+            // Handle generic Error instances
+            if (error instanceof Error) {                
+                setError("root", { message: error.message });
+                return;
+            }
+
+            // Fallback error message
+            setError("root", { message: "Invalid email or password" });
         }
     };
     
 
     return (
-    <div>
+    <main>
         <form onSubmit={handleSubmit(onSubmit)}>
             <InputGroup
                 label="Name"
@@ -54,10 +68,14 @@ function Page() {
                 {...register("confirmPassword")}
                 errorMessage={errors.confirmPassword?.message}
             />
-            <p>{errors.root?.message}</p>
+            {
+                errors.root?.message && (
+                    <p aria-live="polite">{errors.root.message}</p>
+                )
+            }
             <button type="submit">Signup</button>
         </form>
         <p>Already have an account? <Link href="/Login">Login here</Link></p>
-    </div>);
+    </main>);
 }
 export default Page;

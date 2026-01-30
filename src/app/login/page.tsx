@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signIn } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { BetterAuthError } from "better-auth";
 import style from './page.module.css';
 
 function Page() {
@@ -22,7 +23,20 @@ function Page() {
         try {
             await signIn(data);
             push("/dashboard");
-        } catch {
+        } catch(error) {
+            // Handle BetterAuthError specifically
+            if (error instanceof BetterAuthError) {                
+                setError("root", { message: error.message });
+                return;
+            }
+            
+            // Handle generic Error instances
+            if (error instanceof Error) {                
+                setError("root", { message: error.message });
+                return;
+            }
+
+            // Fallback error message
             setError("root", { message: "Invalid email or password" });
         }
     };
@@ -49,7 +63,7 @@ function Page() {
                     />
                     {
                         errors.root?.message && (
-                            <p>{errors.root.message}</p>
+                            <p aria-live="polite">{errors.root.message}</p>
                         )
                     }
                     <div className={style.buttonGroup}>
