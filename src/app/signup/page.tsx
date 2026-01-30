@@ -8,7 +8,7 @@ import { signUp } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { BetterAuthError } from "better-auth";
 
-function Page() {
+function SignupPage() {
     const { push } = useRouter();
     const { register, handleSubmit, formState: { errors }, setError } = useForm<Signup>({
         resolver: zodResolver(Signup),
@@ -78,4 +78,4 @@ function Page() {
         <p>Already have an account? <Link href="/Login">Login here</Link></p>
     </main>);
 }
-export default Page;
+export default SignupPage;

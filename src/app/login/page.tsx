@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { BetterAuthError } from "better-auth";
 import style from './page.module.css';
 
-function Page() {
+function LoginPage() {
     const { push } = useRouter();
     const { register, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<Login>({
         resolver: zodResolver(Login),
@@ -72,4 +72,4 @@ function Page() {
         </main>
     );
 }
-export default Page;
+export default LoginPage;
