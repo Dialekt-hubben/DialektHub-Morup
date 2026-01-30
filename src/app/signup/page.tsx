@@ -76,7 +76,7 @@ function SignupPage() {
             }
             <button type="submit">Signup</button>
         </form>
-        <p>Already have an account? <Link href="/Login">Login here</Link></p>
+        <p>Already have an account? <Link href="/login">login here</Link></p>
     </main>);
 }
 export default SignupPage;
