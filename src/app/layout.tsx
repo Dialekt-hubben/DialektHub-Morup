@@ -19,7 +19,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={robotoMono.className}>
+        
+        {/* header här */}
+        <div>header</div>
+        
         {children}
+        
+        {/* footer här */}
+        <div>footer</div>
+
       </body>
     </html>
   );
