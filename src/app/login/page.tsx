@@ -13,10 +13,6 @@ function Page() {
     const { push } = useRouter();
     const { register, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<Login>({
         resolver: zodResolver(Login),
-        defaultValues: {
-            email: "Josef@forkman.dev",
-            password: "Password1!"
-        }
     })
 
     const onSubmit = async (data: Login) => {
