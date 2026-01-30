@@ -66,7 +66,7 @@ function LoginPage() {
                         <button type="submit" className="btn primary" disabled={isSubmitting}>Login</button>
                         <Link href="/" className="btn">Avbryt</Link>
                     </div>
-                    <p>Don&apos;t have an account? <Link href="/Signup">Sign up here</Link></p>
+                    <p>Don&apos;t have an account? <Link href="/signup">Sign up here</Link></p>
                 </form>
             </div>
         </main>

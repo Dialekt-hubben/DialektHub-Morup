@@ -39,6 +39,7 @@ function SignupPage() {
 
     return (
     <main>
+        <h1>Sign Up</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
             <InputGroup
                 label="Name"
