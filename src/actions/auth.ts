@@ -11,10 +11,18 @@ export async function signUp(data: Signup) {
         throw new Error("Ogiltiga registreringsuppgifter");
     }
 
-    const response = await auth.api.signUpEmail({
-        body: parsedData.data
-    });
-    return response;
+   try {
+     const response = await auth.api.signUpEmail({
+         body: parsedData.data
+     });
+     return response;
+   } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+
+        throw new Error("Ett okänt fel inträffade under registreringen");
+   }
 }
 
 export async function signIn(data: Login) {
@@ -24,11 +32,18 @@ export async function signIn(data: Login) {
         throw new Error("Ogiltiga inloggningsuppgifter");
     }
 
-    const response = await auth.api.signInEmail({
-        body: parsedData.data
-    });
-    
-    return response;
+    try {
+        const response = await auth.api.signInEmail({
+            body: parsedData.data
+        });
+        
+        return response;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Ett okänt fel inträffade under inloggningen");
+    }
 }
 
 export async function signOut() {
