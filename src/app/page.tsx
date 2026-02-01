@@ -26,6 +26,7 @@ export default function Home() {
       const result = await res.json();
       setData(result.data || []);
       setTotal(result.total || 0);
+      console.log("Fetched data:", result);
     }
     fetchData();
   }, [page]);
@@ -36,7 +37,7 @@ export default function Home() {
         <div>
           <div className={styles.tableContainer}>
             <h2 className={styles.tableHeader}>Ordlista</h2>
-            <Table headers={headers} data={data} />
+            <Table data={data} />
           </div>
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         </div>
