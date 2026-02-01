@@ -230,7 +230,7 @@ a.secondary {
   font-size: 16px;
 }
 .paginationButton:hover:not(:disabled) {
-  background: var(--color-yellow);
+  background: var(--color-light-yellow);
   color: var(--text-primary);
   border-color: var(--color-yellow);
 }
