@@ -229,6 +229,11 @@ a.secondary {
   cursor: pointer;
   font-size: 16px;
 }
+.paginationButton:hover:not(:disabled) {
+  background: var(--color-yellow);
+  color: var(--text-primary);
+  border-color: var(--color-yellow);
+}
 
 .paginationButton:disabled {
   opacity: 0.5;
