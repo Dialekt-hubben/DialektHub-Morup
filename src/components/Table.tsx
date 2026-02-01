@@ -1,28 +1,35 @@
 import styles from "../app/page.module.css";
 
 interface TableProps {
-    headers: string[];
     data: any[];
 }
 
 
-export default function Table({ headers, data }: TableProps) {
+export default function Table({ data }: TableProps) {
     return (
     <>
-        {/* Tabell headers */}
-        {headers.map((header, idx) => (
-            <div key={"header" + idx} className={styles.tableHeaderCell}>{header}</div>
-        ))}
-        
-        {/* Dialekt tabellrader */}
-        {/* "item" är Datan och "rowIdx" är radens index */}
-        {data.map((item, rowIdx) => [
-            <div key={`ord${rowIdx}`} className={styles.tableCell}>{item.word}</div>,
-            <div key={`ljudfil${rowIdx}`} className={styles.tableCell}>{item.soundFileId}</div>,
-            <div key={`uttal${rowIdx}`} className={styles.tableCell}>{item.pronunciation}</div>,
-            <div key={`anvandare${rowIdx}`} className={styles.tableCell}>{item.userId}</div>,
-            <div key={`svenska${rowIdx}`} className={styles.tableCell}>{item.nationalWordId}</div>
-            ])}
+    <table className={styles.table}>
+        <thead>
+            <tr>
+                <th className={styles.tableHeaderCell}>{"Ord"}</th>
+                <th className={styles.tableHeaderCell}>{"Ljudfil"}</th>
+                <th className={styles.tableHeaderCell}>{"Uttal"}</th>
+                <th className={styles.tableHeaderCell}>{"Användare"}</th>
+                <th className={styles.tableHeaderCell}>{"Svenska"}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {data.map((item, rowIdx) => (
+                <tr key={rowIdx}>
+                    <td className={styles.tableCell}>{item.word}</td>
+                    <td className={styles.tableCell}>{item.soundFileId}</td>
+                    <td className={styles.tableCell}>{item.pronunciation}</td>
+                    <td className={styles.tableCell}>{item.userId}</td>
+                    <td className={styles.tableCell}>{item.nationalWordId}</td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
     </>
     );
 }
