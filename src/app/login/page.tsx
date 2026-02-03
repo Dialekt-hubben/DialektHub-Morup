@@ -59,7 +59,7 @@ function LoginPage() {
                     />
                     {
                         errors.root?.message && (
-                            <p aria-live="polite">{errors.root.message}</p>
+                            <p role="alert" aria-live="polite">{errors.root.message}</p>
                         )
                     }
                     <div className={style.buttonGroup}>

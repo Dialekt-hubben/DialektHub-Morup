@@ -45,7 +45,7 @@ function SignupPage() {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <InputGroup
                     label="Name"
-                    type="text"
+                    type= "text"
                     id="name"
                     {...register("name")}
                     errorMessage={errors.name?.message}
@@ -73,7 +73,7 @@ function SignupPage() {
                 />
                 {
                     errors.root?.message && (
-                        <p aria-live="polite">{errors.root.message}</p>
+                        <p role="alert" aria-live="polite">{errors.root.message}</p>
                     )
                 }
                 <div className={style.buttonGroup}>
