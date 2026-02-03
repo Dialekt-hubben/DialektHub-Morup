@@ -33,8 +33,7 @@ a {
 }
 
 .btn {
-  --backgroundeColor: #1B9EE4;
-  --backgroundeColorDisabled: lch(from var(--backgroundeColor) lightness - 10% c h);
+  --backgroundColorDisabled: lch(from var(--color-blue) lightness - 10% c h);
 
   font-size: 0.875rem;
   display: inline-flex;
@@ -47,16 +46,11 @@ a {
   border-radius: 0.25rem;
   
   &.primary {
-    background-color: #1B9EE4;
+    background-color: var(--color-blue);
     color: white;
-
-    &:disabled {
-      background-color: var(--backgroundeColorDisabled);
-      cursor: not-allowed;
-    }
   }
   &:disabled {
-    background-color: var(--backgroundeColorDisabled);
+    background-color: var(--backgroundColorDisabled);
     cursor: not-allowed;
   }
 }
