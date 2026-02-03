@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
 const robotoMono = Roboto_Mono({
   subsets: ["latin"],
@@ -25,9 +26,7 @@ export default function RootLayout({
         
         {children}
         
-        {/* footer här */}
-        <div>footer</div>
-
+        <Footer />
       </body>
     </html>
   );
