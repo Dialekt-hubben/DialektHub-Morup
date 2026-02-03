@@ -7,7 +7,7 @@ import Link from "next/link";
 import { signIn } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { BetterAuthError } from "better-auth";
-import style from './page.module.css';
+import style from '@/app/auth.module.css';
 
 function LoginPage() {
     const { push } = useRouter();
@@ -40,7 +40,7 @@ function LoginPage() {
 
     return (
         <main className={style.main}>
-            <div className={style.LoginContainer}>
+            <div className={style.authContainer}>
                 <div className={style.header}><h1>Login</h1></div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <InputGroup
