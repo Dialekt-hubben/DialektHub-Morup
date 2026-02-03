@@ -23,7 +23,7 @@ export const auth = betterAuth({
  *
  * This function attempts to fetch the current session using the request headers.
  * If a valid session with a user object is found, it returns the user object.
- * If no session or user is found, it automatically redirects the client to the `/Login` page.
+ * If no session or user is found, it automatically redirects the client to the `/login` page.
  *
  * @returns {Promise<object>} A promise that resolves to the authenticated user object.
  * @throws {never} This function does not throw but will interrupt execution via a redirect if authentication fails.
