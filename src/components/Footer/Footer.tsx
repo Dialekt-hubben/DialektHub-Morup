@@ -20,7 +20,7 @@ function Footer() {
                 </p>
             </div>
             <hr />
-            <p>&copy; {currentYear} DialektHub. Med kärlek för svenska dialekter.</p>
+            <p className={style.copyright}>&copy; {currentYear} DialektHub. Med kärlek för svenska dialekter.</p>
         </footer>
     );
 }

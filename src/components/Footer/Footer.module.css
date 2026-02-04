@@ -1,3 +1,30 @@
 .footer {
-    
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem 3rem;
+    color: #786A12;
+    background-color: var(--color-yellow);
+
+    padding: 3rem 1rem;
+
+   & > div:nth-child(1) {
+        grid-column: 2;
+    }
+    h2 {
+        margin-bottom: 0.25em;
+    }
+    p {
+        color: #65590f;
+    }
+
+    hr {
+        grid-column: 1 / -1;
+        border-color: #786A12;
+    }
+
+    .copyright {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin-top: 1rem;
+    }
 }
