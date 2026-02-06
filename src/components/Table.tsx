@@ -40,8 +40,7 @@ return (
                                     aria-label="Spela upp ljud"
                                     onClick={() => playSound(item.soundFileUrl)}
                                 >
-                                    ▶️
-                                </button>
+                                    ▶️                         </button>
                             )}
                         </td>
                         <td className={styles.tableCell}>{item.pronunciation}</td>
