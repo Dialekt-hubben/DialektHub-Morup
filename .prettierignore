@@ -1,0 +1,20 @@
+# Ignore artifacts:
+node_modules
+.next
+build
+dist
+coverage
+out
+
+# SQL migrations (Drizzle)
+src/Drizzle/migrations
+
+# Lock files
+package-lock.json
+
+# Seed data
+src/Drizzle/SeedData
+
+# Static assets
+public
+
