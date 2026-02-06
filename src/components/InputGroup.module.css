@@ -15,12 +15,12 @@
         font-family: "Roboto Mono", monospace;
         font-size: 1rem;
         padding: 0.75rem 1rem;
-        border: 1px solid #A6A6A6;
+        border: 1px solid #a6a6a6;
         border-radius: 0.25em;
         transition: border-color 0.2s;
     }
     .errorMessage {
-        color: #FF4D4F;
+        color: #ff4d4f;
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }

@@ -7,27 +7,32 @@ import Link from "next/link";
 import { signIn } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { BetterAuthError } from "better-auth";
-import style from '@/app/auth.module.css';
+import style from "@/app/auth.module.css";
 
 function LoginPage() {
     const { push } = useRouter();
-    const { register, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<Login>({
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        setError,
+    } = useForm<Login>({
         resolver: zodResolver(Login),
-    })
+    });
 
     const onSubmit = async (data: Login) => {
         try {
             await signIn(data);
             push("/dashboard");
-        } catch(error) {
+        } catch (error) {
             // Handle BetterAuthError specifically
-            if (error instanceof BetterAuthError) {                
+            if (error instanceof BetterAuthError) {
                 setError("root", { message: error.message });
                 return;
             }
-            
+
             // Handle generic Error instances
-            if (error instanceof Error) {                
+            if (error instanceof Error) {
                 setError("root", { message: error.message });
                 return;
             }
@@ -36,12 +41,13 @@ function LoginPage() {
             setError("root", { message: "Invalid email or password" });
         }
     };
-    
 
     return (
         <main className={style.main}>
             <div className={style.authContainer}>
-                <div className={style.header}><h1>Login</h1></div>
+                <div className={style.header}>
+                    <h1>Login</h1>
+                </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <InputGroup
                         label="Email"
@@ -57,16 +63,26 @@ function LoginPage() {
                         {...register("password")}
                         errorMessage={errors.password?.message}
                     />
-                    {
-                        errors.root?.message && (
-                            <p role="alert" aria-live="polite">{errors.root.message}</p>
-                        )
-                    }
+                    {errors.root?.message && (
+                        <p role="alert" aria-live="polite">
+                            {errors.root.message}
+                        </p>
+                    )}
                     <div className={style.buttonGroup}>
-                        <button type="submit" className="btn primary" disabled={isSubmitting}>Login</button>
-                        <Link href="/" className="btn">Avbryt</Link>
+                        <button
+                            type="submit"
+                            className="btn primary"
+                            disabled={isSubmitting}>
+                            Login
+                        </button>
+                        <Link href="/" className="btn">
+                            Avbryt
+                        </Link>
                     </div>
-                    <p>Don&apos;t have an account? <Link href="/signup">Sign up here</Link></p>
+                    <p>
+                        Don&apos;t have an account?{" "}
+                        <Link href="/signup">Sign up here</Link>
+                    </p>
                 </form>
             </div>
         </main>

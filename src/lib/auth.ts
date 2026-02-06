@@ -7,15 +7,15 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    provider: "sqlite",
-  }),
-  emailAndPassword: {
-    enabled: true,
-    minPasswordLength: 8,
-  },
-  // "nextCookies" is always need to be placed last in the plugins array
-  plugins: [nextCookies()],
+    database: drizzleAdapter(db, {
+        provider: "sqlite",
+    }),
+    emailAndPassword: {
+        enabled: true,
+        minPasswordLength: 8,
+    },
+    // "nextCookies" is always need to be placed last in the plugins array
+    plugins: [nextCookies()],
 });
 
 /**
@@ -29,13 +29,13 @@ export const auth = betterAuth({
  * @throws {never} This function does not throw but will interrupt execution via a redirect if authentication fails.
  */
 export async function getActiveUserSession(): Promise<AuthUser> {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
 
-  // If no session, redirect to login
-  if (!session?.user) {
-    redirect("/login");
-  }
-  return session.user as AuthUser;
+    // If no session, redirect to login
+    if (!session?.user) {
+        redirect("/login");
+    }
+    return session.user as AuthUser;
 }
