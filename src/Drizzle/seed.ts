@@ -1,10 +1,10 @@
 import fs from "fs";
 import "dotenv/config";
 import db from ".";
-import { userTable } from "./models/User";
 import { dialectWordTable } from "./models/DialectWord";
 import { nationalWordTable } from "./models/NationalWord";
 import { soundFileTable } from "./models/SoundFile";
+import { user } from "./models/auth-schema";
 
 async function main() {
   //user seed
@@ -12,8 +12,8 @@ async function main() {
     "src/Drizzle/SeedData/user_seed.json",
     "utf-8",
   );
-  const userData: typeof userTable.$inferInsert = JSON.parse(userSeed);
-  await db.insert(userTable).values(userData);
+  const userData: typeof user.$inferInsert = JSON.parse(userSeed);
+  await db.insert(user).values(userData);
 
   
   //national word
