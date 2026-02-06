@@ -1,9 +1,12 @@
 .header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: end;
+    /* align-items: center;
+    justify-content: space-between; */
     gap: 1rem;
-    padding: 1rem 2rem;
+    padding: 0.5rem;
+    /* padding: 1rem 2rem; */
     background-color: #7FC8F0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
@@ -27,5 +30,13 @@
         gap: 1.5rem;
         margin: 0;
         padding: 0;
+    }
+
+    @media screen and (width > 710px) {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 1rem 2rem;
     }
 }
