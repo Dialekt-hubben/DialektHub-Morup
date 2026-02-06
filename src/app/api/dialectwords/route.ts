@@ -2,7 +2,7 @@ import db from "@/Drizzle";
 import { sql, eq, inArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { dialectWordTable } from "@/Drizzle/models/DialectWord";
-import { userTable } from "@/Drizzle/models/User";
+import { user } from "@/Drizzle/models/auth-schema";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
 
@@ -65,12 +65,12 @@ export async function GET(req: NextRequest) {
         pronunciation: dialectWordTable.pronunciation,
         phrase: dialectWordTable.phrase,
         status: dialectWordTable.status,
-        userName: userTable.name,
+        userName: user.name,
         nationalWord: nationalWordTable.word,
         soundFileUrl: soundFileTable.url
       })
       .from(dialectWordTable)
-      .leftJoin(userTable, eq(dialectWordTable.userId, userTable.id))
+      .leftJoin(user, eq(dialectWordTable.userId, user.id))
       .leftJoin(nationalWordTable, eq(dialectWordTable.nationalWordId, nationalWordTable.id))
       .leftJoin(soundFileTable, eq(dialectWordTable.soundFileId, soundFileTable.id))
       .where(inArray(dialectWordTable.status, [0, 1])) // Only fetch rows with status 0, 1, or 2
@@ -96,15 +96,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(response);
 
     // if error, return error as JSON with statuscode 500 and reset all fields to default values.
-  } catch (error: any) {
-    const response: DialectWordResponse = {
-      paginationOffset: 0,
-      page: 1,
-      paginationSize: 10,
-      total: 0,
-      data: [],
-      error: error?.message || "Något gick fel vid hämtning av data."
-    };
-    return NextResponse.json(response, { status: 500 });
+  } catch (errorr) {
+    if (errorr instanceof Error) {
+      
+      const response: DialectWordResponse = {
+        paginationOffset: 0,
+        page: 1,
+        paginationSize: 10,
+        total: 0,
+        data: [],
+        error: errorr.message || "Något gick fel vid hämtning av data."
+      };
+      return NextResponse.json(response, { status: 500 });
+    }
   }
 }
