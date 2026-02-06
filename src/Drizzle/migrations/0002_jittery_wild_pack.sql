@@ -1,5 +1,5 @@
-DROP TABLE `user_table`;--> statement-breakpoint
 PRAGMA foreign_keys=OFF;--> statement-breakpoint
+DROP TABLE `user_table`;--> statement-breakpoint
 CREATE TABLE `__new_dialect_word_table` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`word` text NOT NULL,
