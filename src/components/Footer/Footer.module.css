@@ -1,15 +1,14 @@
 .footer {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem 3rem;
+    /* grid-template-columns: repeat(5, 1fr); */
+    grid-template-columns: 1fr;
+    gap: 1rem;
+
     color: #786A12;
     background-color: var(--color-yellow);
 
     padding: 3rem 1rem;
 
-   & > div:nth-child(1) {
-        grid-column: 2;
-    }
     h2 {
         margin-bottom: 0.25em;
     }
@@ -26,5 +25,18 @@
         grid-column: 1 / -1;
         text-align: center;
         margin-top: 1rem;
+    }
+
+    @media screen and (width > 710) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media screen and (width > 1100px) {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem 3rem;
+
+        & > div:nth-child(1) {
+            grid-column: 2;
+        }
     }
 }
