@@ -11,12 +11,10 @@ export const Signup = z.object({
     email: z.email({ message: "Email är inte giltig" }),
     password: z
         .string()
-        .min(8, { message: "Lösenordet måste vara minst 8 tecken långt" })
-        .max(30, { message: "Lösenordet får vara max 30 tecken långt" }),
+        .min(8, { message: "Lösenordet måste vara minst 8 tecken långt" }),
     confirmPassword: z
         .string()
         .min(8, { message: "Lösenordet måste vara minst 8 tecken långt" })
-        .max(30, { message: "Lösenordet får vara max 30 tecken långt" }),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Lösenorden matchar inte",
     path: ["confirmPassword"],
