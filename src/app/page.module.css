@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  /* background-color: var(--background); */
 }
 
 .main {
@@ -27,7 +27,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  background-color: var(--foreground);
+  /* background-color: var(--foreground); */
   padding: 120px 60px;
 }
 
@@ -86,24 +86,24 @@
 }
 
 a.primary {
-  background: var(--text-primary);
+  /* background: var(--text-primary); */
   color: var(--background);
   gap: 8px;
 }
 
 a.secondary {
-  border-color: var(--button-secondary-border);
+  /* border-color: var(--button-secondary-border); */
 }
 
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
-    background: var(--button-primary-hover);
+    /* background: var(--button-primary-hover); */
     border-color: transparent;
   }
 
   a.secondary:hover {
-    background: var(--button-secondary-hover);
+    /* background: var(--button-secondary-hover); */
     border-color: transparent;
   }
 }
@@ -130,7 +130,7 @@ a.secondary {
   }
 
   .page {
-    --background: #000;
+    /* --background: #000; */
     --foreground: #000;
 
     --text-primary: #ededed;
