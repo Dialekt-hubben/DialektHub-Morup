@@ -145,18 +145,19 @@ a.secondary {
 
 /* Centrera tabellen med wrapper */
 .tableContainerWrapper {
-  width: 900px;
+  width: 60em;
   margin: 50px auto;
 }
 
 .tableContainer {
-  width: 900px;
+  width: 60em;
   margin: 10px auto;
   border-radius: 10px;
 }
 
 .table {
-  width: 900px;
+  width: 60em;
+  height: 40em;
   border-collapse: collapse;
   margin: 0 auto;
   table-layout: fixed;
@@ -165,11 +166,11 @@ a.secondary {
 /* -- Table Container -- */
 .tableContainer {
   border-radius: 10px;
+  width: 60em;
 }
 
 /* -- Table Header -- */
 .tableHeader {
-  width: 900px;
   padding: 15px 15px;
   background: var(--color-light-yellow);
   border: solid 1px var(--color-yellow);
@@ -194,21 +195,25 @@ a.secondary {
   text-align: start;
   font-weight: 600;
   font-size: small;
+  height: 60px;
   box-sizing: border-box;
-  height: 48px;
-  max-height: 48px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-/* Adjust to set the size of the cells */
-.tableCell:nth-child(1), .tableHeaderCell:nth-child(1) { width: 80px; }
+
+.tableCell:nth-child(1), .tableHeaderCell:nth-child(1) { width: 4em; }
+.tableCell:nth-child(2), .tableHeaderCell:nth-child(2) { width: 2em; }
+.tableCell:nth-child(3), .tableHeaderCell:nth-child(3) { width: 16em; }
+.tableCell:nth-child(4), .tableHeaderCell:nth-child(4) { width: 4em; }
+.tableCell:nth-child(5), .tableHeaderCell:nth-child(5) { width: 4em; }
+
+/* .tableCell:nth-child(1), .tableHeaderCell:nth-child(1) { width: 80px; }
 .tableCell:nth-child(2), .tableHeaderCell:nth-child(2) { width: 40px; }
 .tableCell:nth-child(3), .tableHeaderCell:nth-child(3) { width: 320px; }
 .tableCell:nth-child(4), .tableHeaderCell:nth-child(4) { width: 80px; }
-.tableCell:nth-child(5), .tableHeaderCell:nth-child(5) { width: 80px; }
-
+.tableCell:nth-child(5), .tableHeaderCell:nth-child(5) { width: 80px; } */
 
 /* --- Pagination styling --- */
 
