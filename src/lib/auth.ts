@@ -37,5 +37,6 @@ export async function getActiveUserSession(): Promise<AuthUser> {
   if (!session?.user) {
     redirect("/login");
   }
+  
   return session.user as AuthUser;
 }
