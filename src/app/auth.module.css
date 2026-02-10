@@ -7,15 +7,14 @@
 }
 
 .authContainer {
-   
-    background-color: #DEDEDE;
+    background-color: #dedede;
     border-radius: 0.5rem;
 
     .header {
         color: #fff;
-        background-color: #7FC8F0;
+        background-color: #7fc8f0;
         padding: 1rem;
-        border-bottom: 1px solid #5FBAEC;
+        border-bottom: 1px solid #5fbaec;
         border-top-left-radius: 0.5rem;
         border-top-right-radius: 0.5rem;
     }
@@ -24,13 +23,12 @@
         flex-direction: column;
         gap: 1.5rem;
         padding: 1rem;
-        
     }
     .buttonGroup {
         display: flex;
         gap: 1rem;
     }
-    p a{
+    p a {
         text-decoration: underline;
     }
 }

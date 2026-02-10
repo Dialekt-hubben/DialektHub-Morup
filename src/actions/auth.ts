@@ -11,32 +11,32 @@ export async function signUp(data: Signup) {
         throw new Error("Ogiltiga registreringsuppgifter");
     }
 
-   try {
-     const response = await auth.api.signUpEmail({
-         body: parsedData.data
-     });
-     return response;
-   } catch (error) {
+    try {
+        const response = await auth.api.signUpEmail({
+            body: parsedData.data,
+        });
+        return response;
+    } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
         }
 
         throw new Error("Ett okänt fel inträffade under registreringen");
-   }
+    }
 }
 
 export async function signIn(data: Login) {
     const parsedData = Login.safeParse(data);
-    
+
     if (!parsedData.success) {
         throw new Error("Ogiltiga inloggningsuppgifter");
     }
 
     try {
         const response = await auth.api.signInEmail({
-            body: parsedData.data
+            body: parsedData.data,
         });
-        
+
         return response;
     } catch (error) {
         if (error instanceof Error) {
@@ -47,9 +47,7 @@ export async function signIn(data: Login) {
 }
 
 export async function signOut() {
-    await auth.api.signOut(
-        {
-            headers: await headers()
-        }
-    );
+    await auth.api.signOut({
+        headers: await headers(),
+    });
 }
