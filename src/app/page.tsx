@@ -3,13 +3,12 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
 import Table from "@/components/Table";
-
-const headers = ["Ord", "Ljudfil", "Uttal", "Användare", "Svenska"];
+import { DialectWordTableResponse } from "@/types/dialectword";
 
 const PAGE_SIZE = 10; // Antal poster per sida
 
 export default function Home() {
-    const [data, setData] = useState([]); // Data för den aktuella sidan
+    const [data, setData] = useState<DialectWordTableResponse | null>(null); // Data för den aktuella sidan
     const [total, setTotal] = useState(0); // Totalt antal poster, används för att beräkna totala sidor
     const [page, setPage] = useState(1); // börjar på sida 1
     const totalPages = Math.ceil(total / PAGE_SIZE);
@@ -19,8 +18,8 @@ export default function Home() {
             const res = await fetch(
                 `/api/dialectwords?page=${page}&pageSize=${PAGE_SIZE}`,
             );
-            const result = await res.json();
-            setData(result.data || []);
+            const result = await res.json() as DialectWordTableResponse;
+            setData(result);
             setTotal(result.total || 0);
         }
         fetchData();
@@ -32,7 +31,7 @@ export default function Home() {
                 <div>
                     <div className={styles.tableContainer}>
                         <h2 className={styles.tableHeader}>Ordlista</h2>
-                        <Table headers={headers} data={data} />
+                        <Table tableData={data} />
                     </div>
                     <Pagination
                         page={page}

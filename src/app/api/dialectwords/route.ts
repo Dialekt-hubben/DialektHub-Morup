@@ -6,24 +6,7 @@ import { user } from "@/Drizzle/models/auth-schema";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
 
-// TypeScript interface for the API response
-interface DialectWordResponse {
-    paginationOffset: number;
-    page: number;
-    paginationSize: number;
-    total: number;
-    data: Array<{
-        id: number;
-        word: string;
-        pronunciation: string | null;
-        phrase: string | null;
-        status: "pending" | "approved" | "rejected";
-        userName: string | null;
-        nationalWord: string | null;
-        soundFileUrl: string | null;
-    }>;
-    error?: string;
-}
+import { DialectWordResponse } from "@/types/dialectwords";
 
 // API-route to fetch paginated dialect words data
 export async function GET(req: NextRequest) {

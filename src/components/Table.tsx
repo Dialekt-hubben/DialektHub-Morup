@@ -1,13 +1,14 @@
 import styles from "../app/page.module.css";
+import { DialectWordTableResponse } from "@/types/dialectword";
 
-interface TableProps {
-    data: any[];
-}
+type TableProps = {
+    tableData: DialectWordTableResponse | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.
+};
 
-// The Table-component recives "data" as a prop from the parent component (e.g. the page).
-// "data" is an array of objects fetched from the API containing words, pronunciation, sound file, etc.
-// Table renders a row for each object in "data".
-export default function Table({ data }: TableProps) {
+// The Table-component recives "tableData" as a prop from the parent component (e.g. the page).
+// "tableData" is an object fetched from the API containing words, pronunciation, sound file, etc.
+// Table renders a row for each object in "tableData.data".
+export default function Table({ tableData }: TableProps) {
     const playSound = (url: string) => {
         const audio = new window.Audio(url);
         audio.play();
@@ -29,7 +30,7 @@ export default function Table({ data }: TableProps) {
                 </thead>
                 <tbody>
                     {/* Loop through the data array and render a row for each object */}
-                    {data.map((item, rowIdx) => (
+                    {tableData?.data.map((item, rowIdx) => (
                         <tr key={rowIdx}>
                             <td className={styles.tableCell}>{item.word}</td>
                             <td className={styles.tableCell}>
@@ -44,7 +45,7 @@ export default function Table({ data }: TableProps) {
                                         type="button"
                                         aria-label="Spela upp ljud"
                                         onClick={() =>
-                                            playSound(item.soundFileUrl)
+                                            playSound(item.soundFileUrl || "")
                                         }>
                                         ▶️{" "}
                                     </button>
