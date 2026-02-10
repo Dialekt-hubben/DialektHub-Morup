@@ -1,5 +1,5 @@
 import db from "@/Drizzle";
-import { sql, eq, inArray } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { user } from "@/Drizzle/models/auth-schema";
@@ -81,7 +81,6 @@ export async function GET(req: NextRequest) {
                 soundFileTable,
                 eq(dialectWordTable.soundFileId, soundFileTable.id),
             )
-            .where(inArray(dialectWordTable.status, [0, 1])) // Only fetch rows with status 0, 1, or 2
             .limit(paginationSize)
             .offset(paginationOffset);
 
