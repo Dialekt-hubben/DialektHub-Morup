@@ -28,7 +28,6 @@ const Pagination = ({ page, totalPages, setPage }: PaginationProps) => (
                             : styles.paginationButton
                     }
                     onClick={() => setPage(i + 1)}>
-                    {" "}
                     {i + 1}
                 </button>
             );
