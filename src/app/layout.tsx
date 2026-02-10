@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
 const robotoMono = Roboto_Mono({
     subsets: ["latin"],
@@ -16,17 +18,16 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-            <body className={robotoMono.className}>
-                {/* header här */}
-                <div>header</div>
-
-                {children}
-
-                {/* footer här */}
-                <div>footer</div>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body className={robotoMono.className}>
+        
+        <Header />
+        
+        {children}
+        
+        <Footer />
+      </body>
+    </html>
+  );
 }
