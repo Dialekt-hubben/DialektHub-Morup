@@ -5,7 +5,6 @@
     "bracketSpacing": true,
     "semi": true,
     "experimentalOperatorPosition": "end",
-    "experimentalTernaries": false,
     "singleQuote": false,
     "jsxSingleQuote": false,
     "quoteProps": "consistent",
@@ -20,5 +19,5 @@
     "tabWidth": 4,
     "useTabs": false,
     "embeddedLanguageFormatting": "auto",
-    "endOfLine": "crlf"
+    "endOfLine": "lf"
 }
