@@ -144,69 +144,83 @@ a.secondary {
 
 /* Centrera tabellen med wrapper */
 .tableContainerWrapper {
-  width: 60em;
-  margin: 50px auto;
+    width: 60em;
+    margin: 50px auto;
 }
 
 .tableContainer {
-  width: 60em;
-  margin: 10px auto;
-  border-radius: 10px;
+    width: 60em;
+    margin: 10px auto;
+    border-radius: 10px;
 }
 
 .table {
-  width: 60em;
-  height: 40em;
-  border-collapse: collapse;
-  margin: 0 auto;
-  table-layout: fixed;
+    width: 60em;
+    height: 40em;
+    border-collapse: collapse;
+    margin: 0 auto;
+    table-layout: fixed;
 }
 
 /* -- Table Container -- */
 .tableContainer {
-  border-radius: 10px;
-  width: 60em;
+    border-radius: 10px;
+    width: 60em;
 }
 
 /* -- Table Header -- */
 .tableHeader {
-  padding: 15px 15px;
-  background: var(--color-light-yellow);
-  border: solid 1px var(--color-yellow);
-  box-sizing: border-box;
+    padding: 15px 15px;
+    background: var(--color-light-yellow);
+    border: solid 1px var(--color-yellow);
+    box-sizing: border-box;
 }
 
 /* -- Table Header -- */
 .tableHeaderCell {
-  border: 1px solid var(--color-yellow);
-  padding: 15px 2px;
-  text-align: center;
-  font-weight: 600;
-  background: var(--color-light-yellow);
-  font-size: medium;
-  box-sizing: border-box;
+    border: 1px solid var(--color-yellow);
+    padding: 15px 2px;
+    text-align: center;
+    font-weight: 600;
+    background: var(--color-light-yellow);
+    font-size: medium;
+    box-sizing: border-box;
 }
 
 /* -- Table Data -- */
 .tableCell {
-  border: 1px solid var(--color-yellow);
-  padding: 0 6px;
-  text-align: start;
-  font-weight: 600;
-  font-size: small;
-  height: 60px;
-  box-sizing: border-box;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    border: 1px solid var(--color-yellow);
+    padding: 0 6px;
+    text-align: start;
+    font-weight: 600;
+    font-size: small;
+    height: 60px;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-
-.tableCell:nth-child(1), .tableHeaderCell:nth-child(1) { width: 4em; }
-.tableCell:nth-child(2), .tableHeaderCell:nth-child(2) { width: 2em; }
-.tableCell:nth-child(3), .tableHeaderCell:nth-child(3) { width: 16em; }
-.tableCell:nth-child(4), .tableHeaderCell:nth-child(4) { width: 4em; }
-.tableCell:nth-child(5), .tableHeaderCell:nth-child(5) { width: 4em; }
+.tableCell:nth-child(1),
+.tableHeaderCell:nth-child(1) {
+    width: 4em;
+}
+.tableCell:nth-child(2),
+.tableHeaderCell:nth-child(2) {
+    width: 2em;
+}
+.tableCell:nth-child(3),
+.tableHeaderCell:nth-child(3) {
+    width: 16em;
+}
+.tableCell:nth-child(4),
+.tableHeaderCell:nth-child(4) {
+    width: 4em;
+}
+.tableCell:nth-child(5),
+.tableHeaderCell:nth-child(5) {
+    width: 4em;
+}
 
 /* .tableCell:nth-child(1), .tableHeaderCell:nth-child(1) { width: 80px; }
 .tableCell:nth-child(2), .tableHeaderCell:nth-child(2) { width: 40px; }
@@ -225,18 +239,18 @@ a.secondary {
 }
 
 .paginationButton {
-  padding: 6px 14px;
-  border: 1px solid #ccc;
-  background: #fff;
-  color: #222;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #222;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
 }
 .paginationButton:hover:not(:disabled) {
-  background: var(--color-light-yellow);
-  color: var(--text-primary);
-  border-color: var(--color-yellow);
+    background: var(--color-light-yellow);
+    color: var(--text-primary);
+    border-color: var(--color-yellow);
 }
 
 .paginationButton:disabled {
