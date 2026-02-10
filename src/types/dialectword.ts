@@ -10,9 +10,9 @@ type DialectWordTableResponse = {
         pronunciation: string,
         phrase: string,
         status: "pending" | "approved" | "rejected",
-        userName: string,
-        nationalWord: string,
-        soundFileUrl: string,
+        userName: string | null,
+        nationalWord: string | null,
+        soundFileUrl: string | null,
     }>;
     error?: string,
 };

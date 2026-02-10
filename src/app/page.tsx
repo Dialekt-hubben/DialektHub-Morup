@@ -19,8 +19,8 @@ export default function Home() {
                 `/api/dialectwords?page=${page}&pageSize=${PAGE_SIZE}`,
             );
             const result = await res.json() as DialectWordTableResponse;
-            setData(result);
-            setTotal(result.total || 0);
+            setData(result || null);
+            setTotal(result?.total || 0);
         }
         fetchData();
     }, [page]);

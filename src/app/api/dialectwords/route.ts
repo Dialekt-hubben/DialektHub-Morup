@@ -5,8 +5,8 @@ import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { user } from "@/Drizzle/models/auth-schema";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
+import { DialectWordTableResponse } from "@/types/dialectword";
 
-import { DialectWordResponse } from "@/types/dialectwords";
 
 // API-route to fetch paginated dialect words data
 export async function GET(req: NextRequest) {
@@ -75,12 +75,12 @@ export async function GET(req: NextRequest) {
         }));
 
         // Return data and pagination info as JSON to frontend
-        const response: DialectWordResponse = {
+        const response: DialectWordTableResponse = {
             paginationOffset,
             page,
             paginationSize,
             total,
-            data,
+            data
         };
 
         // Return successful response as JSON
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
         // if error, return error as JSON with statuscode 500 and reset all fields to default values.
     } catch (errorr) {
         if (errorr instanceof Error) {
-            const response: DialectWordResponse = {
+            const response: DialectWordTableResponse = {
                 paginationOffset: 0,
                 page: 1,
                 paginationSize: 10,

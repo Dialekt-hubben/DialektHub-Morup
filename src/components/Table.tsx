@@ -45,7 +45,7 @@ export default function Table({ tableData }: TableProps) {
                                         type="button"
                                         aria-label="Spela upp ljud"
                                         onClick={() =>
-                                            playSound(item.soundFileUrl || "")
+                                            playSound(item.soundFileUrl || ":)")
                                         }>
                                         ▶️{" "}
                                     </button>
