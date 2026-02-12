@@ -1,4 +1,3 @@
-// import { db } from "../Drizzle";
 import db from ".";
 import { dialectWordTable } from "../Drizzle/models/DialectWord";
 import { nationalWordTable } from "../Drizzle/models/NationalWord";
@@ -8,9 +7,9 @@ import { like, eq } from "drizzle-orm";
 
 export async function searchDialectWords(query: string) {
   if (!query || query.length < 2) return [];
-
-  // Exclude purely alphabetical queries
-  //   if(!query.match(/^[a-zA-Z]+$/)) return [];
+  if (query.length > 50) return [];  // prevent overly long queries
+  if(!query.trim()) return []; // prevent searching only whitespace
+  if (/[%_]/.test(query)) return []; // prevent wildcard characters
 
   return db
     .select({

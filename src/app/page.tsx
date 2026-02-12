@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
 import Table from "@/components/Table";
+import { SearchField } from "@/components/SearchField";
 
 const headers = [
   "Ord",
@@ -36,6 +37,7 @@ export default function Home() {
         <div>
           <div className={styles.tableContainer}>
             <h2 className={styles.tableHeader}>Ordlista</h2>
+            <SearchField />
             <Table headers={headers} data={data} />
           </div>
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
