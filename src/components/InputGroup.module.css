@@ -1,0 +1,27 @@
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 520px;
+    width: 100%;
+
+    label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #000;
+    }
+
+    input {
+        font-family: "Roboto Mono", monospace;
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #a6a6a6;
+        border-radius: 0.25em;
+        transition: border-color 0.2s;
+    }
+    .errorMessage {
+        color: #ff4d4f;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+}

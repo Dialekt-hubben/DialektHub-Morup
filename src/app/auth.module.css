@@ -1,0 +1,34 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.authContainer {
+    background-color: #dedede;
+    border-radius: 0.5rem;
+
+    .header {
+        color: #fff;
+        background-color: #7fc8f0;
+        padding: 1rem;
+        border-bottom: 1px solid #5fbaec;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+    .buttonGroup {
+        display: flex;
+        gap: 1rem;
+    }
+    p a {
+        text-decoration: underline;
+    }
+}
