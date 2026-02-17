@@ -1,5 +1,3 @@
-/* -- Pagination -- */
-
 .page {
     --background: #fafafa;
     --foreground: #fff;
@@ -146,62 +144,89 @@ a.secondary {
 
 /* Centrera tabellen med wrapper */
 .tableContainerWrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    min-width: 100vw;
-    /* padding: 1px; */
+    width: 60em;
+    margin: 50px auto;
 }
 
 .tableContainer {
-    display: grid;
-    grid-template-columns:
-        minmax(100px, 0.2fr)
-        minmax(100px, 0.2fr)
-        minmax(250px, 1fr)
-        minmax(100px, 0.2fr)
-        minmax(100px, 0.2fr);
-    /* gap: 0; */
-    /* min-width: 50vw; */
-    /* width: 650px; */
-    /* min-height:650px; */
-    border: 1px solid var(--color-yellow);
+    width: 60em;
+    margin: 10px auto;
+    border-radius: 10px;
 }
 
-/* -- Table Header Style -- */
+.table {
+    width: 60em;
+    height: 40em;
+    border-collapse: collapse;
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+/* -- Table Container -- */
+.tableContainer {
+    border-radius: 10px;
+    width: 60em;
+}
+
+/* -- Table Header -- */
 .tableHeader {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    font-size: x-large;
-    font-weight: 600;
-    color: var(--text-primary);
-    padding: 10px 20px;
-    grid-column: 1 / -1;
-    text-align: start;
+    padding: 15px 15px;
     background: var(--color-light-yellow);
+    border: solid 1px var(--color-yellow);
+    box-sizing: border-box;
 }
 
 /* -- Table Header -- */
 .tableHeaderCell {
     border: 1px solid var(--color-yellow);
-    padding: 10px 15px;
-    text-align: start;
+    padding: 15px 2px;
+    text-align: center;
     font-weight: 600;
     background: var(--color-light-yellow);
     font-size: medium;
+    box-sizing: border-box;
 }
 
 /* -- Table Data -- */
 .tableCell {
     border: 1px solid var(--color-yellow);
-    padding: 10px 15px;
-    max-width: 50vw;
+    padding: 0 6px;
     text-align: start;
     font-weight: 600;
     font-size: small;
+    height: 60px;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
+
+.tableCell:nth-child(1),
+.tableHeaderCell:nth-child(1) {
+    width: 4em;
+}
+.tableCell:nth-child(2),
+.tableHeaderCell:nth-child(2) {
+    width: 2em;
+}
+.tableCell:nth-child(3),
+.tableHeaderCell:nth-child(3) {
+    width: 16em;
+}
+.tableCell:nth-child(4),
+.tableHeaderCell:nth-child(4) {
+    width: 4em;
+}
+.tableCell:nth-child(5),
+.tableHeaderCell:nth-child(5) {
+    width: 4em;
+}
+
+/* .tableCell:nth-child(1), .tableHeaderCell:nth-child(1) { width: 80px; }
+.tableCell:nth-child(2), .tableHeaderCell:nth-child(2) { width: 40px; }
+.tableCell:nth-child(3), .tableHeaderCell:nth-child(3) { width: 320px; }
+.tableCell:nth-child(4), .tableHeaderCell:nth-child(4) { width: 80px; }
+.tableCell:nth-child(5), .tableHeaderCell:nth-child(5) { width: 80px; } */
 
 /* --- Pagination styling --- */
 
@@ -221,9 +246,11 @@ a.secondary {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    transition:
-        background 0.2s,
-        color 0.2s;
+}
+.paginationButton:hover:not(:disabled) {
+    background: var(--color-light-yellow);
+    color: var(--text-primary);
+    border-color: var(--color-yellow);
 }
 
 .paginationButton:disabled {
