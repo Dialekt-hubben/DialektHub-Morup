@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+    S3Ninja:
+        image: scireum/s3-ninja:latest
+        container_name: s3ninja
+        ports:
+          - "9000:9000"
+        volumes:
+          - ./s3data:/home/sirius/data
+        environment:
+          - TZ=Europe/Stockholm
