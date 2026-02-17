@@ -1,62 +1,99 @@
 "use server";
 import {
     PutObjectCommand,
+    PutObjectCommandInput,
     GetObjectCommand,
     GetObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { s3Client } from "@/lib/s3Client"; // Din klient ovan
-import { file } from "zod";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { paginateListObjectsV2 } from "@aws-sdk/client-s3";
 
-export async function uploadFile(formData: FormData) {
+export async function handleFileUpload(formData: FormData) {
     const file = formData.get("file") as File;
-
-    if (!file) {
-        return { success: false };
-    }
 
     // Konvertera filen till en buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const key = new URL(`${file.name[0]}/${file.name.toLowerCase()}`);
+    const params: PutObjectCommandInput = {
+        Bucket: process.env.S3_BUCKET_NAME, // namn på din bucket
+        Key: file.name.toLowerCase(), // filnamnet i S3
+        Body: buffer, // filens innehåll
+        ContentType: file.type, // filens MIME-typ
+    };
 
-    await s3Client.send(
-        new PutObjectCommand({
-            Bucket: process.env.S3_BUCKET_NAME, // namn på din bucket
-            Key: key.toString(), // filnamnet i S3
-            Body: buffer, // filens innehåll
-            ContentType: file.type, // filens MIME-typ
-        }),
-    );
-
-    return { success: true };
+    await s3Client.send(new PutObjectCommand(params));
 }
 
-// List all files in the S3 bucket.
-// export async function getFiles(formData: FormData) {
 
-//     const input = {
+export async function getFile() {
+    const objects: string[] = [];
+    const paginator = paginateListObjectsV2(
+        { client: s3Client, /* Max items per page */ pageSize: 10 },
+        { Bucket: process.env.S3_BUCKET_NAME },
+    );
+    
+    for await (const page of paginator) {
+        for(const obj of page.Contents ?? []) {
+            // Säkerställ att Key finns
+            
+            if (!obj.Key) {
+                return;
+            }
+            const url = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: process.env.S3_BUCKET_NAME!, Key: obj.Key }), { expiresIn: 3600 });
+            console.log({url, objKey: obj.Key});
+
+            objects.push(url);
+            
+        };
+        
+    }
+
+    return objects; // Returnerar en platt array av URL:er
+}
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    //   objects.push(page.Contents?.map(async (obj) => {
+    //     // Säkerställ att Key finns
+    //     if (!obj.Key) {
+    //         return;
+    //     } 
+        
+    //     const url = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: process.env.S3_BUCKET_NAME!, Key: obj.Key }), { expiresIn: 3600 });
+    //     return url;
+    //   }));
+    // }
+    // objects.forEach((object, pageNum) => {
+    //   console.log(
+    //     `Page ${pageNum + 1}\n------\n${object?.map((o) => `• ${o}`).join("\n") || "No objects found"}\n`,
+    //   );
+    // });
+
+    // const url = await getSignedUrl(s3Client, objects, { expiresIn: 3600 });
+
+
+
+
+// export async function getFile(fileName: string) {
+//     const params: GetObjectCommandInput = {
 //         Bucket: process.env.S3_BUCKET_NAME, // namn på din bucket
-//         Key: formData.get("fileName") as string
-//     } satisfies GetObjectCommandInput
+//         Key: fileName, // filnamnet i S3
+//     };
 
-//     const command = new GetObjectCommand(input);
+//     const command = new GetObjectCommand(params);
 
-//     const response = await s3Client.send(command);
+//     const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 
-//     return { success: true, file: [response] };
-// }
-
-// export async function getFiles(fileName: string) {
-//     const input = {
-//         Bucket: process.env.S3_BUCKET_NAME, // namn på din bucket
-//         Key: fileName
-//     } satisfies GetObjectCommandInput
-
-//     const command = new GetObjectCommand(input);
-
-//     const response = await s3Client.send(command);
-
-//     const byte = await response.Body?.transformToByteArray();
-
-//     return { success: true, files: [fileName], content: byte };
+//     return url;
 // }
