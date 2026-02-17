@@ -42,4 +42,4 @@ next-env.d.ts
 
 dialekthub.db
 
-s3data
+s3data/*

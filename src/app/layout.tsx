@@ -18,16 +18,15 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={robotoMono.className}>
-        
-        <Header />
-        
-        {children}
-        
-        <Footer />
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={robotoMono.className}>
+                <Header />
+
+                {children}
+
+                <Footer />
+            </body>
+        </html>
+    );
 }
