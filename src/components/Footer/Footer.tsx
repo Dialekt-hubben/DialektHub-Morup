@@ -11,16 +11,25 @@ function Footer() {
             </div>
             <div>
                 <h2>Om projektet</h2>
-                <p>En plattform för att dokumentera och bevara svenska dialekter för framtida generationer.</p>
+                <p>
+                    En plattform för att dokumentera och bevara svenska
+                    dialekter för framtida generationer.
+                </p>
             </div>
             <div>
                 <h2>Kontakt</h2>
                 <p>
-                    Hjälp till att bygga det största dialektlexikonet! Email: <Link href="mailto:kontakt@dialekthub.se">kontakt@dialekthub.se</Link>
+                    Hjälp till att bygga det största dialektlexikonet! Email:{" "}
+                    <Link href="mailto:kontakt@dialekthub.se">
+                        kontakt@dialekthub.se
+                    </Link>
                 </p>
             </div>
             <hr />
-            <p className={style.copyright}>&copy; {currentYear} DialektHub. Med kärlek för svenska dialekter.</p>
+            <p className={style.copyright}>
+                &copy; {currentYear} DialektHub. Med kärlek för svenska
+                dialekter.
+            </p>
         </footer>
     );
 }
