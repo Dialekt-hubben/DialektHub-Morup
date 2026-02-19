@@ -1,39 +1,69 @@
 import styles from "../app/page.module.css";
+import { DialectWordTableResponse } from "@/types/dialectword";
 
-interface TableProps {
-    headers: string[];
-    data: any[];
-}
+type TableProps = {
+    tableData: DialectWordTableResponse | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.
+};
 
-export default function Table({ headers, data }: TableProps) {
+// The Table-component recives "tableData" as a prop from the parent component (e.g. the page).
+// "tableData" is an object fetched from the API containing words, pronunciation, sound file, etc.
+// Table renders a row for each object in "tableData.data".
+export default function Table({ tableData }: TableProps) {
+    const playSound = (url: string) => {
+        const audio = new window.Audio(url);
+        audio.play();
+    };
+
     return (
         <>
-            {/* Tabell headers */}
-            {headers.map((header, idx) => (
-                <div key={"header" + idx} className={styles.tableHeaderCell}>
-                    {header}
-                </div>
-            ))}
-
-            {/* Dialekt tabellrader */}
-            {/* "item" är Datan och "rowIdx" är radens index */}
-            {data.map((item, rowIdx) => [
-                <div key={`ord${rowIdx}`} className={styles.tableCell}>
-                    {item.word}
-                </div>,
-                <div key={`ljudfil${rowIdx}`} className={styles.tableCell}>
-                    {item.soundFileId}
-                </div>,
-                <div key={`uttal${rowIdx}`} className={styles.tableCell}>
-                    {item.pronunciation}
-                </div>,
-                <div key={`anvandare${rowIdx}`} className={styles.tableCell}>
-                    {item.userId}
-                </div>,
-                <div key={`svenska${rowIdx}`} className={styles.tableCell}>
-                    {item.nationalWordId}
-                </div>,
-            ])}
+            <table className={styles.table}>
+                <thead>
+                    <tr>
+                        <th className={styles.tableHeaderCell}>{"Ord"}</th>
+                        <th className={styles.tableHeaderCell}>{"Ljudfil"}</th>
+                        <th className={styles.tableHeaderCell}>{"Uttal"}</th>
+                        <th className={styles.tableHeaderCell}>{"Svenska"}</th>
+                        <th className={styles.tableHeaderCell}>
+                            {"Användare"}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {/* Loop through the data array and render a row for each object */}
+                    {tableData?.data.map((item, rowIdx) => (
+                        <tr key={rowIdx}>
+                            <td className={styles.tableCell}>{item.word}</td>
+                            <td className={styles.tableCell}>
+                                {/* Show play button if soundFileUrl exists, if it does not exist show nothing */}
+                                {item.soundFileUrl && (
+                                    <button
+                                        style={{
+                                            border: "none",
+                                            fontSize: "20px",
+                                            cursor: "pointer",
+                                        }}
+                                        type="button"
+                                        aria-label="Spela upp ljud"
+                                        onClick={() =>
+                                            playSound(item.soundFileUrl || ":)")
+                                        }>
+                                        ▶️{" "}
+                                    </button>
+                                )}
+                            </td>
+                            <td className={styles.tableCell}>
+                                {item.pronunciation}
+                            </td>
+                            <td className={styles.tableCell}>
+                                {item.nationalWord}
+                            </td>
+                            <td className={styles.tableCell}>
+                                {item.userName}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </>
     );
 }

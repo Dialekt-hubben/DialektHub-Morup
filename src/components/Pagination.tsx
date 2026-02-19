@@ -1,9 +1,9 @@
 import styles from "../app/page.module.css";
 
 interface PaginationProps {
-    page: number; // Aktuell sida
-    totalPages: number; // Totalt antal sidor
-    setPage: (page: number) => void; // Funktion för att uppdatera aktuell sida
+    page: number; // Current page number
+    totalPages: number; // Total number of pages
+    setPage: (page: number) => void; // Function to update the current page
 }
 
 // Pagination Component
