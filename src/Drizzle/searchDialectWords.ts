@@ -2,7 +2,7 @@ import db from ".";
 import { dialectWordTable } from "../Drizzle/models/DialectWord";
 import { nationalWordTable } from "../Drizzle/models/NationalWord";
 import { soundFileTable } from "../Drizzle/models/SoundFile";
-import { userTable } from "../Drizzle/models/User";
+// import { userTable } from "../Drizzle/models/User";
 import { like, eq } from "drizzle-orm";
 
 export async function searchDialectWords(query: string) {
@@ -22,7 +22,7 @@ export async function searchDialectWords(query: string) {
       description: nationalWordTable.description,
 
       soundUrl: soundFileTable.url,
-      author: userTable.name,
+      // author: userTable.name,
     })
     .from(dialectWordTable)
     .leftJoin(
@@ -33,7 +33,7 @@ export async function searchDialectWords(query: string) {
       soundFileTable,
       eq(dialectWordTable.soundFileId, soundFileTable.id),
     )
-    .leftJoin(userTable, eq(dialectWordTable.userId, userTable.id))
+    // .leftJoin(userTable, eq(dialectWordTable.userId, userTable.id))
     .where(like(dialectWordTable.word, `%${query}%`))
     .limit(10);
 }

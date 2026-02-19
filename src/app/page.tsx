@@ -32,6 +32,7 @@ export default function Home() {
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
+                          <SearchField />
                         <h2 className={styles.tableHeader}>Ordlista</h2>
                         <Table headers={headers} data={data} />
                     </div>
