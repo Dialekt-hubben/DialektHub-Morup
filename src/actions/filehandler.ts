@@ -2,12 +2,12 @@
 import {
     PutObjectCommand,
     PutObjectCommandInput,
-    GetObjectCommand,
-    GetObjectCommandInput,
+    GetObjectCommand
 } from "@aws-sdk/client-s3";
 import { s3Client } from "@/lib/s3Client"; // Din klient ovan
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { paginateListObjectsV2 } from "@aws-sdk/client-s3";
+import { env } from "@/env";
 
 export async function handleFileUpload(formData: FormData) {
     const file = formData.get("file") as File;
@@ -16,7 +16,7 @@ export async function handleFileUpload(formData: FormData) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     const params: PutObjectCommandInput = {
-        Bucket: process.env.S3_BUCKET_NAME, // namn på din bucket
+        Bucket: env.S3_BUCKET_NAME, // namn på din bucket
         Key: file.name.toLowerCase(), // filnamnet i S3
         Body: buffer, // filens innehåll
         ContentType: file.type, // filens MIME-typ
@@ -30,9 +30,9 @@ export async function getFile() {
     const objects: string[] = [];
     const paginator = paginateListObjectsV2(
         { client: s3Client, /* Max items per page */ pageSize: 10 },
-        { Bucket: process.env.S3_BUCKET_NAME },
+        { Bucket: env.S3_BUCKET_NAME },
     );
-    
+
     for await (const page of paginator) {
         for(const obj of page.Contents ?? []) {
             // Säkerställ att Key finns
@@ -40,7 +40,7 @@ export async function getFile() {
             if (!obj.Key) {
                 return;
             }
-            const url = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: process.env.S3_BUCKET_NAME!, Key: obj.Key }), { expiresIn: 3600 });
+            const url = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: env.S3_BUCKET_NAME, Key: obj.Key }), { expiresIn: 3600 });
             console.log({url, objKey: obj.Key});
 
             objects.push(url);
@@ -51,49 +51,3 @@ export async function getFile() {
 
     return objects; // Returnerar en platt array av URL:er
 }
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    //   objects.push(page.Contents?.map(async (obj) => {
-    //     // Säkerställ att Key finns
-    //     if (!obj.Key) {
-    //         return;
-    //     } 
-        
-    //     const url = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: process.env.S3_BUCKET_NAME!, Key: obj.Key }), { expiresIn: 3600 });
-    //     return url;
-    //   }));
-    // }
-    // objects.forEach((object, pageNum) => {
-    //   console.log(
-    //     `Page ${pageNum + 1}\n------\n${object?.map((o) => `• ${o}`).join("\n") || "No objects found"}\n`,
-    //   );
-    // });
-
-    // const url = await getSignedUrl(s3Client, objects, { expiresIn: 3600 });
-
-
-
-
-// export async function getFile(fileName: string) {
-//     const params: GetObjectCommandInput = {
-//         Bucket: process.env.S3_BUCKET_NAME, // namn på din bucket
-//         Key: fileName, // filnamnet i S3
-//     };
-
-//     const command = new GetObjectCommand(params);
-
-//     const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-
-//     return url;
-// }
