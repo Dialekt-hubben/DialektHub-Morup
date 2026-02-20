@@ -26,33 +26,21 @@ export function SearchField() {
 
         timeoutRef.current = setTimeout(async () => {
             try {
-                console.log("Fetching:", `/api/searchDialectWords?query=${encodeURIComponent(value)}`);
-                
                 const res = await fetch(
-                    `/api/searchDialectWords?query=${encodeURIComponent(value)}`
+                    `/api/searchDialectWords?query=${encodeURIComponent(value)}`,
                 );
 
-                console.log("Response status:", res.status);
-                console.log("Response headers:", Object.fromEntries(res.headers.entries()));
-
-                // Läs svaret som text först för att se vad det är
                 const text = await res.text();
-                console.log("Response body (first 500 chars):", text.substring(0, 500));
 
-                // Kontrollera om det är HTML (DOCTYPE indikerar HTML)
-                if (text.startsWith("<!DOCTYPE") || text.startsWith("<html")) {
-                    console.error("Got HTML instead of JSON!");
-                    throw new Error("API-rutten returnerade HTML istället för JSON. Kontrollera att /api/searchDialectWords/route.ts finns.");
-                }
-
-                // Försök parsa som JSON
                 const data = JSON.parse(text);
                 console.log("Parsed data:", data);
 
                 setResults(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error("Sökfel:", error);
-                setError(error instanceof Error ? error.message : "Något gick fel");
+                setError(
+                    error instanceof Error ? error.message : "Något gick fel",
+                );
                 setResults([]);
             } finally {
                 setIsLoading(false);
@@ -67,7 +55,7 @@ export function SearchField() {
                 type="text"
                 value={query}
                 onChange={(e) => handleSearchWithDebounce(e.target.value)}
-                placeholder="Sök dialektord..."
+                placeholder="Sök..."
             />
 
             {isLoading && <p>Söker...</p>}
@@ -85,10 +73,11 @@ export function SearchField() {
                     ))}
                 </ul>
             )}
-            
-            {!isLoading && query.length >= 2 && results.length === 0 && !error && (
-                <p>Inga resultat hittades</p>
-            )}
+
+            {!isLoading &&
+                query.length >= 2 &&
+                results.length === 0 &&
+                !error && <p>Inga resultat hittades</p>}
         </div>
     );
 }
