@@ -12,6 +12,6 @@ const schema = {
     ...soundFile,
 };
 
-const db = drizzle(process.env.DB_FILE_NAME!, { schema });
+const db = drizzle(process.env.DATABASE_URL!, { schema });
 
 export default db;
