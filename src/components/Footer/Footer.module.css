@@ -4,7 +4,7 @@
     grid-template-columns: 1fr;
     gap: 1rem;
 
-    color: #786A12;
+    color: #786a12;
     background-color: var(--color-yellow);
 
     padding: 3rem 1rem;
@@ -18,7 +18,7 @@
 
     hr {
         grid-column: 1 / -1;
-        border-color: #786A12;
+        border-color: #786a12;
     }
 
     .copyright {
