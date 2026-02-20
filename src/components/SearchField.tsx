@@ -1,10 +1,16 @@
 import { useState, useRef } from "react";
+import "./searchField.css";
 
-export function SearchField() {
+type SearchFieldProps = {
+    onSelect: (word: any | null) => void;
+};
+
+export function SearchField({ onSelect }: SearchFieldProps) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showDropDown, setShowDropdown] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     function handleSearchWithDebounce(value: string) {
@@ -18,6 +24,8 @@ export function SearchField() {
             setResults([]);
             setIsLoading(false);
             setError(null);
+            setShowDropdown(false); // Hide dropdown when query is too short
+            onSelect(null); // show all words when query is cleared
             return;
         }
 
@@ -36,39 +44,53 @@ export function SearchField() {
                 console.log("Parsed data:", data);
 
                 setResults(Array.isArray(data) ? data : []);
+                setShowDropdown(true); // Show dropdown when results are available
             } catch (error) {
                 console.error("Sökfel:", error);
                 setError(
                     error instanceof Error ? error.message : "Något gick fel",
                 );
                 setResults([]);
+                setShowDropdown(false); // Hide dropdown on error
             } finally {
                 setIsLoading(false);
             }
         }, 300);
     }
 
+    function handleSelect(result: any) {
+        setQuery(result.word);
+        setShowDropdown(false);
+        setResults([]); // Clear results after selection
+        onSelect(result);
+    }
+
     return (
-        <div className="searchField">
+        <div className={"searchFieldWrapper"}>
             <input
-                className="searchInput"
+                className={"searchInput"}
                 type="text"
                 value={query}
                 onChange={(e) => handleSearchWithDebounce(e.target.value)}
                 placeholder="Sök..."
+                autoComplete="off"
+                onFocus={() => results.length > 0 && setShowDropdown(true)}
             />
 
-            {isLoading && <p>Söker...</p>}
-            {error && <p style={{ color: "red" }}>Fel: {error}</p>}
+            {isLoading && <div className={"searchLoading"}>Söker...</div>}
+            {error && <div className={"searchError"}>Fel: {error}</div>}
 
-            {results.length > 0 && (
-                <ul className="searchResults">
+            {showDropDown && results.length > 0 && (
+                <ul className={"searchDropdown"}>
                     {results.map((result) => (
-                        <li key={result.id} className="wordListItem">
-                            <div className="word">{result.word}</div>
-                            <div className="nationalWord">
+                        <li
+                            key={result.id}
+                            className={"searchDropdownItem"}
+                            onClick={() => handleSelect(result)}>
+                            <span className={"word"}>{result.word}</span>
+                            <span className={"nationalWord"}>
                                 {result.nationalWord}
-                            </div>
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -77,7 +99,9 @@ export function SearchField() {
             {!isLoading &&
                 query.length >= 2 &&
                 results.length === 0 &&
-                !error && <p>Inga resultat hittades</p>}
+                !error && (
+                    <p className={"searchNoResults"}>Inga resultat hittades</p>
+                )}
         </div>
     );
 }
