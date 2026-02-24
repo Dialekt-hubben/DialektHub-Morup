@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
 import Table from "@/components/Table";
 import { DialectWordTableResponse } from "@/types/dialectword";
+import Link from "next/link";
 
 const PAGE_SIZE = 10; // Antal poster per sida
 
@@ -30,7 +31,10 @@ export default function Home() {
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
-                        <h2 className={styles.tableHeader}>Ordlista</h2>
+                        <div className={styles.tableHeader}>
+                            <h2 >Ordlista</h2>
+                            <Link href="/addWord" className="btn primary">Lägg till ord</Link>
+                        </div>
                         <Table tableData={data} />
                     </div>
                     <Pagination

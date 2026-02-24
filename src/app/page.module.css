@@ -170,6 +170,9 @@ a.secondary {
 
 /* -- Table Header -- */
 .tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px 15px;
     background: var(--color-light-yellow);
     border: solid 1px var(--color-yellow);
