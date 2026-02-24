@@ -17,5 +17,5 @@ export const dialectWordTable = sqliteTable("dialect_word_table", {
         .notNull(),
     soundFileId: int()
         .references(() => soundFileTable.id)
-        .notNull(),
+        .notNull(), // ".notNull()" menas that the soundFileId field cannot be null, ensuring that every dialect word must have an associated sound file.
 });

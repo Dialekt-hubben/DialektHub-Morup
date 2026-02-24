@@ -49,6 +49,11 @@ export function useAudio() {
                     const base64 = await fileToBase64(blob);
                     setAudioFile(base64);
                 } catch (error) {
+                    if (error instanceof Error) {
+                        alert(
+                            "Kunde inte konvertera ljudfilen: " + error.message,
+                        );
+                    }
                     setAudioFile(null);
                 }
                 stream.getTracks().forEach((track) => track.stop());
@@ -56,8 +61,12 @@ export function useAudio() {
 
             mediaRecorder.start();
             setIsRecording(true);
-        } catch (err: any) {
-            alert("Kunde inte komma åt mikrofonen: " + (err?.message || err));
+        } catch (err) {
+            if (err instanceof Error) {
+                alert("Kunde inte komma åt mikrofonen: " + err.message);
+                return;
+            }
+            alert("Kunde inte komma åt mikrofonen: " + String(err));
         }
     }
 
@@ -68,17 +77,17 @@ export function useAudio() {
         }
     }
 
-    async function handleAudioInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files && e.target.files[0];
-        if (file) {
-            try {
-                const base64 = await fileToBase64(file);
-                setAudioFile(base64);
-            } catch {
-                setAudioFile(null);
-            }
-        }
-    }
+    // async function handleAudioInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    //     const file = e.target.files && e.target.files[0];
+    //     if (file) {
+    //         try {
+    //             const base64 = await fileToBase64(file);
+    //             setAudioFile(base64);
+    //         } catch {
+    //             setAudioFile(null);
+    //         }
+    //     }
+    // }
 
     function playBase64Audio(base64: string | null) {
         if (!base64) return;
@@ -88,12 +97,9 @@ export function useAudio() {
 
     return {
         audioFile,
-        setAudioFile,
         isRecording,
         startRecording,
         stopRecording,
-        handleAudioInputChange,
         playBase64Audio,
-        fileToBase64,
     };
 }
