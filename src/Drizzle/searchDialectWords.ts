@@ -34,6 +34,6 @@ export async function searchDialectWords(query: string) {
       eq(dialectWordTable.soundFileId, soundFileTable.id),
     )
     // .leftJoin(userTable, eq(dialectWordTable.userId, userTable.id))
-    .where(like(dialectWordTable.word, `%${query}%`))
+    .where(like(nationalWordTable.word, `%${query}%`))
     .limit(10);
 }
