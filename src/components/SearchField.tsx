@@ -70,7 +70,7 @@ export function SearchField({ onSelect }: SearchFieldProps) {
         if (e.key === "Enter") {
             setShowDropdown(false);
             if (results.length > 0) {
-                handleSelect(results[0]); 
+                handleSelect(results[0]);
             }
         }
     }
@@ -79,7 +79,9 @@ export function SearchField({ onSelect }: SearchFieldProps) {
         setQuery(result.word);
         setShowDropdown(false);
         setResults([]); // Clear results after selection
-        onSelect(result);
+        if (results.length > 0) {
+            onSelect(results); // ← skicka hela arrayen
+        }
     }
 
     return (
