@@ -14,6 +14,7 @@ export default function Home() {
     const [data, setData] = useState<DialectWordTableResponse | null>(null); // Data för den aktuella sidan
     const [total, setTotal] = useState(0); // Totalt antal poster, används för att beräkna totala sidor
     const [page, setPage] = useState(1); // börjar på sida 1
+    const [filteredWord, setFilteredWord] = useState<any[] | null>(null); // Det valda ordet från sökfältet
     const totalPages = Math.ceil(total / PAGE_SIZE);
 
     useEffect(() => {
@@ -21,27 +22,34 @@ export default function Home() {
             const res = await fetch(
                 `/api/dialectwords?page=${page}&pageSize=${PAGE_SIZE}`,
             );
-            const result = await res.json() as DialectWordTableResponse;
+            const result = (await res.json()) as DialectWordTableResponse; //parantesen dyker upp pga prettier
             setData(result || null);
             setTotal(result?.total || 0);
         }
         fetchData();
     }, [page]);
 
+    // Om ett ord är valt, visa bara det i tabellen
+    const otherData = filteredWord
+        ? { data: filteredWord, total: filteredWord.length }
+        : data || null;
+
     return (
         <main>
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
-                          <SearchField />
+                        <SearchField onSelect={setFilteredWord} />
                         <h2 className={styles.tableHeader}>Ordlista</h2>
-                        <Table tableData={data} />
+                        <Table tableData={otherData} />
                     </div>
-                    <Pagination
-                        page={page}
-                        totalPages={totalPages}
-                        setPage={setPage}
-                    />
+                    {!filteredWord && (
+                        <Pagination
+                            page={page}
+                            totalPages={totalPages}
+                            setPage={setPage}
+                        />
+                    )}
                 </div>
             </div>
         </main>
