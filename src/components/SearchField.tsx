@@ -40,22 +40,39 @@ export function SearchField({ onSelect }: SearchFieldProps) {
 
                 const text = await res.text();
 
-                const data = JSON.parse(text);
+                let data = JSON.parse(text);
                 console.log("Parsed data:", data);
+
+                if (Array.isArray(data)) {
+                    data = data.sort((a, b) => {
+                        if (a.word.toLowerCase() === value.toLowerCase())
+                            return -1; // Exact match first
+                        if (b.word.toLowerCase() === value.toLowerCase())
+                            return 1;
+                        return 0; // Otherwise, keep original order
+                    });
+                }
 
                 setResults(Array.isArray(data) ? data : []);
                 setShowDropdown(true); // Show dropdown when results are available
             } catch (error) {
                 console.error("Sökfel:", error);
-                setError(
-                    error instanceof Error ? error.message : "Något gick fel",
-                );
+                setError("Något gick fel");
                 setResults([]);
                 setShowDropdown(false); // Hide dropdown on error
             } finally {
                 setIsLoading(false);
             }
         }, 300);
+    }
+
+    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "Enter") {
+            setShowDropdown(false);
+            if (results.length > 0) {
+                handleSelect(results[0]); 
+            }
+        }
     }
 
     function handleSelect(result: any) {
@@ -72,6 +89,7 @@ export function SearchField({ onSelect }: SearchFieldProps) {
                 type="text"
                 value={query}
                 onChange={(e) => handleSearchWithDebounce(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Sök..."
                 autoComplete="off"
                 onFocus={() => results.length > 0 && setShowDropdown(true)}
@@ -99,7 +117,7 @@ export function SearchField({ onSelect }: SearchFieldProps) {
             {!isLoading &&
                 query.length >= 2 &&
                 results.length === 0 &&
-                !error && (
+                error && (
                     <p className={"searchNoResults"}>Inga resultat hittades</p>
                 )}
         </div>
