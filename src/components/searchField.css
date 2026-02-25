@@ -23,7 +23,7 @@
     background: #fff;
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     z-index: 10;
     max-height: 220px;
     overflow-y: auto;
@@ -61,5 +61,5 @@
 .searchNoResults {
     margin-top: 0.5rem;
     font-size: 0.95em;
-    color: #b22222;
+    color: #000000;
 }
