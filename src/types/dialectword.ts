@@ -1,24 +1,26 @@
 import { z } from "zod";
 // TypeScript interface for the API response
-type DialectWordTableResponse = {
-    paginationOffset: number;
-    page: number;
-    paginationSize: number;
-    total: number;
-    data: Array<{
-        id: number;
-        word: string;
-        pronunciation: string;
-        phrase: string;
-        status: "pending" | "approved" | "rejected";
-        userName: string | null;
-        nationalWord: string | null;
-        soundFileUrl: string | null;
-    }>;
-    error?: string;
-};
 
-export type { DialectWordTableResponse };
+export const DialectWordTableResponse = z.object({
+    paginationOffset: z.number(),
+    page: z.number(),
+    paginationSize: z.number(),
+    total: z.number(),
+    data: z.array(z.object({
+        id: z.number(),
+        word: z.string(),
+        pronunciation: z.string(),
+        phrase: z.string(),
+        status: z.enum(["pending", "approved", "rejected"]),
+        userName: z.string().nullable(),
+        nationalWord: z.string().nullable(),
+        soundFileUrl: z.string().nullable(),
+    })),
+    error: z.string().optional(),
+});
+
+export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
+
 
 // TypeScript interface for add word
 const MaxFileSize = 5 * 1024 * 1024; // 5MB

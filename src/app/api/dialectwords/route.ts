@@ -7,6 +7,9 @@ import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { addDialectWord, DialectWordTableResponse } from "@/types/dialectword";
 import { auth } from "@/lib/auth";
 import { user } from "@/Drizzle/models/auth-schema";
+import { query } from "@/"";
+
+
 
 // API-route to fetch paginated dialect words data
 export async function GET(req: NextRequest) {
@@ -64,6 +67,7 @@ export async function GET(req: NextRequest) {
                 soundFileTable,
                 eq(dialectWordTable.soundFileId, soundFileTable.id),
             )
+            .where(eq(nationalWordTable.word, `%${query}%`))
             .limit(paginationSize)
             .offset(paginationOffset);
 
