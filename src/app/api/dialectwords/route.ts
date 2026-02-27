@@ -107,13 +107,17 @@ export async function POST(req: NextRequest) {
 
     if (!currentUser) {
         return NextResponse.json(
-            { error: "Unauthorized: User must be logged in to add a dialect word." },
+            {
+                error: "Unauthorized: User must be logged in to add a dialect word.",
+            },
             { status: 401 },
         );
     }
 
     const formData = await req.formData();
-    const response = addDialectWord.safeParse(Object.fromEntries(formData.entries()));
+    const response = addDialectWord.safeParse(
+        Object.fromEntries(formData.entries()),
+    );
 
     if (!response.success) {
         return NextResponse.json(
@@ -124,60 +128,5 @@ export async function POST(req: NextRequest) {
 
     const addData = response.data;
 
-
-    // Kolla om det nationella ordet redan finns i databasen, 
-    // om inte skapa det nationella ordet och hämta dess id,
-    // om det finns, hämta dess id och använd det för att skapa dialektordet.
-    
-
-
-
-
-
-    // kolla om det nationella ordet redan finns i databasen.
-    // hittar vi ett ord som matchar så neka skapandet av dialektordet och returnera ett felmeddelande,
-    // hittar vi inte ett ord som matchar så skapa det nationella ordet och använd dess id för att skapa dialektordet.
-
-
-    // check if nationalword excist in database
-
     return NextResponse.json({ message: "Word added successfully" });
-    // const nationalWordExists = await db.select()
-    //     .from(nationalWordTable)
-    //     .where(eq(nationalWordTable.word, addData.word));
-
-
-    //     try { if (nationalWordExists.length === 0) {
-    //             const newNationalWord = await db.insert(nationalWordTable).values({
-    //                 word: addData.word,
-    //             });
-    //         }
-    //     } catch (error) {
-    //         if (error instanceof Error) {
-    //             return NextResponse.json(
-    //                 { error: error.message || "Något gick fel vid skapandet av det nationella ordet." },
-    //                 { status: 500 },
-    //             );
-    //         }
-    //     }
-
-
-    // try {
-    //     const newDialectWord = await db.insert(dialectWordTable).values({
-    //         word: addData.word,
-    //         pronunciation: addData.pronunciation,
-    //         // phrase: addData.phrase,
-    //         // status: 0, // Default status is "pending"
-    //         userId: currentUser.session.id,
-    //         nationalWordId: addData.pronunciation,
-    //         soundFileId: addData.audioFile,
-    //     });
-    // } catch (error) {
-    //     if (error instanceof Error) {
-    //         return NextResponse.json(
-    //             { error: error.message || "Något gick fel vid skapandet av dialektordet." },
-    //             { status: 500 },
-    //         );
-    //     }
-    // }
 }
