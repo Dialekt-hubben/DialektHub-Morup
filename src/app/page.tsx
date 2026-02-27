@@ -7,6 +7,7 @@ import { DialectWordTableResponse } from "@/types/dialectword";
 import { SearchField } from "@/components/SearchField";
 
 const headers = ["Ord", "Ljudfil", "Uttal", "Användare", "Svenska"];
+import Link from "next/link";
 
 const PAGE_SIZE = 10; // Antal poster per sida
 
@@ -39,6 +40,11 @@ export default function Home() {
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
+                        <div className={styles.tableHeader}>
+                            <h2 >Ordlista</h2>
+                            <Link href="/addWord" className="btn primary">Lägg till ord</Link>
+                        </div>
+                        <Table tableData={data} />
                         <SearchField onSelect={setFilteredWord} />
                         <h2 className={styles.tableHeader}>Ordlista</h2>
                         <Table tableData={otherData} />
