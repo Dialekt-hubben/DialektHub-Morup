@@ -4,6 +4,7 @@ import Table from "@/components/Table";
 import { DialectWordTableResponse } from "@/types/dialectword";
 import SearchField2 from "@/components/Searchfield2";
 import Link from "next/link";
+import { GetAllDialectwords } from "@/actions/dialectwords";
 
 type params = {
     searchParams: Promise<{
@@ -13,19 +14,15 @@ type params = {
 };
 
 export default async function Home({ searchParams }: params) {
-    const { query = "", page = "" } = await searchParams;
-    const PAGE_SIZE = 10; // Antal poster per sida
-    const res = await fetch(
-        `/api/dialectwords?page=${page}&pageSize=${PAGE_SIZE}&query=${query}`,
-    );
-    const result = DialectWordTableResponse.safeParse(await res.json()); //parantesen dyker upp pga prettier
+    const { query = "", page = "1" } = await searchParams;
 
-    if (!result.success) {
-        console.error("Failed to fetch data:", result.error);
-        return <div>Failed to load data</div>;
-    }
-
-    const totalPages = Math.ceil(result.data.total / PAGE_SIZE);
+    const res = await GetAllDialectwords({
+        query,
+        page: +page,
+        pageSize: 10,
+    });
+    const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize
+    
 
     return (
         <main>
@@ -39,7 +36,7 @@ export default async function Home({ searchParams }: params) {
                                 Lägg till ord
                             </Link>
                         </div>
-                        <Table tableData={result.data} />
+                        <Table tableData={res.rawData} />
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
                 </div>
