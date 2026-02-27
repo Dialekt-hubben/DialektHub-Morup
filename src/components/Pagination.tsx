@@ -26,6 +26,13 @@ function Pagination({ page, totalPages }: PaginationProps) {
 
         push(`${pathname}?${params.toString()}`);
     };
+
+    const setPage = (pageNumber: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", String(pageNumber));
+
+        push(`${pathname}?${params.toString()}`);
+    }
     return (
         <div className={styles.paginationContainer}>
             {/* Knapp för föregående sida */}

@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function SearchField2() {
