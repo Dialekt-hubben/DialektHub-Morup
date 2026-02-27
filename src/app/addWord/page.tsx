@@ -1,15 +1,16 @@
 import AddWordForm from "@/components/AddWordForm";
 import { getActiveUserSession } from "@/lib/auth";
+import styles from "./page.addWord.module.css";
 
 export default async function AddWord() {
     await getActiveUserSession();
 
     return (
-        <div>
-            <div className="Container">
-                <h2 className="Title">Add Word</h2>
+        <main>
+            <div className={styles.Container}>
+                <h2 className={styles.Title}>Lägg till nytt Dialektalt ord</h2>
                 <AddWordForm />
             </div>
-        </div>
+        </main>
     );
 }

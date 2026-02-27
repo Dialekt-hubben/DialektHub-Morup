@@ -4,8 +4,12 @@ import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
 import { addDialectWord } from "@/types/dialectword";
 import { useAudio } from "./Audio";
+import styles from "./AddWordForm.module.css";
+import { useState } from "react";
+import Link from "next/link";
 
 function AddWordForm() {
+    const [isRrecording, setisRrecording] = useState(false);
     const { startRecording, stopRecording, audioFile } = useAudio();
     const {
         handleSubmit,
@@ -17,11 +21,13 @@ function AddWordForm() {
 
     const startAudioRecording = () => {
         console.log("Record button clicked");
+        setisRrecording(true);
         startRecording();
     };
 
     const stopAudioRecording = () => {
         console.log("Stop button clicked");
+        setisRrecording(false);
         stopRecording();
     };
 
@@ -48,7 +54,9 @@ function AddWordForm() {
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+                className={styles.addWordForm}
+                onSubmit={handleSubmit(onSubmit)}>
                 <InputGroup
                     label="Dialekt ord"
                     placeholder="Skriv dialekt ordet här..."
@@ -72,21 +80,26 @@ function AddWordForm() {
                     errorMessage={errors.audioFile?.message?.toString()}
                 />
                 <div>
-                    <button
-                        type="button"
-                        className="btn primary"
-                        onClick={startAudioRecording}>
-                        Spela in
-                    </button>
-                    <button
-                        type="button"
-                        className="btn primary"
-                        onClick={stopAudioRecording}>
-                        Stoppa inspelning
-                    </button>
+                    {!isRrecording ? (
+                        <button
+                            type="button"
+                            className="btn primary"
+                            onClick={startAudioRecording}>
+                            Spela in
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            className="btn primary"
+                            onClick={stopAudioRecording}>
+                            Stoppa inspelning
+                        </button>
+                    )}
                 </div>
                 <button className="btn primary">Spara ord</button>
-                <button className="btn primary">Avbryt</button>
+                <Link href="/" className="btn primary">
+                    Avbryt
+                </Link>
             </form>
         </>
     );
