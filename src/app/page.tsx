@@ -40,13 +40,13 @@ export default function Home() {
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
-                        <div className={styles.tableHeader}>
-                            <h2 >Ordlista</h2>
-                            <Link href="/addWord" className="btn primary">Lägg till ord</Link>
-                        </div>
-                        <Table tableData={data} />
                         <SearchField onSelect={setFilteredWord} />
-                        <h2 className={styles.tableHeader}>Ordlista</h2>
+                        <div className={styles.tableHeader}>
+                            <h2>Ordlista</h2>
+                            <Link href="/addWord" className="btn primary">
+                                Lägg till ord
+                            </Link>
+                        </div>
                         <Table tableData={otherData} />
                     </div>
                     {!filteredWord && (
