@@ -1,7 +1,6 @@
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
 import Table from "@/components/Table";
-import { DialectWordTableResponse } from "@/types/dialectword";
 import SearchField2 from "@/components/Searchfield2";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
