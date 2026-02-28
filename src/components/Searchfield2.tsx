@@ -1,4 +1,5 @@
 "use client";
+import style from "./SearchField.module.css";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -31,10 +32,10 @@ export default function SearchField2() {
     }, []);
 
     return (
-        <div className={"searchFieldWrapper"}>
+        <div className={style.searchFieldWrapper}>
             <input
-                className={"searchInput"}
-                type="text"
+                className={style.searchInput}
+                type="search"
                 defaultValue={searchParams.get("query") || ""}
                 onChange={(event) => handleSearch(event.target.value)}
                 placeholder="Sök..."
