@@ -5,6 +5,7 @@ import { user } from "@/Drizzle/models/auth-schema";
 import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
+import { Status } from "@/types/dialectword";
 import { count, eq, sql, like } from "drizzle-orm";
 
 type params = {
@@ -16,12 +17,6 @@ type params = {
 export async function GetAllDialectwords({ query, page, pageSize }: params) {
     const paginationSize = pageSize;
     const paginationOffset = (page - 1) * pageSize;
-
-    const statusMap = {
-        0: "pending",
-        1: "approved",
-        2: "rejected",
-    } as const; // 'as const' makes the object readonly and preserves literal types
 
     const likeQuery = query
         ? like(sql`lower(${nationalWordTable.word})`, `%${query.toLowerCase()}%`)
@@ -64,7 +59,8 @@ export async function GetAllDialectwords({ query, page, pageSize }: params) {
     return {
         rawData: rawData.map((item) => ({
             ...item,
-            status: statusMap[item.status as keyof typeof statusMap] ?? "pending",
+            // Ensure that the status is one of the defined enum values, defaulting to "pending" if it's not valid
+            status: Status.type[item.status] as Status || Status.enum.pending, 
         })),
         totalResults: Number(totalResults[0].value),
     };
