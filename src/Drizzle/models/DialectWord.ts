@@ -6,8 +6,8 @@ import { user } from "./auth-schema";
 export const dialectWordTable = sqliteTable("dialect_word_table", {
     id: int().primaryKey({ autoIncrement: true }),
     word: text().notNull(),
-    pronunciation: text().notNull(),
-    phrase: text().notNull(),
+    pronunciation: text(),
+    phrase: text(),
     status: int().notNull().default(0),
     userId: text()
         .references(() => user.id)
@@ -17,5 +17,4 @@ export const dialectWordTable = sqliteTable("dialect_word_table", {
         .notNull(),
     soundFileId: int()
         .references(() => soundFileTable.id)
-        .notNull(), // ".notNull()" menas that the soundFileId field cannot be null, ensuring that every dialect word must have an associated sound file.
 });

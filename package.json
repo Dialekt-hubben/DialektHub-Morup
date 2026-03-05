@@ -26,6 +26,7 @@
         "react": "19.2.3",
         "react-dom": "19.2.3",
         "react-hook-form": "^7.70.0",
+        "xlsx": "^0.18.5",
         "zod": "^4.3.5"
     },
     "devDependencies": {
@@ -33,7 +34,7 @@
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "drizzle-kit": "^0.31.9",
-        "eslint": "^10.0.0",
+        "eslint": "^8.57.1",
         "eslint-config-next": "^12.0.4",
         "prettier": "3.8.1",
         "tsx": "^4.21.0",

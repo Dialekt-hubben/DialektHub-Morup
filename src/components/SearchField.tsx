@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import "./searchField.css";
+// import "./SearchField.css";
 
 type SearchFieldProps = {
     onSelect: (word: any | null) => void;
