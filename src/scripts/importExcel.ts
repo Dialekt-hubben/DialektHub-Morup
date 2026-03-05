@@ -12,7 +12,7 @@ const pageName = excelfile.SheetNames[0];
 const page = excelfile.Sheets[pageName];
 const rows = XLSX.utils.sheet_to_json(page);
 
-// Hjälpfunktion: hämta eller skapa användare
+// Hämta eller skapa användare
 async function getOrCreateUser(name: string, email: string) {
     const existing = await db
         .select()
@@ -20,24 +20,26 @@ async function getOrCreateUser(name: string, email: string) {
         .where(eq(userTable.name, name))
         .limit(1);
     if (existing.length > 0) return existing[0].id;
+
     await db.insert(userTable).values({
-        id: String(randomUUID()),
+        id: String(randomUUID()), // https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
         name,
         email,
-        emailVerified: false,
+        emailVerified: true,
         image: null,
         createdAt: Date.now(),
         updatedAt: Date.now(),
     });
-    const created = await db
+
+    const createdUser = await db
         .select()
         .from(userTable)
         .where(eq(userTable.name, name))
         .limit(1);
-    return created[0].id;
+    return createdUser[0].id;
 }
 
-// Hjälpfunktion: hämta eller skapa nationellt ord
+// Hämta eller skapa nationellt ord
 async function getOrCreateNationalWord(word: string) {
     const existing = await db
         .select()
@@ -45,7 +47,9 @@ async function getOrCreateNationalWord(word: string) {
         .where(eq(nationalWordTable.word, word))
         .limit(1);
     if (existing.length > 0) return existing[0].id;
+
     await db.insert(nationalWordTable).values({ word });
+
     const created = await db
         .select()
         .from(nationalWordTable)
@@ -54,7 +58,7 @@ async function getOrCreateNationalWord(word: string) {
     return created[0].id;
 }
 
-// Hjälpfunktion: hämta eller skapa soundfile för ett ord
+// Hämta eller skapa soundfile för ett ord
 async function getOrCreateSoundFile(fileName: string) {
     const existing = await db
         .select()
@@ -62,10 +66,12 @@ async function getOrCreateSoundFile(fileName: string) {
         .where(eq(soundFileTable.fileName, fileName))
         .limit(1);
     if (existing.length > 0) return existing[0].id;
+
     await db.insert(soundFileTable).values({
         fileName,
         url: `s3data/soundfiles/${fileName}`,
     });
+
     const created = await db
         .select()
         .from(soundFileTable)
@@ -79,21 +85,14 @@ async function importWords() {
     const userId = await getOrCreateUser("Håkan Petersson", "hakan@glommen.eu");
 
     for (const row of rows as { [key: string]: string }[]) {
-        // Skapa/hämta nationellt ord
-        const nationalWordId = await getOrCreateNationalWord(row["B"]);
-
-        // Skapa/hämta soundfile för dialektordet
-        const soundFileId = await getOrCreateSoundFile(`${row["A"]}.mp3`);
-
-        // Lägg in dialektordet
         await db.insert(dialectWordTable).values({
-            word: row["A"],
+            word: row["A"], // Vi måste hämta det första ordet om det finns mer än 1 ord.
             phrase: null,
-            pronunciation: row["B"],
-            status: 1,
-            userId,
-            nationalWordId,
-            soundFileId,
+            pronunciation: row["B"], // Vi måste hämta det första ordet om det finns mer än 1 ord.
+            status: 1, // 1 för att ordet kommer ifrån Håkan.
+            userId, // Ska vara Håkans userId
+            nationalWordId: await getOrCreateNationalWord(row["B"]),
+            soundFileId: await getOrCreateSoundFile(`${row["A"]}.mp3`),
         });
     }
     console.log("Import klar!");
