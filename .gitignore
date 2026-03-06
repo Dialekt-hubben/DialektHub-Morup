@@ -43,3 +43,4 @@ next-env.d.ts
 dialekthub.db
 ordlista1.*
 s3data/*
+ExcelFormat*
