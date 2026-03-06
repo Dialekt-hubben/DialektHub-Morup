@@ -39,8 +39,12 @@ class ExcelSuperClass {
         const rows = XLSX.utils.sheet_to_json(this.Page, {
             header: ["Dialekt", "Svenska"], // Vi specificerar headern så att vi får rätt nycklar i objektet
             blankrows: false, // Vi vill inte ha med tomma rader
+            skipHidden: true, // Vi vill inte ha med dolda rader
         }) as Row[];
-        return rows;
+
+        rows.shift(); // Ta bort den första raden som är headern i Excel-filen
+
+        return rows; // Ta bort headern som vi lade till i GetRows och returnera den. Nu har vi bara raderna med data kvar.
     }
 
     public AddToRow(row: Row) {
@@ -125,13 +129,19 @@ async function importWords() {
     //     body: newUser,
     // });
 
-
     // transforma woth regex to check if there are multiple words in either Dialekt or Svenska columns. If there are, skip the row and log it.
-    for (const row of rows) {
-
-        const invalidCharacterRegex = /[,\(\[]/; // Regular expression to check for spaces, commas, parentheses, or brackets
-        if (row.Dialekt.match(invalidCharacterRegex) && row.Svenska.match(invalidCharacterRegex))
-        {
+    for (const row of excel.GetRows()) {
+        const invalidCharacterRegex = new RegExp("[ \\[,\\(]", "g");
+        if (!row.Dialekt || !row.Svenska) {
+            console.log(
+                `Skipping row with empty values ${row.Dialekt} - ${row.Svenska}`,
+            );
+            continue;
+        }
+        if (
+            row.Dialekt.match(invalidCharacterRegex) ||
+            row.Svenska.match(invalidCharacterRegex)
+        ) {
             console.log(
                 `Skipping row with multiple words ${row.Dialekt} - ${row.Svenska}`,
             );
@@ -144,7 +154,7 @@ async function importWords() {
             phrase: "", // Vi har ingen fras i Excel-filen, så vi sätter den till en tom sträng.
             pronunciation: row.Svenska.trim(), // Vi måste hämta det första ordet om det finns mer än 1 ord.
             status: 1, // 1 för att ordet kommer ifrån Håkan så det är okej.
-            userId: "QB4rIoBvvTbdwpd4ZdtLX1UGwKp3Ucgt", // Håkans userId
+            userId: "X06v2WLNt3SfxZjW6qkT5GxHWHPIcHrd", // Håkans userId
             nationalWordId: await getOrCreateNationalWord(row.Svenska), // Hämta eller skapa det nationella ordet
             soundFileId: await getOrCreateSoundFile(`${row.Dialekt}.mp3`),
         });
@@ -152,7 +162,7 @@ async function importWords() {
         if (index !== -1) {
             excel.RemoveRow(index);
         }
-        console.log("Import klar!");
     }
+    console.log("Import klar!");
 }
 importWords();
