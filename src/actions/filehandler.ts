@@ -2,7 +2,7 @@
 import {
     PutObjectCommand,
     PutObjectCommandInput,
-    GetObjectCommand
+    GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { s3Client } from "@/lib/s3Client"; // Din klient ovan
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -25,7 +25,6 @@ export async function handleFileUpload(formData: FormData) {
     await s3Client.send(new PutObjectCommand(params));
 }
 
-
 export async function getFile() {
     const objects: string[] = [];
     const paginator = paginateListObjectsV2(
@@ -34,19 +33,24 @@ export async function getFile() {
     );
 
     for await (const page of paginator) {
-        for(const obj of page.Contents ?? []) {
+        for (const obj of page.Contents ?? []) {
             // Säkerställ att Key finns
-            
+
             if (!obj.Key) {
                 return;
             }
-            const url = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: env.S3_BUCKET_NAME, Key: obj.Key }), { expiresIn: 3600 });
-            console.log({url, objKey: obj.Key});
+
+            const command = new GetObjectCommand({
+                Bucket: env.S3_BUCKET_NAME,
+                Key: obj.Key,
+            });
+
+            const options = { expiresIn: 3600 }; // URL valid for 1 hour
+
+            const url = await getSignedUrl(s3Client, command, options);
 
             objects.push(url);
-            
-        };
-        
+        }
     }
 
     return objects; // Returnerar en platt array av URL:er
