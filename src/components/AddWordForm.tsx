@@ -74,6 +74,7 @@ function AddWordForm() {
                 <InputGroup
                     type="file"
                     label="ljud fil"
+                    accept="audio/*"
                     placeholder="Upload an audio file..."
                     {...register("audioFile")}
                     errorMessage={errors.audioFile?.message?.toString()}
@@ -83,6 +84,7 @@ function AddWordForm() {
                         <button
                             type="button"
                             className="btn primary"
+                            disabled
                             onClick={startAudioRecording}>
                             Spela in
                         </button>

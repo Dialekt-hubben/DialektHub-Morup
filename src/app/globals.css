@@ -43,8 +43,6 @@ a {
 }
 
 .btn {
-    --backgroundColorDisabled: lch(from var(--color-blue) lightness - 10% c h);
-
     font-size: 0.875rem;
     display: inline-flex;
     align-items: center;
@@ -60,7 +58,7 @@ a {
         color: white;
     }
     &:disabled {
-        background-color: var(--backgroundColorDisabled);
+        background-color: hsl(from var(--color-blue) h s 80%);
         cursor: not-allowed;
     }
 }
