@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { dialectWordApi } from "@/types/dialectWordApiSchema";
+import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 
 export async function POST(req: NextRequest) {
     const currentUser = await auth.api.getSession(req);

@@ -1,6 +1,6 @@
 "use client";
 import styles from "../app/page.module.css";
-import { DialectWordTableResponse } from "@/types/dialectword";
+import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
 
 type TableProps = {
     tableData: DialectWordTableResponse[] | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.

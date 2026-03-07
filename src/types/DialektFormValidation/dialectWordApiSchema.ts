@@ -1,7 +1,5 @@
 import z from "zod";
-
-const MaxFileSize = 5 * 1024 * 1024; // 5MB
-const AllowedFileTypes = ["audio/mpeg", "audio/wav", "audio/ogg", "audio/mp3"];
+import { MaxFileSize, AllowedFileTypes } from "./audioFileConstraints";
 
 export const dialectWordApi = z.object({
     word: z.string().min(1, "Dialekt ord är obligatoriskt"),

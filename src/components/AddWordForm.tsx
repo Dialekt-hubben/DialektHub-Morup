@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
-import { addDialectWord } from "@/types/dialectword";
+import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
 import { useAudio } from "./Audio";
 import styles from "./AddWordForm.module.css";
 import { useState } from "react";

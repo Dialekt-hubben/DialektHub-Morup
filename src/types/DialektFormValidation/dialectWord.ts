@@ -1,8 +1,7 @@
 import { z } from "zod";
-import { Status } from "./status";
+import { Status } from "../status";
+import { AllowedFileTypes, MaxFileSize } from "./audioFileConstraints";
 // TypeScript interface for the API response
-
-
 
 export const DialectWordTableResponse = z.object({
     id: z.number(),
@@ -18,8 +17,6 @@ export const DialectWordTableResponse = z.object({
 export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
 // TypeScript interface for add word
-const MaxFileSize = 5 * 1024 * 1024; // 5MB
-const AllowedFileTypes = ["audio/mpeg", "audio/wav", "audio/ogg", "audio/mp3"];
 export const addDialectWord = z.object({
     word: z.string().min(1, "Dialekt ord är obligatoriskt"),
     pronunciation: z.string().min(1, "Uttal är obligatoriskt"),
