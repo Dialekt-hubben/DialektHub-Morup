@@ -3,6 +3,7 @@ import db from "../Drizzle";
 import { dialectWordTable } from "../Drizzle/models/DialectWord";
 import { soundFileTable } from "../Drizzle/models/SoundFile";
 import { nationalWordTable } from "../Drizzle/models/NationalWord";
+import { user } from "../Drizzle/models/auth-schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { Signup } from "@/types/auth";
@@ -21,6 +22,19 @@ const rows = XLSX.utils.sheet_to_json(page, {
     header: ["Dialekt", "Svenska"], // Vi specificerar headern så att vi får rätt nycklar i objektet
     blankrows: false, // Vi vill inte ha med tomma rader
 }) as Row[];
+
+class ExcellUser {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    constructor(name: string, email: string, password: string, confirmPassword: string ) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+    }
+}
 
 class ExcelSuperClass {
     FilePath: string;
@@ -115,19 +129,63 @@ async function getOrCreateSoundFile(fileName: string) {
     return created[0].id;
 }
 
+async function getUserIdByName(
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+) {
+    const result = await db
+        .select({ id: user.id })
+        .from(user)
+        .where(eq(user.name, name))
+        .limit(1);
+
+    if (result.length > 0) {
+        return result[0].id;
+    } else {
+        const createUser = {
+            name: name,
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword,
+        } satisfies Signup;
+        const result = await auth.api.signUpEmail({
+            body: createUser,
+        });
+        return result.user.id;
+    }
+
+    /*
+
+För en mer generisk lösning.    
+export async function getUserIdByName(name: string): Promise<string | null> {
+    const result = await db
+        .select({ id: user.id })
+        .from(user)
+        .where(eq(user.name, name))
+        .limit(1);
+
+    return result.length > 0 ? result[0].id : null;
+}
+
+// Användning:
+const userId = await getUserIdByName("Håkan Petersson");
+    
+    */
+}
+
 async function importWords() {
     const excel = new ExcelSuperClass("ordlista1.xlsx", 9);
-    // Använd befintligt användar-id för Håkan Petersson
 
-    // const newUser = {
-    //     name: "Håkan Petersson",
-    //     email: "hakan@glommen.eu",
-    //     password: "adminadmin",
-    //     confirmPassword: "adminadmin",
-    // } satisfies Signup;
-    // const response = await auth.api.signUpEmail({
-    //     body: newUser,
-    // });
+    // Skapa en användare som ska kopplas till de importerade orden
+    // name, email, password och confirmPassword
+    const excelUser = new ExcellUser(
+        "Håkan Petersson",
+        "hakan@glommen.eu",
+        "adminadmin",
+        "adminadmin",
+    );
 
     // transforma woth regex to check if there are multiple words in either Dialekt or Svenska columns. If there are, skip the row and log it.
     for (const row of excel.GetRows()) {
@@ -149,13 +207,19 @@ async function importWords() {
         }
 
         console.log({ row });
+
         await db.insert(dialectWordTable).values({
-            word: row.Dialekt.trim(), // Vi måste hämta det första ordet om det finns mer än 1 ord.
-            phrase: "", // Vi har ingen fras i Excel-filen, så vi sätter den till en tom sträng.
-            pronunciation: row.Svenska.trim(), // Vi måste hämta det första ordet om det finns mer än 1 ord.
-            status: 1, // 1 för att ordet kommer ifrån Håkan så det är okej.
-            userId: "X06v2WLNt3SfxZjW6qkT5GxHWHPIcHrd", // Håkans userId
-            nationalWordId: await getOrCreateNationalWord(row.Svenska), // Hämta eller skapa det nationella ordet
+            word: row.Dialekt.trim(),
+            phrase: "",
+            pronunciation: row.Svenska.trim(),
+            status: 1,
+            userId: await getUserIdByName(
+                excelUser.name,
+                excelUser.email,
+                excelUser.password,
+                excelUser.confirmPassword,
+            ),
+            nationalWordId: await getOrCreateNationalWord(row.Svenska),
             soundFileId: await getOrCreateSoundFile(`${row.Dialekt}.mp3`),
         });
         const index = rows.indexOf(row);
@@ -165,4 +229,5 @@ async function importWords() {
     }
     console.log("Import klar!");
 }
+
 importWords();
