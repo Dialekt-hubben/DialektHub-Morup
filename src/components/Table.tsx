@@ -1,8 +1,9 @@
+"use client";
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/dialectword";
 
 type TableProps = {
-    tableData: DialectWordTableResponse | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.
+    tableData: DialectWordTableResponse[] | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.
 };
 
 // The Table-component recives "tableData" as a prop from the parent component (e.g. the page).
@@ -30,7 +31,7 @@ export default function Table({ tableData }: TableProps) {
                 </thead>
                 <tbody>
                     {/* Loop through the data array and render a row for each object */}
-                    {tableData?.data.map((item, rowIdx) => (
+                    {tableData?.map((item, rowIdx) => (
                         <tr key={rowIdx}>
                             <td className={styles.tableCell}>{item.word}</td>
                             <td className={styles.tableCell}>

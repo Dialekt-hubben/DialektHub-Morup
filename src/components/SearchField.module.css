@@ -1,0 +1,65 @@
+.searchFieldWrapper {
+    position: relative;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.searchDropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.searchDropdownItem {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.15s;
+}
+
+.searchDropdownItem:hover {
+    background: #f3f4f6;
+}
+
+.word {
+    font-weight: 500;
+    color: #22223b;
+}
+
+.nationalWord {
+    color: #4a4e69;
+    font-size: 0.95em;
+    margin-left: 1rem;
+}
+
+.searchLoading,
+.searchError,
+.searchNoResults {
+    margin-top: 0.5rem;
+    font-size: 0.95em;
+    color: #000000;
+}
