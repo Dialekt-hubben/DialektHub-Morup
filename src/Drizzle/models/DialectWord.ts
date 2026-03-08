@@ -8,13 +8,12 @@ export const dialectWordTable = sqliteTable("dialect_word_table", {
     word: text().notNull(),
     pronunciation: text(),
     phrase: text(),
-    status: int().notNull().default(0),
+    status: int().default(0),
     userId: text()
         .references(() => user.id)
         .notNull(),
     nationalWordId: int()
         .references(() => nationalWordTable.id)
         .notNull(),
-    soundFileId: int()
-        .references(() => soundFileTable.id)
+    soundFileId: int().references(() => soundFileTable.id),
 });
