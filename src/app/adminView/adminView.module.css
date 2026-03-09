@@ -1,0 +1,16 @@
+.adminContainer{
+    border: solid 10px red;
+}
+
+.addWordSection {
+
+    margin: 2rem;
+    width: 50vw; 
+    border: solid 5px blue;
+}
+
+.excelSection {
+    margin: 2rem;
+    width: 50vw; 
+    border: solid 5px green;
+}
