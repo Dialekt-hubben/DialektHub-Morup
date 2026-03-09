@@ -53,10 +53,11 @@ function AddWordForm() {
     };
 
     return (
-        <>
+        <div>
             <form
                 className={styles.addWordForm}
                 onSubmit={handleSubmit(onSubmit)}>
+                <h2>Lägg till nytt ord</h2>
                 <InputGroup
                     label="Dialekt ord"
                     placeholder="Skriv dialekt ordet här..."
@@ -101,7 +102,7 @@ function AddWordForm() {
                     Avbryt
                 </Link>
             </form>
-        </>
+        </div>
     );
 }
 
