@@ -3,7 +3,7 @@ import style from "./SearchField.module.css";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-export default function SearchField2() {
+export default function SearchField() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const { push } = useRouter();
