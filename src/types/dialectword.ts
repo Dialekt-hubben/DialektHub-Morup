@@ -1,5 +1,4 @@
 import { z } from "zod";
-// TypeScript interface for the API response
 
 export const Status = z.enum(["pending", "approved", "rejected"]);
 
@@ -8,8 +7,8 @@ export type Status = z.infer<typeof Status>;
 export const DialectWordTableResponse = z.object({
     id: z.number(),
     word: z.string(),
-    pronunciation: z.string(),
-    phrase: z.string(),
+    pronunciation: z.string().nullable(),
+    phrase: z.string().nullable(),
     status: Status,
     userName: z.string().nullable(),
     nationalWord: z.string().nullable(),
