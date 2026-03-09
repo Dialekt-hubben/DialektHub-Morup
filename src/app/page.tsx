@@ -30,6 +30,9 @@ export default async function Home({ searchParams }: params) {
                         <SearchField />
                         <div className={styles.tableHeader}>
                             <h2>Ordlista</h2>
+                            <Link href="/adminView" className="btn primary">
+                                Adminvy
+                            </Link>
                             <Link href="/addWord" className="btn primary">
                                 Lägg till ord
                             </Link>
