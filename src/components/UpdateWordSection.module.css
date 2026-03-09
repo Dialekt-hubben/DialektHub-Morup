@@ -1,18 +1,18 @@
-.addWordForm {
+.updateWordSection {
     /* width: 500px; */
     /* height: 500px; */
     /* min-width: 500px; */
-    min-height: 500px;
     margin: 2rem;
+    min-height: 500px;
     border: 2px solid #0003;
     border-radius: 0.5rem;
     padding: 2rem;
     box-shadow: 0 4px 12px #00000059;
-    /* border: solid 5px blue; */
-
-    button,
-    a {
-        margin-top: 1rem;
-        margin-right: 0.5rem;
-    }
+    /* border: solid 5px green; */
+}
+.updateWordSectionResults {
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    border: 2px solid #0003;
 }
