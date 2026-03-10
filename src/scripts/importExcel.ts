@@ -187,6 +187,16 @@ async function importWords() {
         "adminadmin",
     );
 
+// const newuser = auth.api.signUpEmail({
+//     body: {
+//         name: excelUser.name,
+//         email: excelUser.email,
+//         password: excelUser.password,
+//         confirmPassword: excelUser.confirmPassword,
+//     },
+// });
+
+
     // transforma woth regex to check if there are multiple words in either Dialekt or Svenska columns. If there are, skip the row and log it.
     for (const row of excel.GetRows()) {
         const invalidCharacterRegex = new RegExp("[ \\[,\\(]", "g");
