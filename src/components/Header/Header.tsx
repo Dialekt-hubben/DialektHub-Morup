@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import style from "./Header.module.css";
+import { signOut } from "@/actions/auth";
 
-function Header() {
+async function Header() {
     return (
         <header className={style.header}>
             <Link href="/" className={style.logo}>
@@ -18,11 +19,15 @@ function Header() {
             <nav>
                 <ul>
                     <li>
+                        <h5>Välkommen</h5>
+                        <form action={signOut} method="post">
+                            <button type="submit" className="btn secondary">
+                                Logga ut
+                            </button>
+                        </form>
                         <Link href="/login" className="btn primary">
                             Login
                         </Link>
-                    </li>
-                    <li>
                         <Link href="/signup" className="btn">
                             Sign Up
                         </Link>
