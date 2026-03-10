@@ -2,8 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import style from "./Header.module.css";
 import { signOut } from "@/actions/auth";
+import { getHomepageUserSession } from "@/lib/auth";
 
 async function Header() {
+    const userSession = await getHomepageUserSession();
+
     return (
         <header className={style.header}>
             <Link href="/" className={style.logo}>
@@ -19,18 +22,23 @@ async function Header() {
             <nav>
                 <ul>
                     <li>
-                        <h5>Välkommen</h5>
-                        <form action={signOut} method="post">
-                            <button type="submit" className="btn secondary">
-                                Logga ut
-                            </button>
-                        </form>
-                        <Link href="/login" className="btn primary">
-                            Login
-                        </Link>
-                        <Link href="/signup" className="btn">
-                            Sign Up
-                        </Link>
+                        <h5>Välkommen,{userSession?.name}</h5>
+                        {userSession ? (
+                            <form action={signOut} method="post">
+                                <button type="submit" className="btn secondary">
+                                    Logga ut
+                                </button>
+                            </form>
+                        ) : (
+                            <div>
+                                <Link href="/login" className="btn primary">
+                                    Login
+                                </Link>
+                                <Link href="/signup" className="btn">
+                                    Sign Up
+                                </Link>
+                            </div>
+                        )}
                     </li>
                 </ul>
             </nav>
