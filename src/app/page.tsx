@@ -14,13 +14,12 @@ type params = {
 
 export default async function Home({ searchParams }: params) {
     const { query = "", page = "1" } = await searchParams;
-
     const res = await GetAllDialectwords({
         query,
         page: +page,
         pageSize: 10,
     });
-    const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize
+    const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize;
 
     return (
         <main>
