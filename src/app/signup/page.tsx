@@ -23,7 +23,7 @@ function SignupPage() {
     const onSubmit = async (data: Signup) => {
         try {
             await signUp(data);
-            push("/dashboard");
+            push("/");
         } catch (error) {
             // Handle BetterAuthError specifically
             if (error instanceof BetterAuthError) {
