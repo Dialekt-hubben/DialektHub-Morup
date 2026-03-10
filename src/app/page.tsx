@@ -1,7 +1,7 @@
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
 import Table from "@/components/Table";
-import SearchField2 from "@/components/Searchfield2";
+import SearchField from "@/components/Searchfield";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 
@@ -21,14 +21,13 @@ export default async function Home({ searchParams }: params) {
         pageSize: 10,
     });
     const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize
-    
 
     return (
         <main>
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
-                        <SearchField2 />
+                        <SearchField />
                         <div className={styles.tableHeader}>
                             <h2>Ordlista</h2>
                             <Link href="/addWord" className="btn primary">

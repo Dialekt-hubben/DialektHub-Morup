@@ -5,7 +5,7 @@ import { user } from "@/Drizzle/models/auth-schema";
 import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
-import { Status } from "@/types/dialectword";
+import { Status } from "@/types/status";
 import { count, eq, sql, like } from "drizzle-orm";
 
 type params = {
