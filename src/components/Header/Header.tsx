@@ -22,9 +22,9 @@ async function Header() {
             <nav>
                 <ul>
                     <li>
-                        <h5>Välkommen,{userSession?.name}</h5>
                         {userSession ? (
                             <form action={signOut} method="post">
+                                <h5>Välkommen,{userSession?.name}</h5>
                                 <button type="submit" className="btn secondary">
                                     Logga ut
                                 </button>
