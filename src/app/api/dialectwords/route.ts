@@ -145,18 +145,18 @@ export async function PUT(req: NextRequest) {
     }
 
     const formData = await req.json();
-    // Skapa ett schema som matchar det du skickar från frontend
-    const updateDialectWord = {
+
+    // Skapa ett schema som matchar det vi skickar från frontend och validera det
+    const updateWord = {
         id: formData.id,
         dialectWord: formData.dialectWord,
         nationalWord: formData.nationalWord,
     };
-    
-    // Kontrollera att alla fält finns och är av rätt typ
+
     if (
-        typeof updateDialectWord.id !== "number" ||
-        typeof updateDialectWord.dialectWord !== "string" ||
-        typeof updateDialectWord.nationalWord !== "string"
+        typeof updateWord.id !== "number" ||
+        typeof updateWord.dialectWord !== "string" ||
+        typeof updateWord.nationalWord !== "string"
     ) {
         return NextResponse.json(
             { error: "Ogiltig data: id, dialectWord och nationalWord krävs." },
@@ -164,9 +164,51 @@ export async function PUT(req: NextRequest) {
         );
     }
 
-    // Här kan du lägga till kod för att uppdatera ordet i databasen om du vill
+    try {
+        // Uppdaterar dialektordet i databasen med det nya värdet
+        await db
+            .update(dialectWordTable)
+            .set({ word: updateWord.dialectWord })
+            .where(eq(dialectWordTable.id, updateWord.id));
+
+        // Hämta nationalWordId för att kunna uppdatera nationalordet
+        const fetchedNationalWordId = await db
+            .select({ nationalWordId: dialectWordTable.nationalWordId })
+            .from(dialectWordTable)
+            .where(eq(dialectWordTable.id, updateWord.id));
+
+        // Om nationalWordId finns, uppdatera nationalordet i databasen
+        if (fetchedNationalWordId.length > 0) {
+            await db
+                .update(nationalWordTable)
+                .set({ word: updateWord.nationalWord })
+                .where(
+                    eq(
+                        nationalWordTable.id,
+                        fetchedNationalWordId[0].nationalWordId,
+                    ),
+                );
+        } else {
+            return NextResponse.json(
+                {
+                    error: "Kunde inte hitta nationalWordId för det angivna id:t.",
+                },
+                { status: 404 },
+            );
+        }
+    } catch (error) {
+        const message =
+            error instanceof Error
+                ? error.message
+                : "Ett fel uppstod vid uppdatering av dialektordet.";
+        return NextResponse.json({ error: message }, { status: 500 });
+    }
+
     return NextResponse.json({
         message: "Word updated successfully",
-        data: updateDialectWord,
+        data: {
+            dialectWord: updateWord.dialectWord,
+            nationalWord: updateWord.nationalWord,
+        },
     });
 }
