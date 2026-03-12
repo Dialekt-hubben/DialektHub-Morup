@@ -20,7 +20,7 @@ export default function EditWordForm({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError("");
@@ -36,7 +36,10 @@ export default function EditWordForm({
                     nationalWord: national,
                 }),
             });
-            if (!res.ok) throw new Error("Kunde inte uppdatera ordet.");
+
+            if (!res.ok) {
+                throw new Error("Kunde inte uppdatera ordet.");
+            }
             if (onUpdated) {
                 onUpdated();
             }
@@ -49,7 +52,7 @@ export default function EditWordForm({
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ margin: "1em 0" }}>
+        <form onSubmit={handleSubmit}>
             <div>
                 <label>
                     Dialektord:

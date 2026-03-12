@@ -2,8 +2,8 @@
 import AddWordForm from "@/components/AddWordForm";
 import { useState, useEffect } from "react";
 import style from "./adminView.module.css";
-import UpdateWordSection from "@/components/UpdateWordSection";
-import ImportExcelSection from "@/components/ImportExcelSection";
+import UpdateWordSection from "@/components/Admin/UpdateWordSection";
+import ImportExcelSection from "@/components/Admin/ImportExcelSection";
 import { useSearchParams } from "next/navigation";
 
 function AdminView() {

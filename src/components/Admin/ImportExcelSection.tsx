@@ -1,5 +1,5 @@
 import React from "react";
-import style from "@/components/ImportExcelSection.module.css";
+import style from "@/components/Admin/ImportExcelSection.module.css";
 
 const ImportExcelSection: React.FC = () => (
     <div className={style.importExcelSection}>

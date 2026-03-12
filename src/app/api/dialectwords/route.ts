@@ -8,8 +8,6 @@ import { addDialectWord, DialectWordTableResponse } from "@/types/dialectword";
 import { auth } from "@/lib/auth";
 import { user } from "@/Drizzle/models/auth-schema";
 
-
-
 // API-route to fetch paginated dialect words data
 export async function GET(req: NextRequest) {
     try {
@@ -132,4 +130,43 @@ export async function POST(req: NextRequest) {
     const addData = response.data;
 
     return NextResponse.json({ message: "Word added successfully" });
+}
+
+export async function PUT(req: NextRequest) {
+    const currentUser = await auth.api.getSession(req);
+
+    if (!currentUser) {
+        return NextResponse.json(
+            {
+                error: "Unauthorized: User must be logged in to update a dialect word.",
+            },
+            { status: 401 },
+        );
+    }
+
+    const formData = await req.json();
+    // Skapa ett schema som matchar det du skickar från frontend
+    const updateDialectWord = {
+        id: formData.id,
+        dialectWord: formData.dialectWord,
+        nationalWord: formData.nationalWord,
+    };
+    
+    // Kontrollera att alla fält finns och är av rätt typ
+    if (
+        typeof updateDialectWord.id !== "number" ||
+        typeof updateDialectWord.dialectWord !== "string" ||
+        typeof updateDialectWord.nationalWord !== "string"
+    ) {
+        return NextResponse.json(
+            { error: "Ogiltig data: id, dialectWord och nationalWord krävs." },
+            { status: 400 },
+        );
+    }
+
+    // Här kan du lägga till kod för att uppdatera ordet i databasen om du vill
+    return NextResponse.json({
+        message: "Word updated successfully",
+        data: updateDialectWord,
+    });
 }

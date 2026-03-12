@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import style from "@/components/UpdateWordSection.module.css";
-import SearchField from "./Searchfield";
+import style from "@/components/Admin/UpdateWordSection.module.css";
+import SearchField from "../Searchfield";
 import EditWordForm from "./EditWordForm";
 
 type UpdateWordSectionProps = {
