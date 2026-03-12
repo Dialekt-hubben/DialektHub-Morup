@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import SearchField from "@/components/Searchfield";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
-import { getHomepageUserSession } from "@/lib/auth";
+import { getInactiveUserSession } from "@/lib/auth";
 
 type params = {
     searchParams: Promise<{
@@ -22,7 +22,7 @@ export default async function Home({ searchParams }: params) {
     });
     const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize;
 
-    const userSession = await getHomepageUserSession();
+    const userSession = await getInactiveUserSession();
 
     return (
         <main>

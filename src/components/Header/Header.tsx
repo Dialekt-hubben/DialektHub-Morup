@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import style from "./Header.module.css";
 import { signOut } from "@/actions/auth";
-import { getHomepageUserSession } from "@/lib/auth";
+import { getInactiveUserSession } from "@/lib/auth";
 
 async function Header() {
-    const userSession = await getHomepageUserSession();
+    const userSession = await getInactiveUserSession();
 
     return (
         <header className={style.header}>

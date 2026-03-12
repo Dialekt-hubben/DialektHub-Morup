@@ -41,7 +41,7 @@ export async function getActiveUserSession(): Promise<AuthUser> {
     return session.user as AuthUser;
 }
 
-export async function getHomepageUserSession(): Promise<AuthUser | null> {
+export async function getInactiveUserSession(): Promise<AuthUser | null> {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
