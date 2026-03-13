@@ -18,4 +18,4 @@ export const dialectWordApi = z.object({
         ),
 });
 
-export type DialectWordApi = z.infer<typeof dialectWordApi>;
+export type dialectWordApi = z.infer<typeof dialectWordApi>;

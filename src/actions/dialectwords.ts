@@ -6,7 +6,7 @@ import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { auth } from "@/lib/auth";
-import { DialectWordApi, dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
+import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
 import { count, eq, sql, like } from "drizzle-orm";
 import Error from "next/error";
@@ -96,7 +96,7 @@ export async function CreateDialectword(data: dialectWordApi) {
     console.log(fileParseResult.data);
 }
 
-export async function UpdateDialectword(data: DialectWordApi) {
+export async function UpdateDialectword(data: dialectWordApi) {
     const currentUser = await auth.api.getSession();
 
     if (!currentUser) {
@@ -106,7 +106,6 @@ export async function UpdateDialectword(data: DialectWordApi) {
             message: "User must be logged in to update a dialect word.",
         });
     }
-
 
     // Skapa ett schema som matchar det vi skickar från frontend och validera det
     const updateWord = {
