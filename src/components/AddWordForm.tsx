@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
-import { addDialectWord } from "@/types/dialectword";
+import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
 import { useAudio } from "./Audio";
 import styles from "./AddWordForm.module.css";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import Link from "next/link";
 
 function AddWordForm() {
     const [isRrecording, setisRrecording] = useState(false);
-    const { startRecording, stopRecording, audioFile } = useAudio();
+    const { startRecording, stopRecording } = useAudio();
     const {
         handleSubmit,
         register,
@@ -35,8 +35,8 @@ function AddWordForm() {
         const formdata = new FormData();
         formdata.append("word", data.word);
         formdata.append("pronunciation", data.pronunciation);
-        if (data.audioFile && data.audioFile.length > 0) {
-            formdata.append("audioFile", data.audioFile[0]);
+        if (data.audioFile && data.audioFile) {
+            formdata.append("audioFile", data.audioFile);
         }
         const response = await fetch("/api/dialectwords", {
             method: "POST",
@@ -49,7 +49,7 @@ function AddWordForm() {
             return;
         }
 
-        console.log(response);
+        console.log(await response.json());
     };
 
     return (
@@ -75,7 +75,7 @@ function AddWordForm() {
                 <InputGroup
                     type="file"
                     label="ljud fil"
-                    accept="audio/mpeg,audio/wav,audio/ogg"
+                    accept="audio/*"
                     placeholder="Upload an audio file..."
                     {...register("audioFile")}
                     errorMessage={errors.audioFile?.message?.toString()}
@@ -85,6 +85,7 @@ function AddWordForm() {
                         <button
                             type="button"
                             className="btn primary"
+                            disabled
                             onClick={startAudioRecording}>
                             Spela in
                         </button>
