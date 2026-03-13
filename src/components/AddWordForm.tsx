@@ -7,6 +7,7 @@ import { useAudio } from "./Audio";
 import styles from "./AddWordForm.module.css";
 import { useState } from "react";
 import Link from "next/link";
+import { CreateDialectWord } from "@/actions/dialectwords";
 
 function AddWordForm() {
     const [isRrecording, setisRrecording] = useState(false);
@@ -32,24 +33,7 @@ function AddWordForm() {
     };
 
     const onSubmit = async (data: addDialectWord) => {
-        const formdata = new FormData();
-        formdata.append("word", data.word);
-        formdata.append("pronunciation", data.pronunciation);
-        if (data.audioFile && data.audioFile) {
-            formdata.append("audioFile", data.audioFile);
-        }
-        const response = await fetch("/api/dialectwords", {
-            method: "POST",
-            body: formdata,
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error submitting form:", errorData.error);
-            return;
-        }
-
-        console.log(await response.json());
+        await CreateDialectWord(data);
     };
 
     return (
