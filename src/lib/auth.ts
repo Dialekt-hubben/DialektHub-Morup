@@ -1,4 +1,5 @@
 import db from "@/Drizzle";
+import { env } from "@/env";
 import { AuthUser } from "@/types/auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -7,6 +8,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const auth = betterAuth({
+    baseURL: env.BETTER_AUTH_BASE_URL,
     database: drizzleAdapter(db, {
         provider: "sqlite",
     }),
