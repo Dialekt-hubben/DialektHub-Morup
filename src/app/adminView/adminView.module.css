@@ -1,0 +1,29 @@
+.adminContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    margin: 0 auto;
+    justify-content: center;
+}
+.adminContainer > div {
+    width: 500px;
+}
+
+.adminContainerH1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+    .adminContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .adminContainer {
+        grid-template-columns: 1fr;
+    }
+}
