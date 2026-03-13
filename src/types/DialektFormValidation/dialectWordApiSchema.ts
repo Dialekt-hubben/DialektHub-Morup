@@ -5,7 +5,7 @@ export const dialectWordApi = z.object({
     word: z.string().min(1, "Dialekt ord är obligatoriskt"),
     pronunciation: z.string().min(1, "Uttal är obligatoriskt"),
     audioFile: z
-        .instanceof(File)
+        .file()
         .optional()
         .refine(
             (file) =>
