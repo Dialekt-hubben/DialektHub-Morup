@@ -9,6 +9,7 @@ export const env = createEnv({
     server: {
         DATABASE_URL: z.url(),
         BETTER_AUTH_SECRET: z.string().min(1),
+        BETTER_AUTH_BASE_URL: z.url(),
         NODE_ENV: z.enum(["development", "test", "production"]),
         S3_ACCESS_KEY: z.string().min(1),
         S3_SECRET_KEY: z.string().min(1),
@@ -33,6 +34,7 @@ export const env = createEnv({
         NODE_ENV: process.env.NODE_ENV,
         // NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+        BETTER_AUTH_BASE_URL: process.env.BETTER_AUTH_BASE_URL,
         S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
         S3_SECRET_KEY: process.env.S3_SECRET_KEY,
         S3_REGION: process.env.S3_REGION,

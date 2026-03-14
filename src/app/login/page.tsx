@@ -23,7 +23,7 @@ function LoginPage() {
     const onSubmit = async (data: Login) => {
         try {
             await signIn(data);
-            push("/dashboard");
+            push("/");
         } catch (error) {
             // Handle BetterAuthError specifically
             if (error instanceof BetterAuthError) {

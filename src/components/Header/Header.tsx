@@ -1,8 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import style from "./Header.module.css";
+import { signOut } from "@/actions/auth";
+import { getInactiveUserSession } from "@/lib/auth";
 
-function Header() {
+async function Header() {
+    const userSession = await getInactiveUserSession();
+
     return (
         <header className={style.header}>
             <Link href="/" className={style.logo}>
@@ -18,14 +22,23 @@ function Header() {
             <nav>
                 <ul>
                     <li>
-                        <Link href="/login" className="btn primary">
-                            Login
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/signup" className="btn">
-                            Sign Up
-                        </Link>
+                        {userSession ? (
+                            <form action={signOut} method="post">
+                                <h5>Välkommen,{userSession?.name}</h5>
+                                <button type="submit" className="btn secondary">
+                                    Logga ut
+                                </button>
+                            </form>
+                        ) : (
+                            <div>
+                                <Link href="/login" className="btn primary">
+                                    Login
+                                </Link>
+                                <Link href="/signup" className="btn">
+                                    Sign Up
+                                </Link>
+                            </div>
+                        )}
                     </li>
                 </ul>
             </nav>

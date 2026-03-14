@@ -4,6 +4,7 @@ import Table from "@/components/Table";
 import SearchField from "@/components/Searchfield";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
+import { getInactiveUserSession } from "@/lib/auth";
 
 type params = {
     searchParams: Promise<{
@@ -14,13 +15,14 @@ type params = {
 
 export default async function Home({ searchParams }: params) {
     const { query = "", page = "1" } = await searchParams;
-
     const res = await GetAllDialectwords({
         query,
         page: +page,
         pageSize: 10,
     });
-    const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize
+    const totalPages = Math.ceil(res.totalResults / 10); // 10 is the pageSize;
+
+    const userSession = await getInactiveUserSession();
 
     return (
         <main>
@@ -30,9 +32,20 @@ export default async function Home({ searchParams }: params) {
                         <SearchField />
                         <div className={styles.tableHeader}>
                             <h2>Ordlista</h2>
-                            <Link href="/addWord" className="btn primary">
-                                Lägg till ord
-                            </Link>
+                            {userSession && (
+                                <div>
+                                    <Link
+                                        href="/adminView"
+                                        className="btn primary">
+                                        Adminvy
+                                    </Link>
+                                    <Link
+                                        href="/addWord"
+                                        className="btn primary">
+                                        Lägg till ord
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                         <Table tableData={res.rawData} />
                     </div>
