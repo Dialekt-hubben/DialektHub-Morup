@@ -6,10 +6,12 @@ import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { auth } from "@/lib/auth";
-import { DialectWordApi, dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
+import {
+    dialectWordApi,
+} from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
 import { count, eq, sql, like } from "drizzle-orm";
-import Error from "next/error";
+import z from "zod";
 
 type GetParams = {
     query: string;
@@ -17,16 +19,30 @@ type GetParams = {
     pageSize: number;
 };
 
+const GetStatusFromNumber = (statusIndex: number | null): Status => {
+    switch (statusIndex) {
+        case 0:
+            return "pending";
+        case 1:
+            return "approved";
+        case 2:
+            return "rejected";
+        default:
+            return "pending";
+    }
+};
+
 export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     const paginationSize = pageSize;
     const paginationOffset = (page - 1) * pageSize;
 
-    const likeQuery = query
+    const caseInsensitiveWordFilter = query
         ? like(
               sql`lower(${nationalWordTable.word})`,
               `%${query.toLowerCase()}%`,
-          )
-        : undefined;
+          ) && // Case-insensitive search on the national word
+          eq(dialectWordTable.status, 1) // Only show approved words when searching
+        : eq(dialectWordTable.status, 1); // Only show approved words when no search query is provided;
 
     const rawData = await db
         .select({
@@ -49,7 +65,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
             soundFileTable,
             eq(dialectWordTable.soundFileId, soundFileTable.id),
         )
-        .where(likeQuery)
+        .where(caseInsensitiveWordFilter)
         .limit(paginationSize)
         .offset(paginationOffset);
 
@@ -60,13 +76,14 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
             nationalWordTable,
             eq(dialectWordTable.nationalWordId, nationalWordTable.id),
         )
-        .where(likeQuery);
+        .where(caseInsensitiveWordFilter);
 
     return {
         rawData: rawData.map((item) => ({
             ...item,
-            // Ensure that the status is one of the defined enum values, defaulting to "pending" if it's not valid
-            status: (Status.type[item.status] as Status) || Status.enum.pending,
+            // This converts the numeric status from the database into a string representation for easier handling in the frontend
+            // If status is null, it will default to "pending"
+            status: GetStatusFromNumber(item.status),
         })),
         totalResults: Number(totalResults[0].value),
     };
@@ -76,56 +93,39 @@ export async function CreateDialectword(data: dialectWordApi) {
     const currentUser = await auth.api.getSession();
 
     if (!currentUser) {
-        throw new Error({
-            statusCode: 401,
-            title: "Unauthorized",
-            message: "User must be logged in to create a dialect word.",
-        });
+        throw new Error("User must be logged in to create a dialect word.");
     }
 
     const fileParseResult = dialectWordApi.safeParse(data);
 
     if (!fileParseResult.success) {
-        throw new Error({
-            statusCode: 400,
-            title: "Invalid input",
-            message: "Ogiltig ljudfil: " + fileParseResult.error.message,
-        });
+        throw new Error("Invalid input: " + fileParseResult.error.message);
     }
 
     console.log(fileParseResult.data);
 }
 
-export async function UpdateDialectword(data: DialectWordApi) {
+export async function UpdateDialectword(data: dialectWordApi) {
     const currentUser = await auth.api.getSession();
 
     if (!currentUser) {
-        throw new Error({
-            statusCode: 401,
-            title: "Unauthorized",
-            message: "User must be logged in to update a dialect word.",
-        });
+        throw new Error("User must be logged in to update a dialect word.");
     }
 
+    // Todo: Move this schema to a separate file since it cam be used in multiple places
+    const updateWordSchema = z.object({
+        id: z.number(),
+        dialectWord: z.string(),
+        nationalWord: z.string(),
+    });
 
-    // Skapa ett schema som matchar det vi skickar från frontend och validera det
-    const updateWord = {
-        id: formData.id,
-        dialectWord: formData.dialectWord,
-        nationalWord: formData.nationalWord,
-    };
+    const parsedData = updateWordSchema.safeParse(data);
 
-    if (
-        typeof updateWord.id !== "number" ||
-        typeof updateWord.dialectWord !== "string" ||
-        typeof updateWord.nationalWord !== "string"
-    ) {
-        throw new Error({
-            statusCode: 400,
-            title: "Invalid input",
-            message: "Ogiltig data: id, dialectWord och nationalWord krävs.",
-        });
+    if (!parsedData.success) {
+        throw new Error("Ogiltig data: id, dialectWord och nationalWord krävs.");
     }
+
+    const updateWord = parsedData.data;
 
     try {
         // Uppdaterar dialektordet i databasen med det nya värdet
@@ -152,19 +152,12 @@ export async function UpdateDialectword(data: DialectWordApi) {
                     ),
                 );
         } else {
-            throw new Error({
-                statusCode: 404,
-                title: "Not Found",
-                message:
-                    "Kunde inte hitta nationalWordId för det angivna id:t.",
-            });
+            throw new Error(
+                "Kunde inte hitta nationalWordId för det angivna id:t.",
+            );
         }
     } catch {
-        throw new Error({
-            statusCode: 500,
-            title: "Internal Server Error",
-            message: "Ett fel uppstod vid uppdatering av dialektordet.",
-        });
+        throw new Error("Ett fel uppstod vid uppdatering av dialektordet.");
     }
     return {
         message: "Word updated successfully",
