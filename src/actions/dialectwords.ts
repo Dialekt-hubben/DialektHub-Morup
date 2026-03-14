@@ -5,12 +5,15 @@ import { user } from "@/Drizzle/models/auth-schema";
 import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
+import { env } from "@/env";
 import { auth } from "@/lib/auth";
-import {
-    dialectWordApi,
-} from "@/types/DialektFormValidation/dialectWordApiSchema";
+import { s3Client } from "@/lib/s3Client";
+import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { count, eq, sql, like } from "drizzle-orm";
+import { headers } from "next/headers";
 import z from "zod";
 
 type GetParams = {
@@ -89,8 +92,10 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     };
 }
 
-export async function CreateDialectword(data: dialectWordApi) {
-    const currentUser = await auth.api.getSession();
+export async function CreateDialectWord(data: addDialectWord) {
+    const currentUser = await auth.api.getSession({
+        headers: await headers(),
+    });
 
     if (!currentUser) {
         throw new Error("User must be logged in to create a dialect word.");
@@ -99,11 +104,58 @@ export async function CreateDialectword(data: dialectWordApi) {
     const fileParseResult = dialectWordApi.safeParse(data);
 
     if (!fileParseResult.success) {
-        throw new Error("Invalid input: " + fileParseResult.error.message);
+        throw new Error(
+            "Invalid input data: " +
+                JSON.stringify(fileParseResult.error.message),
+        );
     }
 
-    console.log(fileParseResult.data);
+    const { word, pronunciation, audioFile } = fileParseResult.data;
+    const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
+
+    if (audioFile && audioFileName) {
+        const command = new PutObjectCommand({
+            Bucket: env.S3_BUCKET_NAME,
+            Key: audioFileName,
+            Body: Buffer.from(await audioFile.arrayBuffer()),
+            ContentType: audioFile.type,
+        });
+        await s3Client.send(command);
+    }
+
+    // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
+    await db.transaction(async (tx) => {
+        const nationalWordId = (
+            await tx
+                .insert(nationalWordTable)
+                .values({ word: pronunciation })
+                .returning({ id: nationalWordTable.id })
+        )[0];
+
+        let soundFileId: { id: number } | undefined = undefined;
+        if (audioFile && audioFileName) {
+            soundFileId = (
+                await tx
+                    .insert(soundFileTable)
+                    .values({
+                        fileName: audioFileName,
+                        url: `/uploads/${audioFileName}`,
+                    })
+                    .returning({ id: soundFileTable.id })
+            ).at(0);
+        }
+
+        await tx.insert(dialectWordTable).values({
+            word,
+            pronunciation,
+            userId: currentUser.user.id,
+            nationalWordId: nationalWordId.id,
+            soundFileId: soundFileId ? soundFileId.id : undefined,
+        });
+    });
+
 }
+
 
 export async function UpdateDialectword(data: dialectWordApi) {
     const currentUser = await auth.api.getSession();
