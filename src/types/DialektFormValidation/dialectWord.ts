@@ -21,7 +21,12 @@ export const addDialectWord = z.object({
     word: z.string().min(1, "Dialekt ord är obligatoriskt"),
     pronunciation: z.string().min(1, "Uttal är obligatoriskt"),
     audioFile: z
-        .instanceof(FileList)
+        .custom<FileList>(
+            (value) =>
+                typeof value !== "undefined" && value instanceof FileList,
+            "Förväntat en FileList",
+        )
+        .nullable()
         .optional()
         .transform((files) => (files && files.length > 0 ? files[0] : null))
         .refine(
