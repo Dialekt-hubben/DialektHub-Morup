@@ -7,23 +7,26 @@ import ImportExcelSection from "@/components/Admin/ImportExcelSection";
 import { useSearchParams } from "next/navigation";
 
 function AdminView() {
-    const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const searchParams = useSearchParams();
-    const query = searchParams.get("query") || "";
+    // Todo: Implement search functionality for updating words. 
+    // Probably use GetAllDialectwords and make this a server components 
 
-    useEffect(() => {
-        if (!query || query.length < 2) {
-            setResults([]);
-            return;
-        }
-        setLoading(true);
-        fetch(`/api/searchDialectWords?query=${encodeURIComponent(query)}`)
-            .then((res) => res.json())
-            .then((data) => setResults(data))
-            .catch(() => setResults([]))
-            .finally(() => setLoading(false));
-    }, [query]);
+    // const [results, setResults] = useState([]);
+    // const [loading, setLoading] = useState(false);
+    // const searchParams = useSearchParams();
+    // const query = searchParams.get("query") || "";
+
+    // useEffect(() => {
+    //     if (!query || query.length < 2) {
+    //         setResults([]);
+    //         return;
+    //     }
+    //     setLoading(true);
+    //     fetch(`/api/searchDialectWords?query=${encodeURIComponent(query)}`)
+    //         .then((res) => res.json())
+    //         .then((data) => setResults(data))
+    //         .catch(() => setResults([]))
+    //         .finally(() => setLoading(false));
+    // }, [query]);
 
     return (
         <div>
@@ -32,13 +35,13 @@ function AdminView() {
                 <div>
                     <AddWordForm />
                 </div>
-                <div>
+                {/* <div>
                     <UpdateWordSection
                         loading={loading}
                         results={results}
                         query={query}
                     />
-                </div>
+                </div> */}
                 <div>
                     <ImportExcelSection />
                 </div>
