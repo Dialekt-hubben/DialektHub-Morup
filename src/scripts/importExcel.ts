@@ -13,7 +13,7 @@ type Row = {
     Svenska: string;
 };
 
-const pageToRead = 9; // Liken på Excel-sidan.
+const pageToRead = 9; // Fliken på Excel-sidan.
 
 const excelfile = XLSX.readFile("ordlista1.xlsx");
 const pageName = excelfile.SheetNames[pageToRead];
@@ -28,7 +28,12 @@ class ExcellUser {
     email: string;
     password: string;
     confirmPassword: string;
-    constructor(name: string, email: string, password: string, confirmPassword: string ) {
+    constructor(
+        name: string,
+        email: string,
+        password: string,
+        confirmPassword: string,
+    ) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -187,19 +192,18 @@ async function importWords() {
         "adminadmin",
     );
 
-// const newuser = auth.api.signUpEmail({
-//     body: {
-//         name: excelUser.name,
-//         email: excelUser.email,
-//         password: excelUser.password,
-//         confirmPassword: excelUser.confirmPassword,
-//     },
-// });
-
+    // const newuser = auth.api.signUpEmail({
+    //     body: {
+    //         name: excelUser.name,
+    //         email: excelUser.email,
+    //         password: excelUser.password,
+    //         confirmPassword: excelUser.confirmPassword,
+    //     },
+    // });
 
     // transforma woth regex to check if there are multiple words in either Dialekt or Svenska columns. If there are, skip the row and log it.
     for (const row of excel.GetRows()) {
-        const invalidCharacterRegex = new RegExp("[ \\[,\\(]", "g");
+        const invalidCharacterRegex = new RegExp("[ \\[,\\(0-9]", "g");
         if (!row.Dialekt || !row.Svenska) {
             console.log(
                 `Skipping row with empty values ${row.Dialekt} - ${row.Svenska}`,
@@ -207,8 +211,8 @@ async function importWords() {
             continue;
         }
         if (
-            row.Dialekt.match(invalidCharacterRegex) ||
-            row.Svenska.match(invalidCharacterRegex)
+            row.Dialekt.toString().match(invalidCharacterRegex) ||
+            row.Svenska.toString().match(invalidCharacterRegex)
         ) {
             console.log(
                 `Skipping row with multiple words ${row.Dialekt} - ${row.Svenska}`,
@@ -221,8 +225,8 @@ async function importWords() {
         await db.insert(dialectWordTable).values({
             word: row.Dialekt.trim(),
             phrase: "",
-            pronunciation: row.Svenska.trim(),
-            status: 1,
+            // pronunciation: row.Svenska.trim(),
+            status: Math.floor(Math.random() * 3), // add random status between 0 and 2
             userId: await getUserIdByName(
                 excelUser.name,
                 excelUser.email,

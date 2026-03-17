@@ -8,11 +8,11 @@ import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { env } from "@/env";
 import { auth } from "@/lib/auth";
 import { s3Client } from "@/lib/s3Client";
-import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import { addDialectWord, updateDialectWord } from "@/types/DialektFormValidation/dialectWord";
 import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { count, eq, sql, like } from "drizzle-orm";
+import { count, eq, sql, like, or, and} from "drizzle-orm";
 import { headers } from "next/headers";
 
 type GetParams = {
@@ -26,10 +26,14 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     const paginationOffset = (page - 1) * pageSize;
 
     const likeQuery = query
-        ? like(
+        ?  
+        and(
+        like(
               sql`lower(${nationalWordTable.word})`,
               `%${query.toLowerCase()}%`,
-          )
+          ),
+           undefined
+        )
         : undefined;
 
     const rawData = await db
@@ -70,7 +74,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
         rawData: rawData.map((item) => ({
             ...item,
             // Ensure that the status is one of the defined enum values, defaulting to "pending" if it's not valid
-            status: (Status.type[item.status] as Status) || Status.enum.pending,
+            status: Status.enum.approved,
         })),
         totalResults: Number(totalResults[0].value),
     };
@@ -137,10 +141,9 @@ export async function CreateDialectWord(data: addDialectWord) {
             soundFileId: soundFileId ? soundFileId.id : undefined,
         });
     });
-
 }
 
-export async function UpdateDialectword(data: dialectWordApi) {
+export async function UpdateDialectword(data: updateDialectWord) {
     const currentUser = await auth.api.getSession();
 
     if (!currentUser) {
@@ -149,9 +152,9 @@ export async function UpdateDialectword(data: dialectWordApi) {
 
     // Skapa ett schema som matchar det vi skickar från frontend och validera det
     const updateWord = {
-        id: formData.id,
-        dialectWord: formData.dialectWord,
-        nationalWord: formData.nationalWord,
+        id: data.id,
+        dialectWord: data.word,
+        nationalWord: data.nationalWord,
     };
 
     if (
@@ -166,8 +169,7 @@ export async function UpdateDialectword(data: dialectWordApi) {
 
     try {
         // Uppdaterar dialektordet i databasen med det nya värdet
-        await db
-            .update(dialectWordTable)
+        await db.update(dialectWordTable)
             .set({ word: updateWord.dialectWord })
             .where(eq(dialectWordTable.id, updateWord.id));
 
@@ -203,4 +205,33 @@ export async function UpdateDialectword(data: dialectWordApi) {
             nationalWord: updateWord.nationalWord,
         },
     };
+}
+
+export async function SearchDialectWords({ page, pageSize, query }: GetParams) {
+    const paginationSize = pageSize;
+    const paginationOffset = (page - 1) * pageSize;
+
+    const words = await db
+        .select({
+            id: dialectWordTable.id,
+            word: dialectWordTable.word,
+            nationalWord: nationalWordTable.word,
+        })
+        .from(dialectWordTable)
+        .leftJoin(
+            nationalWordTable,
+            eq(dialectWordTable.nationalWordId, nationalWordTable.id),
+        )
+        .where(
+            or(
+                like(dialectWordTable.word, `%${query}%`),
+                like(nationalWordTable.word, `%${query}%`),
+            ),
+        )
+        .limit(paginationSize)
+        .offset(paginationOffset);
+
+    return words;
+
+    // hej
 }
