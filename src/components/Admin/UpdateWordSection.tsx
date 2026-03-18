@@ -59,7 +59,7 @@ const UpdateWordSection: React.FC<UpdateWordSectionProps> = ({
                                     <EditWordForm
                                         id={word.id}
                                         dialectWord={word.word}
-                                        nationalWord={word.nationalWord}
+                                        nationalWord={word.nationalWord ?? ""}
                                         onClose={handleClose}
                                         onUpdated={handleUpdated}
                                     />
