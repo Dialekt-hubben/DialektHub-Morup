@@ -1,68 +1,51 @@
-"use client";
-import AddWordForm from "@/components/AddWordForm";
-import { useState, useEffect } from "react";
-import style from "./adminView.module.css";
-import UpdateWordSection from "@/components/Admin/UpdateWordSection";
-import ImportExcelSection from "@/components/Admin/ImportExcelSection";
-import { useSearchParams } from "next/navigation";
+import styles from "../page.module.css";
+import Pagination from "../../components/Pagination";
+import AdminTable from "@/components/Admin/AdminTable";
+import SearchField from "@/components/Searchfield";
+import Link from "next/link";
+import { GetAllDialectwords } from "@/actions/dialectwords";
+import { getActiveUserSession } from "@/lib/auth";
 
-type SearchWordResult = {
-    id: number;
-    word: string;
-    nationalWord: string | null;
+type Params = {
+    searchParams: Promise<{
+        query: string;
+        page: string;
+    }>;
 };
 
-function AdminView() {
-    const [results, setResults] = useState<SearchWordResult[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [searchError, setSearchError] = useState("");
-    const searchParams = useSearchParams();
-    const query = searchParams.get("query") || "";
+export default async function AdminView({ searchParams }: Params) {
+    await getActiveUserSession();
 
-    // useEffect(() => {
-    //     if (!query || query.length < 2) {
-    //         setResults([]);
-    //         setSearchError("");
-    //         return;
-    //     }
-    //     setLoading(true);
-    //     setSearchError("");
-    //     fetch(`/api/searchDialectWords?query=${encodeURIComponent(query)}`)
-    //         .then((res) => {
-    //             if (!res.ok) {
-    //                 throw new Error("Kunde inte hämta sökresultat.");
-    //             }
-    //             return res.json();
-    //         })
-    //         .then((data: SearchWordResult[]) => setResults(data))
-    //         .catch(() => {
-    //             setResults([]);
-    //             setSearchError("Kunde inte hämta sökresultat.");
-    //         })
-    //         .finally(() => setLoading(false));
-    // }, [query]);
+    const { query = "", page = "1" } = await searchParams;
+    const res = await GetAllDialectwords({
+        query,
+        page: +page,
+        pageSize: 10,
+    });
+    const totalPages = Math.ceil(res.totalResults / 10);
 
     return (
-        <div>
-            <h1 className={style.adminContainerH1}>Administrations Panel</h1>
-            <div className={style.adminContainer}>
+        <main>
+            <div className={styles.tableContainerWrapper}>
                 <div>
-                    <AddWordForm />
-                </div>
-                <div>
-                    <UpdateWordSection
-                        loading={loading}
-                        results={results}
-                        query={query}
-                        searchError={searchError}
-                    />
-                </div>
-                <div>
-                    <ImportExcelSection />
+                    <div className={styles.tableContainer}>
+                        <SearchField />
+                        <div className={styles.tableHeader}>
+                            <h2>Ordlista</h2>
+                            <div>
+                                <Link href="/" className="btn primary">
+                                    Till startsidan
+                                </Link>
+                                <Link href="/addWord" className="btn primary">
+                                    Lägg till ord
+                                </Link>
+                            </div>
+                        </div>
+                        <AdminTable tableData={res.rawData} />
+                    </div>
+                    <Pagination page={+page} totalPages={totalPages} />
                 </div>
             </div>
-        </div>
+        </main>
     );
 }
-
-export default AdminView;
