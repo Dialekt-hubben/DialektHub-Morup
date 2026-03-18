@@ -8,11 +8,14 @@ import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { env } from "@/env";
 import { auth } from "@/lib/auth";
 import { s3Client } from "@/lib/s3Client";
-import { addDialectWord, updateDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import {
+    addDialectWord,
+    updateDialectWord,
+} from "@/types/DialektFormValidation/dialectWord";
 import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { count, eq, sql, like, or, and} from "drizzle-orm";
+import { count, eq, sql, like, or, and } from "drizzle-orm";
 import { headers } from "next/headers";
 
 type GetParams = {
@@ -26,14 +29,13 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     const paginationOffset = (page - 1) * pageSize;
 
     const likeQuery = query
-        ?  
-        and(
-        like(
-              sql`lower(${nationalWordTable.word})`,
-              `%${query.toLowerCase()}%`,
-          ),
-           undefined
-        )
+        ? and(
+              like(
+                  sql`lower(${nationalWordTable.word})`,
+                  `%${query.toLowerCase()}%`,
+              ),
+              undefined,
+          )
         : undefined;
 
     const rawData = await db
@@ -144,7 +146,9 @@ export async function CreateDialectWord(data: addDialectWord) {
 }
 
 export async function UpdateDialectword(data: updateDialectWord) {
-    const currentUser = await auth.api.getSession();
+    const currentUser = await auth.api.getSession({
+        headers: await headers(),
+    });
 
     if (!currentUser) {
         throw new Error("User must be logged in to update a dialect word.");
@@ -169,7 +173,8 @@ export async function UpdateDialectword(data: updateDialectWord) {
 
     try {
         // Uppdaterar dialektordet i databasen med det nya värdet
-        await db.update(dialectWordTable)
+        await db
+            .update(dialectWordTable)
             .set({ word: updateWord.dialectWord })
             .where(eq(dialectWordTable.id, updateWord.id));
 
@@ -232,6 +237,4 @@ export async function SearchDialectWords({ page, pageSize, query }: GetParams) {
         .offset(paginationOffset);
 
     return words;
-
-    // hej
 }
