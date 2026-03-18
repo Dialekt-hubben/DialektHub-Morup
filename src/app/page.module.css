@@ -242,10 +242,11 @@ a.primary {
     display: flex;
     gap: 8px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .paginationButton {
+    min-width: 57px;
     padding: 6px 14px;
     border: 1px solid #ccc;
     background: #fff;
