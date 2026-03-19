@@ -8,6 +8,17 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { Signup } from "@/types/auth";
 
+/*
+### OBS VIKTIGT! Läs in en kopia och inte den ursprungliga Excel-filen eftersom den kommer att modifieras under körning. ###
+
+Denna fil är ett engångsskript som används för att importera ord från en Excel-fil till databasen.
+- Den läser in en specifik flik i Excel-filen,
+- Validerar varje rad och importerar giltiga rader till databasen.
+Rader som inte uppfyller valideringskriterierna loggas och hoppas över.
+Efter importen töms de importerade raderna i Excel-filen för att undvika dubbletter vid framtida körningar av skriptet.
+De rader som inte imorterades på grund av valideringsfel lämnas kvar i Excel-filen så att de kan granskas och korrigeras manuellt.
+*/
+
 type Row = {
     Dialekt: string;
     Svenska: string;
