@@ -15,7 +15,7 @@ function Pagination({ page, totalPages }: PaginationProps) {
 
     const safeTotalPages = Math.max(1, totalPages); // Ensure totalPages is at least 1 to avoid issues with pagination logic
     const currentPage = Math.min(Math.max(page, 1), safeTotalPages); // Ensure current page is between 1 and totalPages
-    const maxVisiblePageButtons = 10;
+    const maxVisiblePageButtons = 10; // Maximum number of page buttons to display at once
 
     // Calculate the range of pagenumbers to display based on the current page untill the max visible page buttons.
     const paginationGroupStart =
@@ -27,7 +27,7 @@ function Pagination({ page, totalPages }: PaginationProps) {
         paginationGroupStart + maxVisiblePageButtons - 1,
     );
 
-    // Create an array of page numbers to display in the pagination based on the calculated start and end of the pagination group.
+    // Create an array of pagenumbers to display in the pagination based on the calculated start and end of the pagination group.
     const currentGroupPages = Array.from(
         {
             length: paginationGroupEnd - paginationGroupStart + 1,
