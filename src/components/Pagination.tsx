@@ -56,12 +56,12 @@ function Pagination({ page, totalPages }: PaginationProps) {
         push(`${pathname}?${params.toString()}`);
     };
 
-    const prevPageGroup = () => {
-        setPage(paginationGroupStart - maxVisiblePageButtons);
+    const jumpToFirstPage = () => {
+        setPage(1);
     };
 
-    const nextPageGroup = () => {
-        setPage(paginationGroupStart + maxVisiblePageButtons);
+    const jumpToLastPage = () => {
+        setPage(safeTotalPages);
     };
 
     return (
@@ -74,12 +74,12 @@ function Pagination({ page, totalPages }: PaginationProps) {
                 Föregående
             </button>
 
-            {/* Knapp för att hoppa tillbaka 10 sidor */}
+            {/* Knapp för att hoppa till första sidan */}
             <button
                 className={styles.paginationButton}
-                onClick={prevPageGroup}
+                onClick={jumpToFirstPage}
                 disabled={paginationGroupStart === 1}>
-                -10
+                {1 + "..."}
             </button>
 
             {/* Skapar max 10 sidknappar åt gången */}
@@ -98,12 +98,12 @@ function Pagination({ page, totalPages }: PaginationProps) {
                 );
             })}
 
-            {/* Knapp för att hoppa fram 10 sidor */}
+            {/* Knapp för att hoppa till sista sidan */}
             <button
                 className={styles.paginationButton}
-                onClick={nextPageGroup}
+                onClick={jumpToLastPage}
                 disabled={paginationGroupEnd === safeTotalPages}>
-                +10
+                {"..." + safeTotalPages}
             </button>
 
             {/* Knapp för nästa sida */}
