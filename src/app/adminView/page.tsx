@@ -2,6 +2,7 @@ import styles from "../page.module.css";
 import Pagination from "../../components/Pagination";
 import AdminTable from "@/components/Admin/AdminTable";
 import SearchField from "@/components/Searchfield";
+import ImportExcelSection from "@/components/Admin/ImportExcelSection";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 import { getActiveUserSession } from "@/lib/auth";
@@ -26,6 +27,7 @@ export default async function AdminView({ searchParams }: Params) {
 
     return (
         <main>
+            <ImportExcelSection />
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
