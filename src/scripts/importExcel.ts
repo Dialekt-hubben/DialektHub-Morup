@@ -13,17 +13,11 @@ type Row = {
     Svenska: string;
 };
 
-const pageToRead = 9; // Fliken på Excel-sidan.
+const EXCEL_FILE_PATH = "ordlista1.xlsx";
+const EXCEL_SHEET_INDEX = 9; // Fliken på Excel-sidan.
+const INVALID_CHARACTER_REGEX = /[ \[,\(0-9]/;
 
-const excelfile = XLSX.readFile("ordlista1.xlsx");
-const pageName = excelfile.SheetNames[pageToRead];
-const page = excelfile.Sheets[pageName];
-const rows = XLSX.utils.sheet_to_json(page, {
-    header: ["Dialekt", "Svenska"], // Vi specificerar headern så att vi får rätt nycklar i objektet
-    blankrows: false, // Vi vill inte ha med tomma rader
-}) as Row[];
-
-class ExcellUser {
+class ExcelUser {
     name: string;
     email: string;
     password: string;
@@ -44,14 +38,26 @@ class ExcellUser {
 class ExcelSuperClass {
     FilePath: string;
     PageNumber: number;
+    Workbook: XLSX.WorkBook;
     Page: XLSX.WorkSheet;
 
     constructor(filePath: string, pageNumber: number) {
         this.FilePath = filePath;
         this.PageNumber = pageNumber;
-        const excelfile = XLSX.readFile(filePath);
-        const pageName = excelfile.SheetNames[pageToRead];
-        this.Page = excelfile.Sheets[pageName];
+        this.Workbook = XLSX.readFile(filePath);
+        const pageName = this.Workbook.SheetNames[pageNumber];
+
+        if (!pageName) {
+            throw new Error(
+                `Worksheet with index ${pageNumber} was not found.`,
+            );
+        }
+
+        this.Page = this.Workbook.Sheets[pageName];
+    }
+
+    private SaveWorkbook() {
+        XLSX.writeFile(this.Workbook, this.FilePath);
     }
 
     public GetRows() {
@@ -71,24 +77,54 @@ class ExcelSuperClass {
             skipHeader: true,
             origin: -1,
         });
-        XLSX.writeFile(excelfile, "ordlista1.xlsx");
+        this.SaveWorkbook();
     }
-
-    public RemoveRow(index: number) {
-        XLSX.utils.sheet_add_json(this.Page, [{ Dialekt: "", Svenska: "" }], {
-            skipHeader: true,
-            origin: index + 1, // +1 eftersom headern är på index 0
-        });
-        XLSX.writeFile(excelfile, "ordlista1.xlsx");
-    }
-
     public UpdateRow(index: number, row: Row) {
         XLSX.utils.sheet_add_json(this.Page, [row], {
             skipHeader: true,
             origin: index + 1, // +1 eftersom headern är på index 0
         });
-        XLSX.writeFile(excelfile, "ordlista1.xlsx");
+        this.SaveWorkbook();
     }
+    public RemoveRow(index: number) {
+        XLSX.utils.sheet_add_json(this.Page, [{ Dialekt: "", Svenska: "" }], {
+            skipHeader: true,
+            origin: index + 1, // +1 eftersom headern är på index 0
+        });
+        this.SaveWorkbook();
+    }
+}
+
+function shouldSkipRow(row: Row) {
+    const dialectWord = row.Dialekt.toString().trim();
+    const nationalWord = row.Svenska.toString().trim();
+
+    if (!dialectWord || !nationalWord) {
+        return {
+            skip: true,
+            reason: "Row has empty values",
+            dialectWord,
+            nationalWord,
+        };
+    }
+
+    if (
+        INVALID_CHARACTER_REGEX.test(dialectWord) ||
+        INVALID_CHARACTER_REGEX.test(nationalWord)
+    ) {
+        return {
+            skip: true,
+            reason: "Row has invalid characters or format",
+            dialectWord,
+            nationalWord,
+        };
+    }
+
+    return {
+        skip: false,
+        dialectWord,
+        nationalWord,
+    };
 }
 
 // Hämta eller skapa nationellt ord
@@ -160,88 +196,61 @@ async function getUserIdByName(
         });
         return result.user.id;
     }
-
-    /*
-
-För en mer generisk lösning.    
-export async function getUserIdByName(name: string): Promise<string | null> {
-    const result = await db
-        .select({ id: user.id })
-        .from(user)
-        .where(eq(user.name, name))
-        .limit(1);
-
-    return result.length > 0 ? result[0].id : null;
-}
-
-// Användning:
-const userId = await getUserIdByName("Håkan Petersson");
-    
-    */
 }
 
 async function importWords() {
-    const excel = new ExcelSuperClass("ordlista1.xlsx", 9);
+    const excel = new ExcelSuperClass(EXCEL_FILE_PATH, EXCEL_SHEET_INDEX);
+    const rows = excel.GetRows();
+    let skippedRows = 0;
 
     // Skapa en användare som ska kopplas till de importerade orden
     // name, email, password och confirmPassword
-    const excelUser = new ExcellUser(
+    const excelUser = new ExcelUser(
         "Håkan Petersson",
         "hakan@glommen.eu",
         "adminadmin",
         "adminadmin",
     );
 
-    // const newuser = auth.api.signUpEmail({
-    //     body: {
-    //         name: excelUser.name,
-    //         email: excelUser.email,
-    //         password: excelUser.password,
-    //         confirmPassword: excelUser.confirmPassword,
-    //     },
-    // });
+    const userId = await getUserIdByName(
+        excelUser.name,
+        excelUser.email,
+        excelUser.password,
+        excelUser.confirmPassword,
+    );
 
-    // transforma woth regex to check if there are multiple words in either Dialekt or Svenska columns. If there are, skip the row and log it.
-    for (const row of excel.GetRows()) {
-        const invalidCharacterRegex = new RegExp("[ \\[,\\(0-9]", "g");
-        if (!row.Dialekt || !row.Svenska) {
-            console.log(
-                `Skipping row with empty values ${row.Dialekt} - ${row.Svenska}`,
-            );
+    // Loopa igenom raderna och importera dem till databasen
+    for (const [index, row] of rows.entries()) {
+        const { skip, reason, dialectWord, nationalWord } = shouldSkipRow(row);
+
+        // Om raden inte är giltig, logga anledningen och fortsätt.
+        if (skip) {
+            console.log("[-] Skipping", { reason, row }, "\n");
+            skippedRows++;
             continue;
-        }
-        if (
-            row.Dialekt.toString().match(invalidCharacterRegex) ||
-            row.Svenska.toString().match(invalidCharacterRegex)
-        ) {
-            console.log(
-                `Skipping row with multiple words ${row.Dialekt} - ${row.Svenska}`,
-            );
-            continue;
+        } else {
+            console.log("[+] Adding", { row });
         }
 
-        console.log({ row });
-
+        // Skapa ett nytt dialektord i databasent med referenser till nationalordet och ljudfilen
         await db.insert(dialectWordTable).values({
-            word: row.Dialekt.trim(),
+            word: dialectWord,
             phrase: "",
             // pronunciation: row.Svenska.trim(),
             status: Math.floor(Math.random() * 3), // add random status between 0 and 2
-            userId: await getUserIdByName(
-                excelUser.name,
-                excelUser.email,
-                excelUser.password,
-                excelUser.confirmPassword,
-            ),
-            nationalWordId: await getOrCreateNationalWord(row.Svenska),
-            soundFileId: await getOrCreateSoundFile(`${row.Dialekt}.mp3`),
+            userId,
+            nationalWordId: await getOrCreateNationalWord(nationalWord),
+            soundFileId: await getOrCreateSoundFile(`${dialectWord}.mp3`),
         });
-        const index = rows.indexOf(row);
-        if (index !== -1) {
-            excel.RemoveRow(index);
-        }
+
+        // Töm raden i Excel först efter lyckad insert i databasen.
+        excel.RemoveRow(index);
     }
-    console.log("Import klar!");
+    console.log("\nImport klar!");
+    console.log("--------------------------------------------------");
+    console.log(`Antal skippade rader: ${skippedRows}`);
+    console.log(`Antal bearbetade rader: ${rows.length - skippedRows}`);
+    console.log("--------------------------------------------------");
 }
 
 importWords();
