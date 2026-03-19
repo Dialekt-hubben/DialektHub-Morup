@@ -20,7 +20,7 @@ export default function Table({ tableData }: TableProps) {
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <th className={styles.tableHeaderCell}>{"Ord"}</th>
+                        <th className={styles.tableHeaderCell}>{"Dialekt"}</th>
                         <th className={styles.tableHeaderCell}>{"Ljudfil"}</th>
                         <th className={styles.tableHeaderCell}>{"Uttal"}</th>
                         <th className={styles.tableHeaderCell}>{"Svenska"}</th>
