@@ -114,7 +114,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         <table className={`${pageStyles.table} ${styles.adminTable}`}>
             <thead>
                 <tr>
-                    <th className={pageStyles.tableHeaderCell}>{"Ord"}</th>
+                    <th className={pageStyles.tableHeaderCell}>{"Dialekt"}</th>
                     <th className={pageStyles.tableHeaderCell}>{"Ljudfil"}</th>
                     <th className={pageStyles.tableHeaderCell}>{"Uttal"}</th>
                     <th className={pageStyles.tableHeaderCell}>{"Svenska"}</th>
