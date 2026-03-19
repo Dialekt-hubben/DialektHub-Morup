@@ -30,6 +30,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
             return;
         }
 
+        // När en rad har sparats, visa "Sparat" i 2.5 sekunder innan det försvinner
         const timerId = setTimeout(() => {
             setSavedRowId(null);
         }, 2500);
@@ -37,11 +38,13 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         return () => clearTimeout(timerId);
     }, [savedRowId]);
 
+    // Funktion för att spela upp ljudfilen
     const playSound = (url: string) => {
         const audio = new window.Audio(url);
         audio.play();
     };
 
+    // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
     const startEdit = (item: DialectWordTableResponse) => {
         setEditingId(item.id);
         setWordValue(item.word);
@@ -50,6 +53,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         setSavedRowId(null);
     };
 
+    // Avbryter redigering och återställer alla tillstånd
     const cancelEdit = () => {
         setEditingId(null);
         setWordValue("");
@@ -62,12 +66,12 @@ export default function AdminTable({ tableData }: AdminTableProps) {
             return;
         }
 
+        // Förbered data för uppdatering, trimma whitespace och validera att fälten inte är tomma
         const targetId = editingId;
+        const targetWord = wordValue.trim();
+        const targetNationalWord = nationalWordValue.trim();
 
-        const trimmedWord = wordValue.trim();
-        const trimmedNationalWord = nationalWordValue.trim();
-
-        if (!trimmedWord || !trimmedNationalWord) {
+        if (!targetWord || !targetNationalWord) {
             setError("Både dialektord och svenskt ord måste fyllas i.");
             return;
         }
@@ -78,8 +82,8 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         try {
             await UpdateDialectword({
                 id: targetId,
-                word: trimmedWord,
-                nationalWord: trimmedNationalWord,
+                word: targetWord,
+                nationalWord: targetNationalWord,
             });
 
             setRows((prevRows) =>
@@ -87,8 +91,8 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                     row.id === targetId
                         ? {
                               ...row,
-                              word: trimmedWord,
-                              nationalWord: trimmedNationalWord,
+                              word: targetWord,
+                              nationalWord: targetNationalWord,
                           }
                         : row,
                 ),
@@ -192,7 +196,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         </label>
 
                                         <label className={styles.inputGroup}>
-                                            <span>Svenskt ord</span>
+                                            <span>Svensktord</span>
                                             <input
                                                 type="text"
                                                 value={nationalWordValue}
