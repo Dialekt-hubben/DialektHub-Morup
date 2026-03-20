@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import pageStyles from "@/app/page.module.css";
 import styles from "./AdminTable.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
@@ -128,7 +128,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
             </thead>
             <tbody>
                 {rows.map((item) => (
-                    <Fragment key={item.id}>
+                    < key={item.id}>
                         <tr>
                             <td className={pageStyles.tableCell}>
                                 {item.word}
@@ -236,7 +236,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                 </td>
                             </tr>
                         )}
-                    </Fragment>
+                    </>
                 ))}
             </tbody>
         </table>
