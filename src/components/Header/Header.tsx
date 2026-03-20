@@ -23,7 +23,7 @@ async function Header() {
                 <ul>
                     <li>
                         {userSession ? (
-                            <form action={signOut} method="post">
+                            <form action={signOut}>
                                 <h5>Välkommen,{userSession?.name}</h5>
                                 <button type="submit" className="btn secondary">
                                     Logga ut

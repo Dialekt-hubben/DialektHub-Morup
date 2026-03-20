@@ -6,7 +6,7 @@ export const dialectWordApi = z.object({
     pronunciation: z.string().min(1, "Uttal är obligatoriskt"),
     audioFile: z
         .instanceof(File)
-        .optional()
+        .nullable()
         .refine(
             (file) =>
                 !file || AllowedFileTypes.includes(file.type.toLowerCase()),
@@ -18,4 +18,4 @@ export const dialectWordApi = z.object({
         ),
 });
 
-export type DialectWordApi = z.infer<typeof dialectWordApi>;
+export type dialectWordApi = z.infer<typeof dialectWordApi>;

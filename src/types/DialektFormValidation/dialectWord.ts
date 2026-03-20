@@ -13,7 +13,6 @@ export const DialectWordTableResponse = z.object({
     nationalWord: z.string().nullable(),
     soundFileUrl: z.string().nullable(),
 });
-
 export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
 // TypeScript interface for add word
@@ -34,5 +33,11 @@ export const addDialectWord = z.object({
             "Filen får inte vara större än 5MB",
         ),
 });
-
 export type addDialectWord = z.infer<typeof addDialectWord>;
+
+export const updateDialectWord = z.object({
+    id: z.number(),
+    word: z.string().min(1, "Dialekt ord är obligatoriskt"),
+    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
+});
+export type updateDialectWord = z.infer<typeof updateDialectWord>;

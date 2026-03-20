@@ -3,20 +3,28 @@ import style from "@/components/Admin/UpdateWordSection.module.css";
 import SearchField from "../Searchfield";
 import EditWordForm from "./EditWordForm";
 
+type SearchWordResult = {
+    id: number;
+    word: string;
+    nationalWord: string | null;
+};
+
 type UpdateWordSectionProps = {
     loading: boolean;
-    results: any[];
+    results: SearchWordResult[];
     query: string;
+    searchError: string;
 };
 
 const UpdateWordSection: React.FC<UpdateWordSectionProps> = ({
     loading,
     results,
     query,
+    searchError,
 }) => {
-    const [editWord, setEditWord] = useState<any | null>(null);
+    const [editWord, setEditWord] = useState<SearchWordResult | null>(null);
 
-    const handleEdit = (word: any) => {
+    const handleEdit = (word: SearchWordResult) => {
         setEditWord(word);
     };
 
@@ -24,10 +32,8 @@ const UpdateWordSection: React.FC<UpdateWordSectionProps> = ({
         setEditWord(null);
     };
 
-    // Optional: callback for after update
     const handleUpdated = () => {
         setEditWord(null);
-        // Optionally: trigger reload of results here
     };
 
     return (
@@ -38,9 +44,10 @@ const UpdateWordSection: React.FC<UpdateWordSectionProps> = ({
             <SearchField />
             <div className={style.updateWordSectionResults}>
                 {loading && <p>Söker...</p>}
+                {!loading && searchError && <p>{searchError}</p>}
                 {!loading && results.length > 0 && (
                     <ul>
-                        {results.map((word: any) => (
+                        {results.map((word) => (
                             <li key={word.id}>
                                 <b>{word.word}</b> - {word.nationalWord}{" "}
                                 <button
@@ -52,7 +59,7 @@ const UpdateWordSection: React.FC<UpdateWordSectionProps> = ({
                                     <EditWordForm
                                         id={word.id}
                                         dialectWord={word.word}
-                                        nationalWord={word.nationalWord}
+                                        nationalWord={word.nationalWord ?? ""}
                                         onClose={handleClose}
                                         onUpdated={handleUpdated}
                                     />
@@ -61,9 +68,10 @@ const UpdateWordSection: React.FC<UpdateWordSectionProps> = ({
                         ))}
                     </ul>
                 )}
-                {!loading && query.length >= 2 && results.length === 0 && (
-                    <p>Inga träffar.</p>
-                )}
+                {!loading &&
+                    !searchError &&
+                    query.length >= 2 &&
+                    results.length === 0 && <p>Inga träffar.</p>}
             </div>
         </div>
     );
