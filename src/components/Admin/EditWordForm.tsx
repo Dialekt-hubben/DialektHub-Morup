@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SubmitEvent, useState } from "react";
 import { UpdateDialectword } from "@/actions/dialectwords";
 
 interface EditWordFormProps {
@@ -21,8 +21,8 @@ export default function EditWordForm({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
         setLoading(true);
         setError("");
         try {
@@ -58,7 +58,7 @@ export default function EditWordForm({
                     <input
                         type="text"
                         value={dialekt}
-                        onChange={(e) => setDialekt(e.target.value)}
+                        onChange={(event) => setDialekt(event.target.value)}
                         disabled={loading}
                     />
                 </label>
@@ -69,7 +69,7 @@ export default function EditWordForm({
                     <input
                         type="text"
                         value={national}
-                        onChange={(e) => setNational(e.target.value)}
+                        onChange={(event) => setNational(event.target.value)}
                         disabled={loading}
                     />
                 </label>
