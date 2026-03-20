@@ -27,11 +27,11 @@ export default async function AdminView({ searchParams }: Params) {
 
     return (
         <main>
-            <ImportExcelSection />
             <div className={styles.tableContainerWrapper}>
                 <div>
                     <div className={styles.tableContainer}>
                         <SearchField />
+                        <Pagination page={+page} totalPages={totalPages} />
                         <div className={styles.tableHeader}>
                             <h2>Ordlista</h2>
                             <div>
@@ -45,7 +45,7 @@ export default async function AdminView({ searchParams }: Params) {
                         </div>
                         <AdminTable tableData={res.rawData} />
                     </div>
-                    <Pagination page={+page} totalPages={totalPages} />
+                    <ImportExcelSection />
                 </div>
             </div>
         </main>
