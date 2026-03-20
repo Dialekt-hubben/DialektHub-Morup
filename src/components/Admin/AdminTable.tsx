@@ -128,7 +128,8 @@ export default function AdminTable({ tableData }: AdminTableProps) {
             </thead>
             <tbody>
                 {rows.map((item) => (
-                    < key={item.id}>
+                    <>
+                        key={item.id}
                         <tr>
                             <td className={pageStyles.tableCell}>
                                 {item.word}
@@ -176,7 +177,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                 </div>
                             </td>
                         </tr>
-
                         {editingId === item.id && (
                             <tr>
                                 <td colSpan={6} className={styles.editRowCell}>
