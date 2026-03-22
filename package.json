@@ -8,9 +8,9 @@
         "start": "next start",
         "lint": "eslint",
         "format": "prettier --write .",
-        "db:studio": "drizzle-kit studio",
-        "db:migrate": "drizzle-kit migrate",
-        "db:generate": "drizzle-kit generate",
+        "db:studio": "drizzle-kit studio --config ./drizzle.config.ts",
+        "db:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
+        "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
         "db:seed": "tsx src/Drizzle/seed.ts"
     },
     "dependencies": {
@@ -20,8 +20,9 @@
         "@libsql/client": "^0.17.0",
         "@t3-oss/env-nextjs": "^0.13.10",
         "better-auth": "^1.4.20",
-        "dotenv": "^17.2.3",
+        "dotenv": "^17.3.1",
         "drizzle-orm": "^0.45.1",
+        "mysql2": "^3.19.1",
         "next": "^16.1.6",
         "react": "19.2.3",
         "react-dom": "19.2.3",
