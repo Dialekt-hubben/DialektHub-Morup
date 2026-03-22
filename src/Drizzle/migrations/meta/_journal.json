@@ -1,40 +1,12 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "mysql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1767966937788,
-      "tag": "0000_equal_leech",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1767994524762,
-      "tag": "0001_gifted_magdalene",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1767994876065,
-      "tag": "0002_jittery_wild_pack",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1767995277769,
-      "tag": "0003_curvy_psynapse",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1773391996694,
-      "tag": "0004_modern_moonstone",
+      "version": "5",
+      "when": 1774080061750,
+      "tag": "0000_faulty_menace",
       "breakpoints": true
     }
   ]
