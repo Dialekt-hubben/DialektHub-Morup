@@ -1,7 +1,7 @@
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { mysqlTable, text, int } from "drizzle-orm/mysql-core";
 
-export const soundFileTable = sqliteTable("sound_file_table", {
-    id: int().primaryKey({ autoIncrement: true }),
-    fileName: text().notNull(),
-    url: text().notNull(),
+export const soundFileTable = mysqlTable("sound_file_table", {
+    id: int("id").primaryKey().autoincrement(),
+    fileName: text("file_name").notNull(),
+    url: text("url").notNull(),
 });

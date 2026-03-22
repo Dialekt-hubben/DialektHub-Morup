@@ -1,19 +1,19 @@
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { mysqlTable, serial, text, varchar, int } from "drizzle-orm/mysql-core";
 import { nationalWordTable } from "./NationalWord";
 import { soundFileTable } from "./SoundFile";
 import { user } from "./auth-schema";
 
-export const dialectWordTable = sqliteTable("dialect_word_table", {
-    id: int().primaryKey({ autoIncrement: true }),
-    word: text().notNull(),
-    pronunciation: text(),
-    phrase: text(),
-    status: int().default(0),
-    userId: text()
+export const dialectWordTable = mysqlTable("dialect_word_table", {
+    id: serial("id").primaryKey(),
+    word: text("word").notNull(),
+    pronunciation: text("pronunciation"),
+    phrase: text("phrase"),
+    status: int("status").default(0),
+    userId: varchar("user_id", { length: 36 })
         .references(() => user.id)
         .notNull(),
-    nationalWordId: int()
+    nationalWordId: int("national_word_id")
         .references(() => nationalWordTable.id)
         .notNull(),
-    soundFileId: int().references(() => soundFileTable.id),
+    soundFileId: int("sound_file_id").references(() => soundFileTable.id),
 });
