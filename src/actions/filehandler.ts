@@ -37,7 +37,7 @@ export async function getFile() {
             // Säkerställ att Key finns
 
             if (!obj.Key) {
-                return;
+                return [];
             }
 
             const command = new GetObjectCommand({

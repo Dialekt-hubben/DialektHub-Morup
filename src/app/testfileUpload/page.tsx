@@ -12,7 +12,7 @@ export default async function Page() {
             </form>
             {/* {files && <audio controls src={files[0]}></audio>} */}
             <ul>
-                {files?.map((file, index) => (
+                {files.map((file, index) => (
                     <li key={index}>
                         <audio controls key={index} src={file}></audio>
                     </li>
