@@ -43,6 +43,27 @@ COPY --from=dependencies /app/node_modules ./node_modules
 
 # Copy application source code
 COPY . .
+ARG DATABASE_URL
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG BETTER_AUTH_SECRET
+ARG BETTER_AUTH_BASE_URL
+ARG S3_ACCESS_KEY
+ARG S3_SECRET_KEY
+ARG S3_REGION
+ARG S3_BUCKET_NAME
+ARG S3_ENDPOINT
+
+ENV DATABASE_URL=$DATABASE_URL
+ENV MYSQL_USER=$MYSQL_USER
+ENV MYSQL_PASSWORD=$MYSQL_PASSWORD
+ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
+ENV BETTER_AUTH_BASE_URL=$BETTER_AUTH_BASE_URL
+ENV S3_ACCESS_KEY=$S3_ACCESS_KEY
+ENV S3_SECRET_KEY=$S3_SECRET_KEY
+ENV S3_REGION=$S3_REGION
+ENV S3_BUCKET_NAME=$S3_BUCKET_NAME
+ENV S3_ENDPOINT=$S3_ENDPOINT
 
 ENV NODE_ENV=production
 
@@ -98,6 +119,12 @@ RUN chown node:node .next
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
+# Drizzle Files
+COPY --from=builder /app/src/Drizzle/migrations ./src/Drizzle/migrations
+
+# Drizzle migrations
+COPY --from=builder /app/src/Drizzle/migrate.ts ./src/Drizzle/migrate.ts
+
 # If you want to persist the fetch cache generated during the build so that
 # cached responses are available immediately on startup, uncomment this line:
 # COPY --from=builder --chown=node:node /app/.next/cache ./.next/cache
@@ -109,4 +136,4 @@ USER node
 EXPOSE 3000
 
 # Start Next.js standalone server
-CMD ["node", "server.js"]
+# CMD ["node", "server.js"]
