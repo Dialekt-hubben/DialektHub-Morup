@@ -1,8 +1,8 @@
-"use client";
-import { useState } from "react";
+import { SubmitEvent, useState } from "react";
+import { UpdateDialectword } from "@/actions/dialectwords";
 
 interface EditWordFormProps {
-    id: string;
+    id: number | string;
     dialectWord: string;
     nationalWord: string;
     onClose: () => void;
@@ -21,32 +21,30 @@ export default function EditWordForm({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
         setLoading(true);
         setError("");
         try {
-            const res = await fetch(`/api/dialectwords`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    id,
-                    dialectWord: dialekt,
-                    nationalWord: national,
-                }),
+            const parsedId = Number(id);
+            if (Number.isNaN(parsedId)) {
+                throw new Error("Ogiltigt id för ordet.");
+            }
+
+            await UpdateDialectword({
+                id: parsedId,
+                word: dialekt,
+                nationalWord: national,
             });
 
-            if (!res.ok) {
-                throw new Error("Kunde inte uppdatera ordet.");
-            }
             if (onUpdated) {
                 onUpdated();
             }
             onClose();
-        } catch (err: any) {
-            setError(err.message || "Något gick fel.");
+        } catch (err: unknown) {
+            const message =
+                err instanceof Error ? err.message : "Något gick fel.";
+            setError(message);
         } finally {
             setLoading(false);
         }
@@ -60,7 +58,7 @@ export default function EditWordForm({
                     <input
                         type="text"
                         value={dialekt}
-                        onChange={(e) => setDialekt(e.target.value)}
+                        onChange={(event) => setDialekt(event.target.value)}
                         disabled={loading}
                     />
                 </label>
@@ -71,7 +69,7 @@ export default function EditWordForm({
                     <input
                         type="text"
                         value={national}
-                        onChange={(e) => setNational(e.target.value)}
+                        onChange={(event) => setNational(event.target.value)}
                         disabled={loading}
                     />
                 </label>

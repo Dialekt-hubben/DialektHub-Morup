@@ -1,15 +1,23 @@
 import React from "react";
 import style from "@/components/Admin/ImportExcelSection.module.css";
 
-const ImportExcelSection: React.FC = () => (
+const ImportExcelSection: React.FC = (file) => (
     <div className={style.importExcelSection}>
         <h2>Läs in en Excel-fil</h2>
         <hr />
-        <br />
         <p>
-            För att importera en Excel-fil, klicka på knappen nedan och välj din
-            fil. Filen måste vara i ett av följande format:
-            <small>.xlsx,.xls,.csv</small>
+            Vissa förutsättningar måste uppfyllas för att importen ska lyckas.
+            Se till att din fil är sorterad/uppsatt enligt följande kolumner.
+            <br />
+            <strong>
+                [A] Dialektalt ord
+                <br />
+                [B] Nationellt ord
+                <br />
+                [C] Uttal (alternativt)
+            </strong>
+            <br />
+            Tillåtet Format:<small>.xlsx,.xls,.csv</small>
         </p>
         <br />
         <input type="file" accept=".xlsx,.xls,.csv" id="excel-file" />
