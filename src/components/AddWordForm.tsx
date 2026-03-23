@@ -45,14 +45,14 @@ function AddWordForm() {
                 <InputGroup
                     label="Dialekt ord"
                     placeholder="Skriv dialekt ordet här..."
-                    {...register("word")}
-                    errorMessage={errors.word?.message}
+                    {...register("dialectWord")}
+                    errorMessage={errors.dialectWord?.message}
                 />
                 <InputGroup
                     label="Svenskt ord"
                     placeholder="Skriv det svenska ordet här..."
-                    {...register("pronunciation")}
-                    errorMessage={errors.pronunciation?.message}
+                    {...register("nationalWord")}
+                    errorMessage={errors.nationalWord?.message}
                 />
                 <br />
                 <p>Ladda upp en ljudfil eller spela in direkt</p>

@@ -33,7 +33,7 @@ export default function EditWordForm({
 
             await UpdateDialectword({
                 id: parsedId,
-                word: dialekt,
+                dialectWord: dialekt,
                 nationalWord: national,
             });
 

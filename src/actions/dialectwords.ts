@@ -100,7 +100,9 @@ export async function CreateDialectWord(data: addDialectWord) {
         );
     }
 
-    const { word, pronunciation, audioFile } = fileParseResult.data;
+    // När vi skapar ett nytt ord och det redan finns ett nationellt ord behöver vi ta till vara på NationalWordId
+    // och koppla det in inmatade DialectWord ifrån inputen.
+    const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
     const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
 
     if (audioFile && audioFileName) {
@@ -113,14 +115,31 @@ export async function CreateDialectWord(data: addDialectWord) {
         await s3Client.send(command);
     }
 
+    const existingNationalWord = await db
+        .select(
+            { id: nationalWordTable.id },
+        )
+        .from(nationalWordTable)
+        .where(eq(nationalWordTable.word, nationalWord))
+        .limit(1);
+
     // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
+    // transactionen hanterar både skapandet av nationalordet och dialektordet, samt kopplingen mellan dem
     await db.transaction(async (tx) => {
-        const nationalWordId = (
-            await tx
+        // Kolla om det redan finns ett nationellt ord som matchar det inmatade, och hämta dess ID
+
+        let nationalWordId: number;
+
+        if (existingNationalWord.length > 0) {
+            nationalWordId = existingNationalWord[0].id;
+        } else {
+            // Om det inte finns, skapa ett nytt nationellt ord och hämta dess ID
+            const insertedNationalWord = await tx
                 .insert(nationalWordTable)
-                .values({ word: pronunciation })
-                .returning({ id: nationalWordTable.id })
-        )[0];
+                .values({ word: nationalWord })
+                .returning({ id: nationalWordTable.id });
+            nationalWordId = insertedNationalWord[0].id;
+        }
 
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
@@ -136,13 +155,57 @@ export async function CreateDialectWord(data: addDialectWord) {
         }
 
         await tx.insert(dialectWordTable).values({
-            word,
-            pronunciation,
+            word: dialectWord,
+            // pronunciation: nationalWord,
             userId: currentUser.user.id,
-            nationalWordId: nationalWordId.id,
+            nationalWordId: nationalWordId,
             soundFileId: soundFileId ? soundFileId.id : undefined,
         });
     });
+
+    // const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
+    // const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
+
+    // if (audioFile && audioFileName) {
+    //     const command = new PutObjectCommand({
+    //         Bucket: env.S3_BUCKET_NAME,
+    //         Key: audioFileName,
+    //         Body: Buffer.from(await audioFile.arrayBuffer()),
+    //         ContentType: audioFile.type,
+    //     });
+    //     await s3Client.send(command);
+    // }
+
+    // // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
+    // await db.transaction(async (tx) => {
+    //     const nationalWordId = (
+    //         await tx
+    //             .insert(nationalWordTable)
+    //             .values({ word: nationalWord })
+    //             .returning({ id: nationalWordTable.id })
+    //     )[0];
+
+    //     let soundFileId: { id: number } | undefined = undefined;
+    //     if (audioFile && audioFileName) {
+    //         soundFileId = (
+    //             await tx
+    //                 .insert(soundFileTable)
+    //                 .values({
+    //                     fileName: audioFileName,
+    //                     url: `/uploads/${audioFileName}`,
+    //                 })
+    //                 .returning({ id: soundFileTable.id })
+    //         ).at(0);
+    //     }
+
+    //     await tx.insert(dialectWordTable).values({
+    //         word: dialectWord,
+    //         pronunciation: nationalWord,
+    //         userId: currentUser.user.id,
+    //         nationalWordId: nationalWordId.id,
+    //         soundFileId: soundFileId ? soundFileId.id : undefined,
+    //     });
+    // });
 }
 
 export async function UpdateDialectword(data: updateDialectWord) {
@@ -157,7 +220,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
     // Skapa ett schema som matchar det vi skickar från frontend och validera det
     const updateWord = {
         id: data.id,
-        dialectWord: data.word,
+        dialectWord: data.dialectWord,
         nationalWord: data.nationalWord,
     };
 
