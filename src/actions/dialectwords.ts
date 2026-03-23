@@ -17,6 +17,7 @@ import { Status } from "@/types/status";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { count, eq, sql, like, or, and } from "drizzle-orm";
 import { headers } from "next/headers";
+import z from "zod";
 
 type GetParams = {
     query: string;
@@ -24,19 +25,30 @@ type GetParams = {
     pageSize: number;
 };
 
+const GetStatusFromNumber = (statusIndex: number | null): Status => {
+    switch (statusIndex) {
+        case 0:
+            return "pending";
+        case 1:
+            return "approved";
+        case 2:
+            return "rejected";
+        default:
+            return "pending";
+    }
+};
+
 export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     const paginationSize = pageSize;
     const paginationOffset = (page - 1) * pageSize;
 
-    const likeQuery = query
-        ? and(
-              like(
+    const caseInsensitiveWordFilter = query
+        ?  like(
                   sql`lower(${nationalWordTable.word})`,
                   `%${query.toLowerCase()}%`,
-              ),
-              undefined,
-          )
-        : undefined;
+              ) && // Case-insensitive search on the national word
+          eq(dialectWordTable.status, 1) // Only show approved words when searching
+        : eq(dialectWordTable.status, 1); // Only show approved words when no search query is provided;
 
     const rawData = await db
         .select({
@@ -59,7 +71,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
             soundFileTable,
             eq(dialectWordTable.soundFileId, soundFileTable.id),
         )
-        .where(likeQuery)
+        .where(caseInsensitiveWordFilter)
         .limit(paginationSize)
         .offset(paginationOffset);
 
@@ -70,7 +82,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
             nationalWordTable,
             eq(dialectWordTable.nationalWordId, nationalWordTable.id),
         )
-        .where(likeQuery);
+        .where(caseInsensitiveWordFilter);
 
     return {
         rawData: rawData.map((item) => ({
@@ -100,40 +112,40 @@ export async function CreateDialectWord(data: addDialectWord) {
         );
     }
 
-    const { word, pronunciation, audioFile } = fileParseResult.data;
-    const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
+    // const { word, pronunciation, audioFile } = fileParseResult.data;
+    // const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
 
-    if (audioFile && audioFileName) {
-        const command = new PutObjectCommand({
-            Bucket: env.S3_BUCKET_NAME,
-            Key: audioFileName,
-            Body: Buffer.from(await audioFile.arrayBuffer()),
-            ContentType: audioFile.type,
-        });
-        await s3Client.send(command);
-    }
+    // if (audioFile && audioFileName) {
+    //     const command = new PutObjectCommand({
+    //         Bucket: env.S3_BUCKET_NAME,
+    //         Key: audioFileName,
+    //         Body: Buffer.from(await audioFile.arrayBuffer()),
+    //         ContentType: audioFile.type,
+    //     });
+    //     await s3Client.send(command);
+    // }
 
-    // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
-    await db.transaction(async (tx) => {
-        const nationalWordId = (
-            await tx
-                .insert(nationalWordTable)
-                .values({ word: pronunciation })
-                .returning({ id: nationalWordTable.id })
-        )[0];
+    // // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
+    // await db.transaction(async (tx) => {
+    //     const nationalWordId = (
+    //         await tx
+    //             .insert(nationalWordTable)
+    //             .values({ word: pronunciation })
+    //             .returning({ id: nationalWordTable.id })
+    //     )[0];
 
-        let soundFileId: { id: number } | undefined = undefined;
-        if (audioFile && audioFileName) {
-            soundFileId = (
-                await tx
-                    .insert(soundFileTable)
-                    .values({
-                        fileName: audioFileName,
-                        url: `/uploads/${audioFileName}`,
-                    })
-                    .returning({ id: soundFileTable.id })
-            ).at(0);
-        }
+    //     let soundFileId: { id: number } | undefined = undefined;
+    //     if (audioFile && audioFileName) {
+    //         soundFileId = (
+    //             await tx
+    //                 .insert(soundFileTable)
+    //                 .values({
+    //                     fileName: audioFileName,
+    //                     url: `/uploads/${audioFileName}`,
+    //                 })
+    //                 .returning({ id: soundFileTable.id })
+    //         ).at(0);
+    //     }
 
         await tx.insert(dialectWordTable).values({
             word,
@@ -154,22 +166,22 @@ export async function UpdateDialectword(data: updateDialectWord) {
         throw new Error("User must be logged in to update a dialect word.");
     }
 
-    // Skapa ett schema som matchar det vi skickar från frontend och validera det
-    const updateWord = {
-        id: data.id,
-        dialectWord: data.word,
-        nationalWord: data.nationalWord,
-    };
+    // Todo: Move this schema to a separate file since it cam be used in multiple places
+    const updateWordSchema = z.object({
+        id: z.number(),
+        dialectWord: z.string(),
+        nationalWord: z.string(),
+    });
 
-    if (
-        typeof updateWord.id !== "number" ||
-        typeof updateWord.dialectWord !== "string" ||
-        typeof updateWord.nationalWord !== "string"
-    ) {
+    const parsedData = updateWordSchema.safeParse(data);
+
+    if (!parsedData.success) {
         throw new Error(
             "Ogiltig data: id, dialectWord och nationalWord krävs.",
         );
     }
+
+    const updateWord = parsedData.data;
 
     try {
         // Uppdaterar dialektordet i databasen med det nya värdet

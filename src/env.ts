@@ -8,6 +8,9 @@ export const env = createEnv({
      */
     server: {
         DATABASE_URL: z.url(),
+        MYSQL_USER: z.string().min(1),
+        MYSQL_PASSWORD: z.string().min(1),
+
         BETTER_AUTH_SECRET: z.string().min(1),
         BETTER_AUTH_BASE_URL: z.url(),
         NODE_ENV: z.enum(["development", "test", "production"]),
@@ -32,6 +35,8 @@ export const env = createEnv({
     runtimeEnv: {
         DATABASE_URL: process.env.DATABASE_URL,
         NODE_ENV: process.env.NODE_ENV,
+        MYSQL_USER: process.env.MYSQL_USER,
+        MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
         // NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
         BETTER_AUTH_BASE_URL: process.env.BETTER_AUTH_BASE_URL,

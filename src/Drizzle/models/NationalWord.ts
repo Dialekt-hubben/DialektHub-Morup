@@ -1,7 +1,7 @@
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { mysqlTable, text, int } from "drizzle-orm/mysql-core";
 
-export const nationalWordTable = sqliteTable("national_word_table", {
-    id: int().primaryKey({ autoIncrement: true }),
-    word: text().notNull(),
-    description: text(),
+export const nationalWordTable = mysqlTable("national_word_table", {
+    id: int("id").primaryKey().autoincrement(),
+    word: text("word").notNull(),
+    description: text("description"),
 });

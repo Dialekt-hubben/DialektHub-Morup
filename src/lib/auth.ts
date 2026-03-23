@@ -1,4 +1,5 @@
 import db from "@/Drizzle";
+import * as authSchema from "@/Drizzle/models/auth-schema";
 import { env } from "@/env";
 import { AuthUser } from "@/types/auth";
 import { betterAuth } from "better-auth";
@@ -10,7 +11,8 @@ import { redirect } from "next/navigation";
 export const auth = betterAuth({
     baseURL: env.BETTER_AUTH_BASE_URL,
     database: drizzleAdapter(db, {
-        provider: "sqlite",
+        provider: "mysql",
+        schema: authSchema,
     }),
     emailAndPassword: {
         enabled: true,

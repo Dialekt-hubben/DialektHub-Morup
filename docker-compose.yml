@@ -1,11 +1,101 @@
-version: "3.8"
 services:
+    db:
+        image: mysql:latest
+        container_name: mysql-container
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: DialektHubDB
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        ports:
+            - "3306:3306"
+        volumes:
+            - db_data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+    migrator:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: builder
+            args:
+                DATABASE_URL: ${DATABASE_URL}
+                MYSQL_USER: ${MYSQL_USER}
+                MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+                BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+                S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+                S3_SECRET_KEY: ${S3_SECRET_KEY}
+                S3_REGION: ${S3_REGION}
+                S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+                S3_ENDPOINT: http://S3Ninja:9000/s3
+                BETTER_AUTH_BASE_URL: ${BETTER_AUTH_BASE_URL:-http://localhost:3000}
+        image: migrator-image
+        environment:
+            NODE_ENV: production
+        command: npx tsx src/Drizzle/migrate.ts
+        depends_on:
+            db:
+                condition: service_healthy
     S3Ninja:
         image: scireum/s3-ninja:latest
         container_name: s3ninja
         ports:
-          - "9000:9000"
+            - "9000:9000"
         volumes:
-          - ./s3data:/home/sirius/data
+            - ./s3data:/home/sirius/data
         environment:
-          - TZ=Europe/Stockholm
+            - TZ=Europe/Stockholm
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9000/s3"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+    DialektHub:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                DATABASE_URL: ${DATABASE_URL}
+                MYSQL_USER: ${MYSQL_USER}
+                MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+                BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+                S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+                S3_SECRET_KEY: ${S3_SECRET_KEY}
+                S3_REGION: ${S3_REGION}
+                S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+                S3_ENDPOINT: http://S3Ninja:9000/s3
+                BETTER_AUTH_BASE_URL: ${BETTER_AUTH_BASE_URL:-http://localhost:3000}
+        image: dialekt-hub-image
+        container_name: dialekt-hub-container
+        environment:
+            DATABASE_URL: ${DATABASE_URL}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            
+            BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+            BETTER_AUTH_BASE_URL: ${BETTER_AUTH_BASE_URL:-http://0.0.0.0:3000}
+
+            S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+            S3_SECRET_KEY: ${S3_SECRET_KEY}
+            S3_REGION: ${S3_REGION}
+            S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+            S3_ENDPOINT: http://S3Ninja:9000/s3
+
+            NODE_ENV: production
+            PORT: "3000"
+        ports:
+            - "3000:3000"
+        depends_on:
+            S3Ninja:
+                condition: service_healthy # Startar ENDAST om S3Ninja är redo
+            migrator:
+                condition: service_completed_successfully # Startar ENDAST om migratorn lyckades
+        command: ["node", "server.js"]
+        restart: unless-stopped
+
+volumes:
+    db_data:
