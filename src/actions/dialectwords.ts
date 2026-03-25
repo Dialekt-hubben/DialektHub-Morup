@@ -43,10 +43,10 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     const paginationOffset = (page - 1) * pageSize;
 
     const caseInsensitiveWordFilter = query
-        ?  like(
-                  sql`lower(${nationalWordTable.word})`,
-                  `%${query.toLowerCase()}%`,
-              ) && // Case-insensitive search on the national word
+        ? like(
+              sql`lower(${nationalWordTable.word})`,
+              `%${query.toLowerCase()}%`,
+          ) && // Case-insensitive search on the national word
           eq(dialectWordTable.status, 1) // Only show approved words when searching
         : eq(dialectWordTable.status, 1); // Only show approved words when no search query is provided;
 
@@ -147,14 +147,14 @@ export async function CreateDialectWord(data: addDialectWord) {
     //         ).at(0);
     //     }
 
-        await tx.insert(dialectWordTable).values({
-            word,
-            pronunciation,
-            userId: currentUser.user.id,
-            nationalWordId: nationalWordId.id,
-            soundFileId: soundFileId ? soundFileId.id : undefined,
-        });
-    });
+    //     await tx.insert(dialectWordTable).values({
+    //         word,
+    //         pronunciation,
+    //         userId: currentUser.user.id,
+    //         nationalWordId: nationalWordId.id,
+    //         soundFileId: soundFileId ? soundFileId.id : undefined,
+    //     });
+    // });
 }
 
 export async function UpdateDialectword(data: updateDialectWord) {
