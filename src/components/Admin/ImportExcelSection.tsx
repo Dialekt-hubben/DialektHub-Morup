@@ -10,10 +10,11 @@ import * as XLSX from "xlsx";
 // Eventuella rader som inte kan importeras på grund av valideringsfel kommer att lämnas kvar i Excel-filen för manuell granskning och korrigering.
 // OBS: För att denna komponent ska fungera korrekt, måste importExcelRows-funktionen vara ordentligt implementerad för att hantera filinläsning, validering och databasinteraktion.
 // Dessutom måste nödvändiga beroenden som XLSX-biblioteket vara installerade och korrekt konfigurerade i projektet.
+type Row = [Dialekt: string, Svenska: string];
 
-function shouldSkipRow(row: any) {
-    const dialectWord = row[0].toString().trim();
-    const nationalWord = row[1].toString().trim();
+function shouldSkipRow(row: Row | any[]) {
+    const dialectWord = row[0]?.toString?.().trim?.() ?? "";
+    const nationalWord = row[1]?.toString?.().trim?.() ?? "";
 
     if (!dialectWord || !nationalWord) {
         return {
@@ -31,12 +32,12 @@ function shouldSkipRow(row: any) {
 }
 
 const ImportExcelSection: React.FC = () => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const fileInput = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
 
     const handleImport = async () => {
-        const file = fileInputRef.current?.files?.[0];
+        const file = fileInput.current?.files?.[0];
         if (!file) {
             setMessage("Välj en fil först.");
             return;
@@ -45,35 +46,43 @@ const ImportExcelSection: React.FC = () => {
         setMessage(null);
 
         try {
-            const data = await file.arrayBuffer(); // Läs in filen som en array buffer
-            const excelFile = XLSX.read(data, { type: "array" }); // Läs in Excel-filen
-            const page = excelFile.SheetNames[0]; // Använd den första fliken i Excel-filen
-            const sheet = excelFile.Sheets[page]; // Läs in alla rader från den valda fliken
-            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 }); // Konvertera arket till en array av rader, där varje rad är en array av cellvärden
+            const data = await file.arrayBuffer();
+            const excelFile = XLSX.read(data, { type: "array" });
 
-            // Validera och filtrera rader
-            const parsedRows = rows.slice(1).map((row) => shouldSkipRow(row));
+            let allValidRows: { dialectWord: string; nationalWord: string }[] =
+                [];
+            let allSkippedRows: any[] = [];
 
-            // om det finns giltiga rader, importera dem till databasen
-            const validRows = parsedRows
-                .filter((row) => !row.skip)
-                .map((row) => ({
-                    dialectWord: row.dialectWord,
-                    nationalWord: row.nationalWord,
-                }));
+            for (const sheetName of excelFile.SheetNames) {
+                const sheet = excelFile.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-            // Räkna antalet skippade rader baserat på valideringsresultatet
-            const skippedRows = parsedRows.filter((row) => row.skip);
+                const parsedRows = rows
+                    .slice(1)
+                    .map((row) => shouldSkipRow(row as Row));
 
-            // Importera de giltiga raderna till databasen och få resultatett av importen, inklusive eventuella felmeddelanden eller framgångsmeddelanden.
+                const validRows = parsedRows
+                    .filter((row) => !row.skip)
+                    .map((row) => ({
+                        dialectWord: row.dialectWord,
+                        nationalWord: row.nationalWord,
+                    }));
+
+                const skippedRows = parsedRows.filter((row) => row.skip);
+
+                allValidRows.push(...validRows);
+                allSkippedRows.push(...skippedRows);
+            }
+
             let result = null;
-            if (validRows.length > 0) {
-                result = await importExcelRows(validRows);
+            if (allValidRows.length > 0) {
+                result = await importExcelRows(allValidRows);
             }
             setMessage(
-                (result?.message || "Import klar!") +
-                    `\nAntal importerade: ${validRows.length}
-                    \nAntal skippade: ${skippedRows.length}`,
+                "Import klar!" +
+                    `\nAntal rader kontrollerade: ${allValidRows.length + allSkippedRows.length}` +
+                    `\nAntal rader tillgda: ${allValidRows.length}` +
+                    `\nAntal skippade: ${allSkippedRows.length}`,
             );
         } catch (err: any) {
             setMessage("Fel vid import: " + err.message);
@@ -87,22 +96,28 @@ const ImportExcelSection: React.FC = () => {
             <h2>Läs in en Excel-fil</h2>
             <hr />
             <p>
-                Vissa förutsättningar måste uppfyllas för att importen ska
-                lyckas. Se till att din fil är sorterad/uppsatt enligt följande
-                kolumner.
+                Se till att Excel-filen är i rätt format innan du importerar.
+                Första kolumnen ska innehålla det dialektala ordet och Andra
+                kolumnen dess motsvarande nationella ord.
                 <br />
                 <strong>
                     [A] Dialektalt ord
                     <br />
                     [B] Nationellt ord
                     <br />
-                    [C] Uttal (alternativt)
                 </strong>
                 <br />
                 Tillåtet Format:<small>.xlsx,.xls,.csv</small>
             </p>
             <br />
-            <input type="file" accept=".xlsx,.xls,.csv" ref={fileInputRef} />
+            <input
+                className={style.fileInput}
+                id="excel-file"
+                type="file"
+                disabled={loading}
+                accept=".xlsx,.xls,.csv"
+                ref={fileInput}
+            />
             <button
                 className="btn primary"
                 onClick={handleImport}
