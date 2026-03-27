@@ -6,8 +6,6 @@ import { AllowedFileTypes, MaxFileSize } from "./audioFileConstraints";
 export const DialectWordTableResponse = z.object({
     id: z.number(),
     word: z.string(),
-    pronunciation: z.string().nullable(),
-    phrase: z.string().nullable(),
     status: Status,
     userName: z.string().nullable(),
     nationalWord: z.string().nullable(),

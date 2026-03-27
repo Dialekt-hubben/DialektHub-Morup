@@ -54,8 +54,6 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
         .select({
             id: dialectWordTable.id,
             word: dialectWordTable.word,
-            pronunciation: dialectWordTable.pronunciation,
-            phrase: dialectWordTable.phrase,
             status: dialectWordTable.status,
             userName: user.name,
             nationalWord: nationalWordTable.word,
