@@ -151,9 +151,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                 )}
                             </td>
                             <td className={pageStyles.tableCell}>
-                                {item.pronunciation}
-                            </td>
-                            <td className={pageStyles.tableCell}>
                                 {item.nationalWord}
                             </td>
                             <td className={pageStyles.tableCell}>

@@ -53,9 +53,6 @@ export default function Table({ tableData }: TableProps) {
                                 )}
                             </td>
                             <td className={styles.tableCell}>
-                                {item.pronunciation}
-                            </td>
-                            <td className={styles.tableCell}>
                                 {item.nationalWord}
                             </td>
                             <td className={styles.tableCell}>
