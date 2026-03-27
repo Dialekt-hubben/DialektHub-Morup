@@ -246,8 +246,6 @@ async function importWords() {
         // Skapa ett nytt dialektord i databasent med referenser till nationalordet och ljudfilen
         await db.insert(dialectWordTable).values({
             word: dialectWord,
-            phrase: "",
-            // pronunciation: row.Svenska.trim(),
             status: Math.floor(Math.random() * 3), // add random status between 0 and 2
             userId,
             nationalWordId: await getOrCreateNationalWord(nationalWord),
