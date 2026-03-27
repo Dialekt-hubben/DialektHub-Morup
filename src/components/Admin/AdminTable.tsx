@@ -129,7 +129,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
             <tbody>
                 {rows.map((item) => (
                     <>
-                        key={item.id}
                         <tr>
                             <td className={pageStyles.tableCell}>
                                 {item.word}

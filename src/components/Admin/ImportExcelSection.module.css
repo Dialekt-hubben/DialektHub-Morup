@@ -9,3 +9,8 @@
     padding: 2rem;
     box-shadow: 0 4px 12px #00000059;
 }
+
+.fileInput {
+    display: block;
+    margin-bottom: 1rem;
+}
