@@ -22,7 +22,6 @@ export default function Table({ tableData }: TableProps) {
                     <tr>
                         <th className={styles.tableHeaderCell}>{"Dialekt"}</th>
                         <th className={styles.tableHeaderCell}>{"Ljudfil"}</th>
-                        <th className={styles.tableHeaderCell}>{"Uttal"}</th>
                         <th className={styles.tableHeaderCell}>{"Svenska"}</th>
                         <th className={styles.tableHeaderCell}>
                             {"Användare"}
