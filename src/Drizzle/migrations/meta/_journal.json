@@ -8,6 +8,13 @@
       "when": 1774080061750,
       "tag": "0000_faulty_menace",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774617899490,
+      "tag": "0001_loud_dracula",
+      "breakpoints": true
     }
   ]
 }
