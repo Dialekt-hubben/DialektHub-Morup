@@ -2,8 +2,8 @@ import z from "zod";
 import { MaxFileSize, AllowedFileTypes } from "./audioFileConstraints";
 
 export const dialectWordApi = z.object({
-    word: z.string().min(1, "Dialekt ord är obligatoriskt"),
-    pronunciation: z.string().min(1, "Uttal är obligatoriskt"),
+    dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
+    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
     audioFile: z
         .instanceof(File)
         .nullable()

@@ -17,8 +17,8 @@ export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
 // TypeScript interface for add word
 export const addDialectWord = z.object({
-    word: z.string().min(1, "Dialekt ord är obligatoriskt"),
-    pronunciation: z.string().min(1, "Uttal är obligatoriskt"),
+    dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
+    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
     audioFile: z
         .custom<FileList>(
             (value) =>
@@ -42,7 +42,7 @@ export type addDialectWord = z.infer<typeof addDialectWord>;
 
 export const updateDialectWord = z.object({
     id: z.number(),
-    word: z.string().min(1, "Dialekt ord är obligatoriskt"),
+    dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
     nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
 });
 export type updateDialectWord = z.infer<typeof updateDialectWord>;
