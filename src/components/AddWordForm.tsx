@@ -16,6 +16,7 @@ function AddWordForm() {
         handleSubmit,
         register,
         formState: { errors },
+        setError,
     } = useForm({
         resolver: zodResolver(addDialectWord),
     });
@@ -33,7 +34,15 @@ function AddWordForm() {
     };
 
     const onSubmit = async (data: addDialectWord) => {
-        await CreateDialectWord(data);
+        try {
+            await CreateDialectWord(data);
+        } catch (error) {
+            if (error instanceof Error) {
+                setError("root", {
+                    message: error.message,
+                });
+            }
+        }
     };
 
     return (
@@ -64,6 +73,9 @@ function AddWordForm() {
                     {...register("audioFile")}
                     errorMessage={errors.audioFile?.message?.toString()}
                 />
+                {errors.root && (
+                    <p>{errors.root.message}</p>
+                )}
                 <div>
                     {!isRrecording ? (
                         <button
