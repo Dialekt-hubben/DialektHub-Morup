@@ -101,7 +101,9 @@ export async function CreateDialectWord(data: addDialectWord) {
     // När vi skapar ett nytt ord och det redan finns ett nationellt ord behöver vi ta till vara på NationalWordId
     // och koppla det in inmatade DialectWord ifrån inputen.
     const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
-    const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
+    const audioFileName = audioFile
+        ? crypto.randomUUID() + "-" + audioFile.name.toLowerCase()
+        : null;
 
     const existingNationalWord = await db
         .select({ id: nationalWordTable.id })
