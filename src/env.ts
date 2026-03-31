@@ -10,6 +10,8 @@ export const env = createEnv({
         DATABASE_URL: z.url(),
         MYSQL_USER: z.string().min(1),
         MYSQL_PASSWORD: z.string().min(1),
+        MYSQL_HOST: z.string().min(1),
+        MYSQL_DATABASE: z.string().min(1),
 
         BETTER_AUTH_SECRET: z.string().min(1),
         BETTER_AUTH_BASE_URL: z.url(),
@@ -33,10 +35,12 @@ export const env = createEnv({
      * Här mappar vi process.env
      */
     runtimeEnv: {
-        DATABASE_URL: process.env.DATABASE_URL,
         NODE_ENV: process.env.NODE_ENV,
+        DATABASE_URL: process.env.DATABASE_URL,
         MYSQL_USER: process.env.MYSQL_USER,
         MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
+        MYSQL_HOST: process.env.MYSQL_HOST,
+        MYSQL_DATABASE: process.env.MYSQL_DATABASE,
         // NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
         BETTER_AUTH_BASE_URL: process.env.BETTER_AUTH_BASE_URL,

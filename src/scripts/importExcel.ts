@@ -25,7 +25,7 @@ type Row = {
 };
 
 const EXCEL_FILE_PATH = "ordlista1.xlsx";
-const EXCEL_SHEET_INDEX = 8; // Fliken på Excel-sidan.
+const EXCEL_SHEET_INDEX = 9; // Fliken på Excel-sidan.
 const INVALID_CHARACTER_REGEX = /[ \[,\(0-9]/;
 
 class ExcelUser {

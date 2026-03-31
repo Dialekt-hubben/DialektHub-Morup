@@ -82,7 +82,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         try {
             await UpdateDialectword({
                 id: targetId,
-                word: targetWord,
+                dialectWord: targetWord,
                 nationalWord: targetNationalWord,
             });
 
@@ -91,7 +91,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                     row.id === targetId
                         ? {
                               ...row,
-                              word: targetWord,
+                              dialectWord: targetWord,
                               nationalWord: targetNationalWord,
                           }
                         : row,

@@ -35,7 +35,7 @@ export default function Table({ tableData }: TableProps) {
                             <td className={styles.tableCell}>{item.word}</td>
                             <td className={styles.tableCell}>
                                 {/* Show play button if soundFileUrl exists, if it does not exist show nothing */}
-                                {item.soundFileUrl && (
+                                {item.fileName && (
                                     <button
                                         style={{
                                             border: "none",
