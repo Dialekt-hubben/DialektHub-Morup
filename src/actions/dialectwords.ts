@@ -16,7 +16,7 @@ import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSche
 import { Status } from "@/types/status";
 import { GetNumberFromStatus } from "@/utils/enumConverter";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
-import { count, eq, sql, like, or } from "drizzle-orm";
+import { count, eq, sql, like, or, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import z from "zod";
 
@@ -45,7 +45,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
             status: dialectWordTable.status,
             userName: user.name,
             nationalWord: nationalWordTable.word,
-            soundFileUrl: soundFileTable.url,
+            fileName: soundFileTable.fileName,
         })
         .from(dialectWordTable)
         .leftJoin(user, eq(dialectWordTable.userId, user.id))
@@ -102,14 +102,35 @@ export async function CreateDialectWord(data: addDialectWord) {
     // och koppla det in inmatade DialectWord ifrån inputen.
     const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
     const audioFileName = audioFile
-        ? crypto.randomUUID() + "-" + audioFile.name.toLowerCase()
+        ? Date.now() + "-" + audioFile.name.toLowerCase()
         : null;
+    const existingDialectWord = await db
+        .select({ word: dialectWordTable.word })
+        .from(dialectWordTable)
+        .where(eq(dialectWordTable.word, dialectWord))
+        .limit(1);
 
     const existingNationalWord = await db
         .select({ id: nationalWordTable.id })
         .from(nationalWordTable)
         .where(eq(nationalWordTable.word, nationalWord))
         .limit(1);
+
+    const existingPair = await db
+        .select({ id: dialectWordTable.id })
+        .from(dialectWordTable)
+        .where(
+            and(
+                eq(
+                    dialectWordTable.word,
+                    existingDialectWord.at(0)?.word || "",
+                ),
+                eq(
+                    dialectWordTable.nationalWordId,
+                    existingNationalWord.at(0)?.id || 0,
+                ),
+            ),
+        );
 
     // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
     // transactionen hanterar både skapandet av nationalordet och dialektordet, samt kopplingen mellan dem
@@ -118,23 +139,33 @@ export async function CreateDialectWord(data: addDialectWord) {
 
         let nationalWordId = existingNationalWord.at(0)?.id;
 
+        if (existingPair.length > 0) {
+            throw new Error(
+                "Detta dialektord och nationalord par finns redan i systemet.",
+            );
+        }
+
         if (!nationalWordId) {
             // Om det inte finns, skapa ett nytt nationellt ord och hämta dess ID
             const insertedNationalWord = await transactionContext
                 .insert(nationalWordTable)
-                .values({ word: nationalWord })
+                .values({ word: nationalWord.toLowerCase() })
                 .$returningId();
             nationalWordId = insertedNationalWord[0].id;
         }
 
+        
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
+            const arraybuffer = await audioFile.arrayBuffer();
             const uploadParams = {
                 Bucket: env.S3_BUCKET_NAME,
                 Key: audioFileName,
-                Body: audioFile,
+                Body: new Uint8Array(arraybuffer),
                 ContentType: audioFile.type,
+                
             } satisfies PutObjectCommandInput;
+
             const command = new PutObjectCommand(uploadParams);
             await s3Client.send(command);
             soundFileId = (
@@ -142,14 +173,13 @@ export async function CreateDialectWord(data: addDialectWord) {
                     .insert(soundFileTable)
                     .values({
                         fileName: audioFileName,
-                        url: `/uploads/${audioFileName}`,
                     })
                     .$returningId()
             ).at(0);
         }
 
         await transactionContext.insert(dialectWordTable).values({
-            word: dialectWord,
+            word: dialectWord.toLowerCase(),
             userId: currentUser.user.id,
             nationalWordId: nationalWordId,
             soundFileId: soundFileId ? soundFileId.id : undefined,
