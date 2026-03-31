@@ -14,8 +14,9 @@ import {
 } from "@/types/DialektFormValidation/dialectWord";
 import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { count, eq, sql, like, or, and } from "drizzle-orm";
+import { GetNumberFromStatus } from "@/utils/enumConverter";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { count, eq, sql, like, or } from "drizzle-orm";
 import { headers } from "next/headers";
 import z from "zod";
 
@@ -23,19 +24,6 @@ type GetParams = {
     query: string;
     page: number;
     pageSize: number;
-};
-
-const GetStatusFromNumber = (statusIndex: number | null): Status => {
-    switch (statusIndex) {
-        case 0:
-            return "pending";
-        case 1:
-            return "approved";
-        case 2:
-            return "rejected";
-        default:
-            return "pending";
-    }
 };
 
 export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
@@ -115,107 +103,57 @@ export async function CreateDialectWord(data: addDialectWord) {
     const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
     const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
 
-    // if (audioFile && audioFileName) {
-    //     const command = new PutObjectCommand({
-    //         Bucket: env.S3_BUCKET_NAME,
-    //         Key: audioFileName,
-    //         Body: Buffer.from(await audioFile.arrayBuffer()),
-    //         ContentType: audioFile.type,
-    //     });
-    //     await s3Client.send(command);
-    // }
-
     const existingNationalWord = await db
-        .select(
-            { id: nationalWordTable.id },
-        )
+        .select({ id: nationalWordTable.id })
         .from(nationalWordTable)
         .where(eq(nationalWordTable.word, nationalWord))
         .limit(1);
 
     // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
     // transactionen hanterar både skapandet av nationalordet och dialektordet, samt kopplingen mellan dem
-    await db.transaction(async (tx) => {
+    await db.transaction(async (transactionContext) => {
         // Kolla om det redan finns ett nationellt ord som matchar det inmatade, och hämta dess ID
 
-        let nationalWordId: number;
+        let nationalWordId = existingNationalWord.at(0)?.id;
 
-        if (existingNationalWord.length > 0) {
-            nationalWordId = existingNationalWord[0].id;
-        } else {
+        if (!nationalWordId) {
             // Om det inte finns, skapa ett nytt nationellt ord och hämta dess ID
-            const insertedNationalWord = await tx
+            const insertedNationalWord = await transactionContext
                 .insert(nationalWordTable)
                 .values({ word: nationalWord })
-                .returning({ id: nationalWordTable.id });
+                .$returningId();
             nationalWordId = insertedNationalWord[0].id;
         }
 
-    //     let soundFileId: { id: number } | undefined = undefined;
-    //     if (audioFile && audioFileName) {
-    //         soundFileId = (
-    //             await tx
-    //                 .insert(soundFileTable)
-    //                 .values({
-    //                     fileName: audioFileName,
-    //                     url: `/uploads/${audioFileName}`,
-    //                 })
-    //                 .returning({ id: soundFileTable.id })
-    //         ).at(0);
-    //     }
+        let soundFileId: { id: number } | undefined = undefined;
+        if (audioFile && audioFileName) {
+            const uploadParams = {
+                Bucket: env.S3_BUCKET_NAME,
+                Key: audioFileName,
+                Body: audioFile,
+                ContentType: audioFile.type,
+            } satisfies PutObjectCommandInput;
+            const command = new PutObjectCommand(uploadParams);
+            await s3Client.send(command);
+            soundFileId = (
+                await transactionContext
+                    .insert(soundFileTable)
+                    .values({
+                        fileName: audioFileName,
+                        url: `/uploads/${audioFileName}`,
+                    })
+                    .$returningId()
+            ).at(0);
+        }
 
-        await tx.insert(dialectWordTable).values({
+        await transactionContext.insert(dialectWordTable).values({
             word: dialectWord,
-            // pronunciation: nationalWord,
             userId: currentUser.user.id,
             nationalWordId: nationalWordId,
             soundFileId: soundFileId ? soundFileId.id : undefined,
+            status: GetNumberFromStatus(Status.enum.approved), // Sätter status till "approved" när ett nytt ord skapas
         });
     });
-
-    // const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
-    // const audioFileName = audioFile ? audioFile.name.toLowerCase() : null;
-
-    // if (audioFile && audioFileName) {
-    //     const command = new PutObjectCommand({
-    //         Bucket: env.S3_BUCKET_NAME,
-    //         Key: audioFileName,
-    //         Body: Buffer.from(await audioFile.arrayBuffer()),
-    //         ContentType: audioFile.type,
-    //     });
-    //     await s3Client.send(command);
-    // }
-
-    // // Använd en transaktion för att säkerställa att alla steg lyckas eller misslyckas tillsammans
-    // await db.transaction(async (tx) => {
-    //     const nationalWordId = (
-    //         await tx
-    //             .insert(nationalWordTable)
-    //             .values({ word: nationalWord })
-    //             .returning({ id: nationalWordTable.id })
-    //     )[0];
-
-    //     let soundFileId: { id: number } | undefined = undefined;
-    //     if (audioFile && audioFileName) {
-    //         soundFileId = (
-    //             await tx
-    //                 .insert(soundFileTable)
-    //                 .values({
-    //                     fileName: audioFileName,
-    //                     url: `/uploads/${audioFileName}`,
-    //                 })
-    //                 .returning({ id: soundFileTable.id })
-    //         ).at(0);
-    //     }
-
-    //     await tx.insert(dialectWordTable).values({
-    //         word: dialectWord,
-    //         pronunciation: nationalWord,
-    //         userId: currentUser.user.id,
-    //         nationalWordId: nationalWordId.id,
-    //         soundFileId: soundFileId ? soundFileId.id : undefined,
-    //     });
-    // });
 }
 
 export async function UpdateDialectword(data: updateDialectWord) {
