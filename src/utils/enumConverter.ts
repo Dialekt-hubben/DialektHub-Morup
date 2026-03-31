@@ -12,3 +12,16 @@ export const GetStatusFromNumber = (statusIndex: number | null): Status => {
             return "pending";
     }
 };
+
+export const GetNumberFromStatus = (status: Status): number => {
+    switch (status) {
+        case "pending":
+            return 0;
+        case "approved":
+            return 1;
+        case "rejected":
+            return 2;
+        default:
+            return 0;
+    }
+};
