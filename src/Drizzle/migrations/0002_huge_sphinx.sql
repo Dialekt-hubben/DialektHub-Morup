@@ -1,0 +1,1 @@
+ALTER TABLE `sound_file_table` DROP COLUMN `url`;
