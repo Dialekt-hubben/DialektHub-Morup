@@ -9,7 +9,7 @@ export const DialectWordTableResponse = z.object({
     status: Status,
     userName: z.string().nullable(),
     nationalWord: z.string().nullable(),
-    soundFileUrl: z.string().nullable(),
+    fileName: z.string().nullable(),
 });
 export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
