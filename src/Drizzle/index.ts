@@ -14,7 +14,16 @@ const schema = {
     ...soundFile,
 };
 
-export const connection = mysql.createPool(env.DATABASE_URL);
+export const connection = mysql.createPool({
+    host: env.MYSQL_HOST,
+    user: env.MYSQL_USER,
+    password: env.MYSQL_PASSWORD,
+    database: env.MYSQL_DATABASE,
+    pool: {
+        min: 2,
+        max: 10,
+    },
+});
 const db = drizzle(connection, { schema, mode: "default" });
 
 export default db;
