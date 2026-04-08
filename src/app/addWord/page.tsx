@@ -1,13 +1,9 @@
 import AddWordForm from "@/components/AddWordForm";
 import { getActiveUserSession } from "@/lib/auth";
 import styles from "./page.addWord.module.css";
-import { env } from "@/env";
 
 export default async function AddWord() {
     await getActiveUserSession();
-
-    console.log(env)
-
 
     return (
         <main>

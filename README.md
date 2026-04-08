@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Troubleshoot enviroment file problem
+
+if active terminal wrong S3_ENDPOINT value ex. S3_ENDPOINT=http://s3ninja:9000/s3.
+It might be hardcoded in Process scope (not User/Machine), i.e. session bound.
+Then that value is used by the app when you run the dev server.
+
+### Do this in the terminal before starting the app:
+
+```bash
+Remove-Item Env:S3_ENDPOINT
+$env:S3_ENDPOINT # This one might not be needed to run.
+```
