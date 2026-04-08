@@ -64,7 +64,7 @@ CREATE TABLE `dialect_word_table` (
 --> statement-breakpoint
 CREATE TABLE `national_word_table` (
 	`id` int AUTO_INCREMENT NOT NULL,
-	`word` text NOT NULL,
+	`word` varchar(255) NOT NULL,
 	`description` text,
 	CONSTRAINT `national_word_table_id` PRIMARY KEY(`id`)
 );
@@ -76,11 +76,23 @@ CREATE TABLE `sound_file_table` (
 	CONSTRAINT `sound_file_table_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-ALTER TABLE `account` ADD CONSTRAINT `account_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `session` ADD CONSTRAINT `session_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `dialect_word_table` ADD CONSTRAINT `dialect_word_table_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `dialect_word_table` ADD CONSTRAINT `dialect_word_table_national_word_id_national_word_table_id_fk` FOREIGN KEY (`national_word_id`) REFERENCES `national_word_table`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `dialect_word_table` ADD CONSTRAINT `dialect_word_table_sound_file_id_sound_file_table_id_fk` FOREIGN KEY (`sound_file_id`) REFERENCES `sound_file_table`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX `account_userId_idx` ON `account` (`user_id`);--> statement-breakpoint
-CREATE INDEX `session_userId_idx` ON `session` (`user_id`);--> statement-breakpoint
+ALTER TABLE `account`
+ADD CONSTRAINT `account_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE `session`
+ADD CONSTRAINT `session_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE `dialect_word_table`
+ADD CONSTRAINT `dialect_word_table_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE no action ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE `dialect_word_table`
+ADD CONSTRAINT `dialect_word_table_national_word_id_national_word_table_id_fk` FOREIGN KEY (`national_word_id`) REFERENCES `national_word_table`(`id`) ON DELETE no action ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE `dialect_word_table`
+ADD CONSTRAINT `dialect_word_table_sound_file_id_sound_file_table_id_fk` FOREIGN KEY (`sound_file_id`) REFERENCES `sound_file_table`(`id`) ON DELETE no action ON UPDATE no action;
+--> statement-breakpoint
+CREATE INDEX `account_userId_idx` ON `account` (`user_id`);
+--> statement-breakpoint
+CREATE INDEX `session_userId_idx` ON `session` (`user_id`);
+--> statement-breakpoint
 CREATE INDEX `verification_identifier_idx` ON `verification` (`identifier`);

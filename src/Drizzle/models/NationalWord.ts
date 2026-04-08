@@ -1,6 +1,6 @@
-import { mysqlTable, text, int } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar } from "drizzle-orm/mysql-core";
 
 export const nationalWordTable = mysqlTable("national_word_table", {
     id: int("id").primaryKey().autoincrement(),
-    word: text("word").unique().notNull(),
+    word: varchar("word", { length: 255 }).unique().notNull(),
 });

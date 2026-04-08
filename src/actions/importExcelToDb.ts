@@ -31,22 +31,22 @@ async function getOrCreateNationalWord(word: string) {
     return createdNationalWord[0].id;
 }
 
-async function getOrCreateSoundFile(fileName: string) {
+// Hämta eller skapa soundfile för ett ord
+async function getOrCreateSoundFile(file_name: string) {
     const existing = await db
         .select({ id: soundFileTable.id })
         .from(soundFileTable)
-        .where(eq(soundFileTable.fileName, fileName));
+        .where(eq(soundFileTable.fileName, file_name));
     if (existing.length > 0) return existing[0].id;
 
     await db.insert(soundFileTable).values({
-        fileName,
-        url: `s3data/soundfiles/${fileName}`,
+        fileName: file_name,
     });
 
     const createdSoundFile = await db
         .select({ id: soundFileTable.id })
         .from(soundFileTable)
-        .where(eq(soundFileTable.fileName, fileName));
+        .where(eq(soundFileTable.fileName, file_name));
     return createdSoundFile[0].id;
 }
 

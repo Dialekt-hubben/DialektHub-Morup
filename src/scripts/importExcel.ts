@@ -170,7 +170,6 @@ async function getOrCreateSoundFile(fileName: string) {
 
     await db.insert(soundFileTable).values({
         fileName,
-        url: `s3data/soundfiles/${fileName}`,
     });
 
     const created = await db

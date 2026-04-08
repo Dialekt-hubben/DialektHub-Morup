@@ -34,7 +34,7 @@ export default function Table({ tableData }: TableProps) {
                         <tr key={rowIdx}>
                             <td className={styles.tableCell}>{item.word}</td>
                             <td className={styles.tableCell}>
-                                {/* Show play button if soundFileUrl exists, if it does not exist show nothing */}
+                                {/* Show play button if a sound file exists */}
                                 {item.fileName && (
                                     <button
                                         style={{
@@ -45,7 +45,7 @@ export default function Table({ tableData }: TableProps) {
                                         type="button"
                                         aria-label="Spela upp ljud"
                                         onClick={() =>
-                                            playSound(item.soundFileUrl || ":)")
+                                            playSound(item.fileName || ":)")
                                         }>
                                         ▶️{" "}
                                     </button>

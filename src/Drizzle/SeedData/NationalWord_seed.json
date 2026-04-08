@@ -1,152 +1,119 @@
-[
-  {
-    "word": "interdum" 
-  },
-  {
-    "word": "vivamus" 
-  },
-  {
-    "word": "diam" 
-  },
-  {
-    "word": "congue" 
-  },
-  {
-    "word": "cras" 
-  },
-  {
-    "word": "pellentesque" 
-  },
-  {
-    "word": "mus" 
-  },
-  {
-    "word": "turpis" 
-  },
-  {
-    "word": "pede" 
-  },
-  {
-    "word": "sed" 
-  },
-  {
-    "word": "duis" 
-  },
-  {
-    "word": "eget" 
-  },
-  {
-    "word": "vel" 
-  },
-  {
-    "word": "sed" 
-  },
-  {
-    "word": "integer" 
-  },
-  {
-    "word": "nulla" 
-  },
-  {
-    "word": "congue" 
-  },
-  {
-    "word": "eu" 
-  },
-  {
-    "word": "a" 
-  },
-  {
-    "word": "mattis" 
-  },
-  {
-    "word": "lacus" 
-  },
-  {
-    "word": "erat" 
-  },
-  {
-    "word": "congue" 
-  },
-  {
-    "word": "tristique" 
-  },
-  {
-    "word": "donec" 
-  },
-  {
-    "word": "consectetuer" 
-  },
-  {
-    "word": "lorem" 
-  },
-  {
-    "word": "volutpat" 
-  },
-  {
-    "word": "eu" 
-  },
-  {
-    "word": "morbi" 
-  },
-  {
-    "word": "sapien" 
-  },
-  {
-    "word": "ullamcorper" 
-  },
-  {
-    "word": "dictumst" 
-  },
-  {
-    "word": "dui" 
-  },
-  {
-    "word": "gravida" 
-  },
-  {
-    "word": "donec" 
-  },
-  {
-    "word": "vel" 
-  },
-  {
-    "word": "rutrum" 
-  },
-  {
-    "word": "nulla" 
-  },
-  {
-    "word": "libero" 
-  },
-  {
-    "word": "tortor" 
-  },
-  {
-    "word": "ultricies" 
-  },
-  {
-    "word": "imperdiet" 
-  },
-  {
-    "word": "vel" 
-  },
-  {
-    "word": "vestibulum" 
-  },
-  {
-    "word": "porttitor" 
-  },
-  {
-    "word": "in" 
-  },
-  {
-    "word": "turpis" 
-  },
-  {
-    "word": "nulla" 
-  },
-  {
-    "word": "pede" 
-  }
+﻿[
+    {
+        "word":  "interdum"
+    },
+    {
+        "word":  "vivamus"
+    },
+    {
+        "word":  "diam"
+    },
+    {
+        "word":  "congue"
+    },
+    {
+        "word":  "cras"
+    },
+    {
+        "word":  "pellentesque"
+    },
+    {
+        "word":  "mus"
+    },
+    {
+        "word":  "turpis"
+    },
+    {
+        "word":  "pede"
+    },
+    {
+        "word":  "sed"
+    },
+    {
+        "word":  "duis"
+    },
+    {
+        "word":  "eget"
+    },
+    {
+        "word":  "vel"
+    },
+    {
+        "word":  "integer"
+    },
+    {
+        "word":  "nulla"
+    },
+    {
+        "word":  "eu"
+    },
+    {
+        "word":  "a"
+    },
+    {
+        "word":  "mattis"
+    },
+    {
+        "word":  "lacus"
+    },
+    {
+        "word":  "erat"
+    },
+    {
+        "word":  "tristique"
+    },
+    {
+        "word":  "donec"
+    },
+    {
+        "word":  "consectetuer"
+    },
+    {
+        "word":  "lorem"
+    },
+    {
+        "word":  "volutpat"
+    },
+    {
+        "word":  "morbi"
+    },
+    {
+        "word":  "sapien"
+    },
+    {
+        "word":  "ullamcorper"
+    },
+    {
+        "word":  "dictumst"
+    },
+    {
+        "word":  "dui"
+    },
+    {
+        "word":  "gravida"
+    },
+    {
+        "word":  "rutrum"
+    },
+    {
+        "word":  "libero"
+    },
+    {
+        "word":  "tortor"
+    },
+    {
+        "word":  "ultricies"
+    },
+    {
+        "word":  "imperdiet"
+    },
+    {
+        "word":  "vestibulum"
+    },
+    {
+        "word":  "porttitor"
+    },
+    {
+        "word":  "in"
+    }
 ]
