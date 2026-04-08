@@ -21,6 +21,7 @@ async function main() {
     // const userData: typeof user.$inferInsert = JSON.parse(userSeed);
     // await db.insert(user).values(userData);
 
+    //user seed
     const userData: typeof user.$inferInsert = 
         parseJsonFile("src/Drizzle/SeedData/user_seed.json");
     await db.insert(user).values(userData);
