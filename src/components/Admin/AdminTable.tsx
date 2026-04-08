@@ -133,7 +133,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                 {item.word}
                             </td>
                             <td className={pageStyles.tableCell}>
-                                {item.soundFileUrl && (
+                                {item.fileName && (
                                     <button
                                         style={{
                                             border: "none",
@@ -143,7 +143,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         type="button"
                                         aria-label="Spela upp ljud"
                                         onClick={() =>
-                                            playSound(item.soundFileUrl || ":)")
+                                            playSound(item.fileName || ":)")
                                         }>
                                         ▶️
                                     </button>
