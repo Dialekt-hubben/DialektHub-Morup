@@ -7,7 +7,7 @@ export const env = createEnv({
      * Dessa är ALDRIG tillgängliga i browsern
      */
     server: {
-        DATABASE_URL: z.url(),
+        DATABASE_URL: z.string().min(1),
         MYSQL_USER: z.string().min(1),
         MYSQL_PASSWORD: z.string().min(1),
         MYSQL_HOST: z.string().min(1),
