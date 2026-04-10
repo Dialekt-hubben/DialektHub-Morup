@@ -28,15 +28,15 @@ export default async function Home({ searchParams }: params) {
     // Generera URL:er bara för de ljudfiler som visas på den här sidan.
     const filenames = res.rawData
         .map((item) => item.fileName)
-        .filter((fileName): fileName is string => Boolean(fileName));
+        .filter(fileName => Boolean(fileName))
+        .filter(fileName => fileName !== null);
     const soundFileUrls = await generateS3Urls(filenames);
 
     // loopa igenom res.data och lägg till soundFileUrl för varje objekt som har en fileName
     const tableDataWithUrls = res.rawData
-        // .filter((item) => item.fileName) // Filtrera bara de objekt som har en fileName
         .map((item) => ({
             ...item,
-            soundFileUrl: soundFileUrls[item.fileName as string] || null, // Lägg till soundFileUrl baserat på fileName
+            soundFileUrl: item.fileName ? soundFileUrls[item.fileName] : null // Lägg till soundFileUrl baserat på fileName
         }));
 
     return (
