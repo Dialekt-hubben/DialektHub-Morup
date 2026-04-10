@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { Status } from "../status";
 import { AllowedFileTypes, MaxFileSize } from "./audioFileConstraints";
-import { soundFileTable } from "@/Drizzle/models/SoundFile";
 // TypeScript interface for the API response
 
 export const DialectWordTableResponse = z.object({
