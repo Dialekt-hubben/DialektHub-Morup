@@ -2,251 +2,301 @@
   {
     "id": "7cfa0045-acdf-4dff-8d1d-0434e224d54b",
     "name": "Anaël",
-    "email": "pchestney0@themeforest.net"
+    "email": "pchestney0@themeforest.net",
+    "role": "user"
   },
   {
     "id": "998d0940-3344-47ca-b5ad-d9bf6c05b266",
     "name": "Gisèle",
-    "email": "aickeringill1@cargocollective.com"
+    "email": "aickeringill1@cargocollective.com",
+    "role": "user"
   },
   {
     "id": "d907746e-c1ea-4a94-be16-c593c8bc4b15",
     "name": "Håkan",
-    "email": "gdureden2@java.com"
+    "email": "gdureden2@java.com",
+    "role": "user"
   },
   {
     "id": "77f70b8c-a95f-4356-a03c-1060ac29ccc1",
     "name": "Dorothée",
-    "email": "gbarfitt3@facebook.com"
+    "email": "gbarfitt3@facebook.com",
+    "role": "user"
   },
   {
     "id": "510b5368-1c7a-4b26-9748-344a9f57b6fa",
     "name": "Cécilia",
-    "email": "pmckiernan4@slate.com"
+    "email": "pmckiernan4@slate.com",
+    "role": "user"
   },
   {
     "id": "68a12032-2931-4d07-8d73-14fd3e4f4ba0",
     "name": "Noëlla",
-    "email": "blouca5@foxnews.com"
+    "email": "blouca5@foxnews.com",
+    "role": "user"
   },
   {
     "id": "6bd52b1a-e487-4788-8d9f-52628bf9e4ed",
     "name": "Renée",
-    "email": "tstaner6@woothemes.com"
+    "email": "tstaner6@woothemes.com",
+    "role": "user"
   },
   {
     "id": "a94ac0b4-b2e4-45b5-ab3f-e33d6825af60",
     "name": "Céline",
-    "email": "apidgeley7@ihg.com"
+    "email": "apidgeley7@ihg.com",
+    "role": "user"
   },
   {
     "id": "5a3cb98b-1928-4d5c-b3a6-2ef9adaf59ec",
     "name": "Gwenaëlle",
-    "email": "jkike8@eventbrite.com"
+    "email": "jkike8@eventbrite.com",
+    "role": "user"
   },
   {
     "id": "28d233a6-2097-4947-a826-13c1666fe910",
     "name": "Noëlla",
-    "email": "ltweedle9@storify.com"
+    "email": "ltweedle9@storify.com",
+    "role": "user"
   },
   {
     "id": "0693d661-b6f3-4804-9975-b14a972ec6c3",
     "name": "Chloé",
-    "email": "mkauschera@topsy.com"
+    "email": "mkauschera@topsy.com",
+    "role": "user"
   },
   {
     "id": "9650a9bc-b0d7-445e-aa7b-8b83838fbc0c",
     "name": "Cinéma",
-    "email": "hbariballb@hud.gov"
+    "email": "hbariballb@hud.gov",
+    "role": "user"
   },
   {
     "id": "df57b969-2cf8-49a8-bcb8-22781a186de5",
     "name": "Françoise",
-    "email": "gkettowc@hugedomains.com"
+    "email": "gkettowc@hugedomains.com",
+    "role": "user"
   },
   {
     "id": "101e9a00-118b-41e6-b9d2-8ca5d768403f",
     "name": "Andréa",
-    "email": "efrenzld@huffingtonpost.com"
+    "email": "efrenzld@huffingtonpost.com",
+    "role": "user"
   },
   {
     "id": "626466fa-f126-4e68-974a-20bb086d4c2b",
     "name": "Maëlle",
-    "email": "jadamthwaitee@123-reg.co.uk"
+    "email": "jadamthwaitee@123-reg.co.uk",
+    "role": "user"
   },
   {
     "id": "2a701c7c-932c-4549-9b4c-aba71266a137",
     "name": "Pål",
-    "email": "egedgef@amazon.co.jp"
+    "email": "egedgef@amazon.co.jp",
+    "role": "user"
   },
   {
     "id": "1fc55dc0-6a38-4e53-ad2c-8628de1ecfc0",
     "name": "Eléa",
-    "email": "mmcgeacheyg@cdc.gov"
+    "email": "mmcgeacheyg@cdc.gov",
+    "role": "user"
   },
   {
     "id": "4434616b-0cd1-4333-91e0-d59019a7d0fd",
     "name": "Inès",
-    "email": "rwrenh@berkeley.edu"
+    "email": "rwrenh@berkeley.edu",
+    "role": "user"
   },
   {
     "id": "aea6cb5c-27a9-4438-9151-6936a219e632",
     "name": "Inès",
-    "email": "aquelchi@house.gov"
+    "email": "aquelchi@house.gov",
+    "role": "user"
   },
   {
     "id": "19159049-951f-4b24-88f3-879597819545",
     "name": "Táng",
-    "email": "tyesj@sohu.com"
+    "email": "tyesj@sohu.com",
+    "role": "user"
   },
   {
     "id": "9326bcf4-b7fd-4624-a0b2-78afc6f4e179",
     "name": "Geneviève",
-    "email": "trentzk@quantcast.com"
+    "email": "trentzk@quantcast.com",
+    "role": "user"
   },
   {
     "id": "06a642a0-7484-4173-812d-ef8deb808af7",
     "name": "Thérèsa",
-    "email": "tjicklesl@xrea.com"
+    "email": "tjicklesl@xrea.com",
+    "role": "user"
   },
   {
     "id": "c8a6b7ee-d1c0-411b-9faf-330b5b24eadf",
     "name": "Méghane",
-    "email": "epirism@ifeng.com"
+    "email": "epirism@ifeng.com",
+    "role": "user"
   },
   {
     "id": "0c4131ee-f13d-4d2f-9e60-670941d059f2",
     "name": "Marie-noël",
-    "email": "fbrechinn@walmart.com"
+    "email": "fbrechinn@walmart.com",
+    "role": "user"
   },
   {
     "id": "e3289812-bd76-47b4-8084-3011ec8dece2",
     "name": "Yè",
-    "email": "ltrembleyo@wunderground.com"
+    "email": "ltrembleyo@wunderground.com",
+    "role": "user"
   },
   {
     "id": "f3b56b92-5a9b-47d0-9fc7-3ccfee4a66f0",
     "name": "Mélanie",
-    "email": "kscogginsp@1688.com"
+    "email": "kscogginsp@1688.com",
+    "role": "user"
   },
   {
     "id": "54b704c6-5f05-4842-8a2a-8205c1c88fec",
     "name": "Méline",
-    "email": "rgraingerq@sbwire.com"
+    "email": "rgraingerq@sbwire.com",
+    "role": "user"
   },
   {
     "id": "a0e10d5e-6ca3-4724-8d8c-ff520973d991",
     "name": "Pål",
-    "email": "dgrimwadr@geocities.com"
+    "email": "dgrimwadr@geocities.com",
+    "role": "user"
   },
   {
     "id": "84c1df50-3161-4f6e-8e14-310d6b03498d",
     "name": "Aimée",
-    "email": "msemonins@blogger.com"
+    "email": "msemonins@blogger.com",
+    "role": "user"
   },
   {
     "id": "5f034b2f-ece7-4ace-84d1-2b7572422ac1",
     "name": "Anaëlle",
-    "email": "rhaitliet@sciencedaily.com"
+    "email": "rhaitliet@sciencedaily.com",
+    "role": "user"
   },
   {
     "id": "29b9624b-b2fd-4729-b505-e60510a43de6",
     "name": "Solène",
-    "email": "slargenu@altervista.org"
+    "email": "slargenu@altervista.org",
+    "role": "user"
   },
   {
     "id": "016924d4-63d9-4323-a0b5-ad81cdefb021",
     "name": "Mélissandre",
-    "email": "thelwigv@bloglovin.com"
+    "email": "thelwigv@bloglovin.com",
+    "role": "user"
   },
   {
     "id": "27bc986c-a6cf-4562-be70-d747f2251c08",
     "name": "Pål",
-    "email": "hfolksw@yahoo.com"
+    "email": "hfolksw@yahoo.com",
+    "role": "user"
   },
   {
     "id": "99f15727-742a-4f9e-89ed-53473bfaf2da",
     "name": "Mélodie",
-    "email": "drubeex@narod.ru"
+    "email": "drubeex@narod.ru",
+    "role": "user"
   },
   {
     "id": "f136d198-7cbc-4f2f-b330-0cc1658dec2b",
     "name": "Illustrée",
-    "email": "lmaccaguey@4shared.com"
+    "email": "lmaccaguey@4shared.com",
+    "role": "user"
   },
   {
     "id": "b5ad2f80-37d2-492f-956c-feb854a43fe0",
     "name": "Méghane",
-    "email": "ibramoz@reference.com"
+    "email": "ibramoz@reference.com",
+    "role": "user"
   },
   {
     "id": "1753d73c-fbc7-478c-b1e5-2e163892a643",
     "name": "Maï",
-    "email": "cmaclure10@mail.ru"
+    "email": "cmaclure10@mail.ru",
+    "role": "user"  
   },
   {
     "id": "dfdcee88-3042-4510-91e7-c298d85f8aa7",
     "name": "Maïlys",
-    "email": "lorgel11@comsenz.com"
+    "email": "lorgel11@comsenz.com",
+    "role": "user"
   },
   {
     "id": "df354738-1ecc-491c-9620-ee8f4f90177f",
     "name": "Dà",
-    "email": "playman12@intel.com"
+    "email": "playman12@intel.com",
+    "role": "user"
   },
   {
     "id": "5352c2c8-356e-4658-adba-4ff8901a45ae",
     "name": "Angélique",
-    "email": "cfairweather13@netscape.com"
+    "email": "cfairweather13@netscape.com",
+    "role": "user"
   },
   {
     "id": "7aa8e472-a645-4056-ae32-0ee19baace47",
     "name": "Bérangère",
-    "email": "skmiec14@irs.gov"
+    "email": "skmiec14@irs.gov",
+    "role": "user"
   },
   {
     "id": "b3448809-c952-46ad-b5e4-5895556a0172",
     "name": "Eugénie",
-    "email": "iitzkovici15@cisco.com"
+    "email": "iitzkovici15@cisco.com",
+    "role": "user"
   },
   {
     "id": "d7b5dd6a-e0d8-4685-9cf9-f56f1b353745",
     "name": "Thérèse",
-    "email": "owitsey16@networkadvertising.org"
+    "email": "owitsey16@networkadvertising.org",
+    "role": "user"
   },
   {
     "id": "e2a47062-d268-4030-bedd-da6ddf582038",
     "name": "Eliès",
-    "email": "nstutard17@hugedomains.com"
+    "email": "nstutard17@hugedomains.com",
+    "role": "user"
   },
   {
     "id": "c840bca8-b114-4c04-8cc0-1984548894d6",
     "name": "Lauréna",
-    "email": "rbabcock18@icq.com"
+    "email": "rbabcock18@icq.com",
+    "role": "user"
   },
   {
     "id": "5c8da049-cae8-48fd-926b-cdf3e0ac94a5",
     "name": "Garçon",
-    "email": "mtabbernor19@fda.gov"
+    "email": "mtabbernor19@fda.gov",
+    "role": "user"
   },
   {
     "id": "a25d7d88-796b-47cd-a603-7621fe5328a0",
     "name": "Adélie",
-    "email": "ncarlyon1a@webnode.com"
+    "email": "ncarlyon1a@webnode.com",
+    "role": "user"
   },
   {
     "id": "c7801996-f0d8-4af5-b463-421f6665d43d",
     "name": "Méghane",
-    "email": "adagleas1b@miibeian.gov.cn"
+    "email": "adagleas1b@miibeian.gov.cn",
+    "role": "user"
   },
   {
     "id": "6bcf7a06-398c-48de-a3da-01156c836313",
     "name": "Mylène",
-    "email": "gdavydochkin1c@symantec.com"
+    "email": "gdavydochkin1c@symantec.com",
+    "role": "user"
   },
   {
     "id": "948d1c26-6963-41f4-9349-e7423d9aa563",
     "name": "Östen",
-    "email": "lsancias1d@hostgator.com"
+    "email": "lsancias1d@hostgator.com",
+    "role": "user"
   }
 ]
