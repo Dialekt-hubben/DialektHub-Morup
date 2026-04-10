@@ -143,7 +143,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         type="button"
                                         aria-label="Spela upp ljud"
                                         onClick={() =>
-                                            playSound(item.fileName || ":)")
+                                            playSound(item.soundFileUrl || ":)")
                                         }>
                                         ▶️
                                     </button>

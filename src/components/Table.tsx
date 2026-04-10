@@ -2,8 +2,12 @@
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
 
+type TableRow = DialectWordTableResponse & {
+    soundFileUrl: string | null;
+};
+
 type TableProps = {
-    tableData: DialectWordTableResponse[] | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.
+    tableData: TableRow[] | null; // Object containing pagination info and an array of objects with word, pronunciation, sound file URL, etc.
 };
 
 // The Table-component recives "tableData" as a prop from the parent component (e.g. the page).
@@ -35,7 +39,7 @@ export default function Table({ tableData }: TableProps) {
                             <td className={styles.tableCell}>{item.word}</td>
                             <td className={styles.tableCell}>
                                 {/* Show play button if a sound file exists */}
-                                {item.fileName && (
+                                {item.soundFileUrl && (
                                     <button
                                         style={{
                                             border: "none",
@@ -44,10 +48,12 @@ export default function Table({ tableData }: TableProps) {
                                         }}
                                         type="button"
                                         aria-label="Spela upp ljud"
-                                        onClick={() =>
-                                            playSound(item.fileName || ":)")
-                                        }>
-                                        ▶️{" "}
+                                        onClick={() => {
+                                            if (item.soundFileUrl) {
+                                                playSound(item.soundFileUrl);
+                                            }
+                                        }}>
+                                        ▶️
                                     </button>
                                 )}
                             </td>
