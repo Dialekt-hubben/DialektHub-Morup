@@ -1,7 +1,7 @@
 import db from "@/Drizzle";
 import * as authSchema from "@/Drizzle/models/auth-schema";
 import { env } from "@/env";
-import { AuthUser } from "@/types/auth";
+import { AuthUser, UserRole } from "@/types/auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
@@ -15,6 +15,15 @@ export const auth = betterAuth({
         schema: authSchema,
         transaction: true,
     }),
+    user: {
+        additionalFields: {
+            role: {
+                type: "string",
+                required: false,
+                defaultValue: "user",
+            },
+        },
+    },
     emailAndPassword: {
         enabled: true,
         minPasswordLength: 8,
@@ -44,6 +53,16 @@ export async function getActiveUserSession(): Promise<AuthUser> {
     }
 
     return session.user as AuthUser;
+}
+
+export async function getAdminSession(): Promise<AuthUser> {
+    const user = await getActiveUserSession();
+
+    if (user.role !== UserRole.enum.admin) {
+        redirect("/");
+    }
+
+    return user;
 }
 
 export async function getInactiveUserSession(): Promise<AuthUser | null> {

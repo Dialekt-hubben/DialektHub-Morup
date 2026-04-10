@@ -1,6 +1,9 @@
 import { user } from "@/Drizzle/models/auth-schema";
 import { z } from "zod";
 
+export const UserRole = z.enum(["user", "admin"]);
+export type UserRole = z.infer<typeof UserRole>;
+
 export const Login = z.object({
     email: z.email({ message: "Email är inte giltig" }),
     password: z
