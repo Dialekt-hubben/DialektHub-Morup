@@ -29,6 +29,13 @@
       "when": 1774976310397,
       "tag": "0002_huge_sphinx",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1775822994672,
+      "tag": "0003_clammy_rictor",
+      "breakpoints": true
     }
   ]
 }
