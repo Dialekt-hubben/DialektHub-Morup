@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import pageStyles from "@/app/page.module.css";
 import styles from "./AdminTable.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
