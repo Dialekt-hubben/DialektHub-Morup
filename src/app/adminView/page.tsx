@@ -6,6 +6,7 @@ import ImportExcelSection from "@/components/Admin/ImportExcelSection";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 import { getActiveUserSession } from "@/lib/auth";
+import { generateS3Urls } from "@/actions/soundfileUrl";
 
 type Params = {
     searchParams: Promise<{
@@ -25,6 +26,20 @@ export default async function AdminView({ searchParams }: Params) {
     });
     const totalPages = Math.ceil(res.totalResults / 10);
 
+    // Generera URL:er bara för de ljudfiler som visas på den här sidan.
+    const filenames = res.rawData
+            .map((item) => item.fileName)
+            .filter((fileName): fileName is string => Boolean(fileName));
+        const soundFileUrls = await generateS3Urls(filenames);
+    
+        // loopa igenom res.data och lägg till soundFileUrl för varje objekt som har en fileName
+        const tableDataWithUrls = res.rawData
+            // .filter((item) => item.fileName) // Filtrera bara de objekt som har en fileName
+            .map((item) => ({
+                ...item,
+                soundFileUrl: soundFileUrls[item.fileName as string] || null, // Lägg till soundFileUrl baserat på fileName
+            }));
+
     return (
         <main>
             <div className={styles.tableContainerWrapper}>
@@ -43,7 +58,7 @@ export default async function AdminView({ searchParams }: Params) {
                                 </Link>
                             </div>
                         </div>
-                        <AdminTable tableData={res.rawData} />
+                        <AdminTable tableData={tableDataWithUrls} />
                     </div>
                     <ImportExcelSection />
                 </div>
