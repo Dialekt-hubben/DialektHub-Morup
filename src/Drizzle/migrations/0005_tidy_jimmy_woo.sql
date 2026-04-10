@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX `national_word_table_word_unique` ON `national_word_table` (`word`);

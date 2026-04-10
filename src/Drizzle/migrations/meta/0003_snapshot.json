@@ -1,16 +1,16 @@
 {
-  "version": "6",
-  "dialect": "sqlite",
-  "id": "3f8229d7-912f-42e0-8a23-4fcddeb63ff1",
-  "prevId": "f905c24a-385a-4d50-8fa3-52557f288f77",
+  "version": "5",
+  "dialect": "mysql",
+  "id": "0ef2d03e-3ee7-4e31-80be-c048b3514187",
+  "prevId": "efe8ac93-9112-46fc-bb0d-849dbe78affa",
   "tables": {
     "account": {
       "name": "account",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
-          "primaryKey": true,
+          "type": "varchar(36)",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -30,7 +30,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "text",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -58,14 +58,14 @@
         },
         "access_token_expires_at": {
           "name": "access_token_expires_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "refresh_token_expires_at": {
           "name": "refresh_token_expires_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -86,15 +86,15 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -124,45 +124,52 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "account_id": {
+          "name": "account_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraint": {}
     },
     "session": {
       "name": "session",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
-          "primaryKey": true,
+          "type": "varchar(36)",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "expires_at": {
           "name": "expires_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "token": {
           "name": "token",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -183,20 +190,13 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "text",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {
-        "session_token_unique": {
-          "name": "session_token_unique",
-          "columns": [
-            "token"
-          ],
-          "isUnique": true
-        },
         "session_userId_idx": {
           "name": "session_userId_idx",
           "columns": [
@@ -220,37 +220,51 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
+      "compositePrimaryKeys": {
+        "session_id": {
+          "name": "session_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "session_token_unique": {
+          "name": "session_token_unique",
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "checkConstraint": {}
     },
     "user": {
       "name": "user",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
-          "primaryKey": true,
+          "type": "varchar(36)",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "name": {
           "name": "name",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "email": {
           "name": "email",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "email_verified": {
           "name": "email_verified",
-          "type": "integer",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -263,50 +277,64 @@
           "notNull": false,
           "autoincrement": false
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
+        "role": {
+          "name": "role",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+          "default": "'user'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+          "default": "(now())"
         }
       },
-      "indexes": {
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "user_id": {
+          "name": "user_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
         "user_email_unique": {
           "name": "user_email_unique",
           "columns": [
             "email"
-          ],
-          "isUnique": true
+          ]
         }
       },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraint": {}
     },
     "verification": {
       "name": "verification",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
-          "primaryKey": true,
+          "type": "varchar(36)",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "identifier": {
           "name": "identifier",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -320,26 +348,26 @@
         },
         "expires_at": {
           "name": "expires_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "timestamp(3)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+          "default": "(now())"
         }
       },
       "indexes": {
@@ -352,17 +380,24 @@
         }
       },
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "verification_id": {
+          "name": "verification_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraint": {}
     },
     "dialect_word_table": {
       "name": "dialect_word_table",
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
-          "primaryKey": true,
+          "type": "serial",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
@@ -373,45 +408,31 @@
           "notNull": true,
           "autoincrement": false
         },
-        "pronunciation": {
-          "name": "pronunciation",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "phrase": {
-          "name": "phrase",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "status": {
           "name": "status",
-          "type": "integer",
+          "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
           "default": 0
         },
-        "userId": {
-          "name": "userId",
-          "type": "text",
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "nationalWordId": {
-          "name": "nationalWordId",
-          "type": "integer",
+        "national_word_id": {
+          "name": "national_word_id",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "soundFileId": {
-          "name": "soundFileId",
-          "type": "integer",
+        "sound_file_id": {
+          "name": "sound_file_id",
+          "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -419,12 +440,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "dialect_word_table_userId_user_id_fk": {
-          "name": "dialect_word_table_userId_user_id_fk",
+        "dialect_word_table_user_id_user_id_fk": {
+          "name": "dialect_word_table_user_id_user_id_fk",
           "tableFrom": "dialect_word_table",
           "tableTo": "user",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -432,12 +453,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "dialect_word_table_nationalWordId_national_word_table_id_fk": {
-          "name": "dialect_word_table_nationalWordId_national_word_table_id_fk",
+        "dialect_word_table_national_word_id_national_word_table_id_fk": {
+          "name": "dialect_word_table_national_word_id_national_word_table_id_fk",
           "tableFrom": "dialect_word_table",
           "tableTo": "national_word_table",
           "columnsFrom": [
-            "nationalWordId"
+            "national_word_id"
           ],
           "columnsTo": [
             "id"
@@ -445,12 +466,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "dialect_word_table_soundFileId_sound_file_table_id_fk": {
-          "name": "dialect_word_table_soundFileId_sound_file_table_id_fk",
+        "dialect_word_table_sound_file_id_sound_file_table_id_fk": {
+          "name": "dialect_word_table_sound_file_id_sound_file_table_id_fk",
           "tableFrom": "dialect_word_table",
           "tableTo": "sound_file_table",
           "columnsFrom": [
-            "soundFileId"
+            "sound_file_id"
           ],
           "columnsTo": [
             "id"
@@ -459,68 +480,67 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "dialect_word_table_id": {
+          "name": "dialect_word_table_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraint": {}
     },
     "national_word_table": {
       "name": "national_word_table",
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
-          "primaryKey": true,
+          "type": "int",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
         "word": {
           "name": "word",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
-      "indexes": {
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "national_word_table_id": {
+          "name": "national_word_table_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
         "national_word_table_word_unique": {
           "name": "national_word_table_word_unique",
           "columns": [
             "word"
-          ],
-          "isUnique": true
+          ]
         }
       },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraint": {}
     },
     "sound_file_table": {
       "name": "sound_file_table",
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
-          "primaryKey": true,
+          "type": "int",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
-        "fileName": {
-          "name": "fileName",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "url": {
-          "name": "url",
+        "file_name": {
+          "name": "file_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -529,19 +549,26 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "sound_file_table_id": {
+          "name": "sound_file_table_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraint": {}
     }
   },
   "views": {},
-  "enums": {},
   "_meta": {
     "schemas": {},
     "tables": {},
     "columns": {}
   },
   "internal": {
+    "tables": {},
     "indexes": {}
   }
 }
