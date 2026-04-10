@@ -6,6 +6,7 @@ import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 import { getInactiveUserSession } from "@/lib/auth";
 import { generateS3Urls } from "@/actions/soundfileUrl";
+import { UserRole } from "@/types/auth";
 
 type params = {
     searchParams: Promise<{
@@ -28,16 +29,15 @@ export default async function Home({ searchParams }: params) {
     // Generera URL:er bara för de ljudfiler som visas på den här sidan.
     const filenames = res.rawData
         .map((item) => item.fileName)
-        .filter(fileName => Boolean(fileName))
-        .filter(fileName => fileName !== null);
+        .filter((fileName) => Boolean(fileName))
+        .filter((fileName) => fileName !== null);
     const soundFileUrls = await generateS3Urls(filenames);
 
     // loopa igenom res.data och lägg till soundFileUrl för varje objekt som har en fileName
-    const tableDataWithUrls = res.rawData
-        .map((item) => ({
-            ...item,
-            soundFileUrl: item.fileName ? soundFileUrls[item.fileName] : null // Lägg till soundFileUrl baserat på fileName
-        }));
+    const tableDataWithUrls = res.rawData.map((item) => ({
+        ...item,
+        soundFileUrl: item.fileName ? soundFileUrls[item.fileName] : null, // Lägg till soundFileUrl baserat på fileName
+    }));
 
     return (
         <main>
@@ -49,11 +49,14 @@ export default async function Home({ searchParams }: params) {
                             <h2>Ordlista</h2>
                             {userSession && (
                                 <div>
-                                    <Link
-                                        href="/adminView"
-                                        className="btn primary">
-                                        Adminvy
-                                    </Link>
+                                    {userSession.role ===
+                                        UserRole.enum.admin && (
+                                        <Link
+                                            href="/adminView"
+                                            className="btn primary">
+                                            Adminvy
+                                        </Link>
+                                    )}
                                     <Link
                                         href="/addWord"
                                         className="btn primary">
