@@ -5,7 +5,7 @@ import SearchField from "@/components/Searchfield";
 import ImportExcelSection from "@/components/Admin/ImportExcelSection";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
-import { getActiveUserSession } from "@/lib/auth";
+import { getAdminSession } from "@/lib/auth";
 import { generateS3Urls } from "@/actions/soundfileUrl";
 
 type Params = {
@@ -16,7 +16,7 @@ type Params = {
 };
 
 export default async function AdminView({ searchParams }: Params) {
-    await getActiveUserSession();
+    await getAdminSession();
 
     const { query = "", page = "1" } = await searchParams;
     const res = await GetAllDialectwords({
