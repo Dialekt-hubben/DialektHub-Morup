@@ -14,3 +14,12 @@
     display: block;
     margin-bottom: 1rem;
 }
+
+.messageBox {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    white-space: pre-wrap;
+}
