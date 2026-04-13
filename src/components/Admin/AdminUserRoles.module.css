@@ -1,0 +1,108 @@
+.card {
+    background: #fff;
+    border: 2px solid #0003;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-shadow: 0 4px 12px #00000059;
+}
+
+.searchForm {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+    
+.searchInput {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.55rem 0.75rem;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.searchInput:focus-visible {
+    outline: none;
+    border-color: var(--color-blue);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.18);
+}
+
+.statusSuccess {
+    margin-bottom: 0.85rem;
+    color: #047857;
+    font-weight: 600;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    padding: 0.45rem 0.6rem;
+}
+
+.statusError {
+    margin-bottom: 0.85rem;
+    color: #b91c1c;
+    font-weight: 600;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 0.45rem 0.6rem;
+}
+
+.userList {
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+
+}
+
+.userRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.8rem;
+    background: #fcfcfd;
+}
+
+.userName {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.userEmail {
+    color: #4b5563;
+    font-size: 0.9rem;
+}
+
+.roleForm {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.roleSelect {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.38rem 0.55rem;
+    background: #fff;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.roleSelect:focus-visible {
+    outline: none;
+    border-color: var(--color-blue);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.18);
+}
+
+@media (max-width: 700px) {
+    .userRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .roleForm {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
