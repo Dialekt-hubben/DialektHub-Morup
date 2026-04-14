@@ -1,6 +1,6 @@
 "use client";
 
-import { searchUsersByEmail, updateUserRole } from "@/actions/auth";
+import { searchUserByEmail, updateUserRole } from "@/actions/user";
 import { UserRole } from "@/types/auth";
 import { SubmitEvent, useState } from "react";
 import styles from "./AdminUserRoles.module.css";
@@ -12,14 +12,19 @@ type RoleUser = {
     role: UserRole;
 };
 
+type UpdateRoleStatus = {
+    type: "success" | "error";
+    message: string;
+}
+
 export default function AdminUserRoles() {
     const [emailQuery, setEmailQuery] = useState("");
     const [users, setUsers] = useState<RoleUser[]>([]);
-    const [hasSearched, setHasSearched] = useState(false);
-    const [activeUserId, setActiveUserId] = useState<string | null>(null);
-    const [statusMessage, setStatusMessage] = useState<string>("");
-    const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
-    const [isSearching, setIsSearching] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false); // Handle if a search has been performed to conditionally render messages and user list.
+    const [isSearching, setIsSearching] = useState(false); // Handle search is in progress to disable the search button and show loading state.
+    const [activeUserId, setActiveUserId] = useState<string | null>(null); // Handle which user's role is currently being updated.
+    const [status, setStatus] = useState<UpdateRoleStatus | null>(null); // Handle status messages for successful or failed role update and provide feedback when a role is updated.
+    // const [statusMessage, setStatusMessage] = useState<string>("");
 
     
     // Handle search functionality based on email.
@@ -37,14 +42,12 @@ export default function AdminUserRoles() {
         // Perform the search and handle loading state
         setIsSearching(true);
         try {
-            const result = await searchUsersByEmail(normalizedQuery);
+            const result = await searchUserByEmail(normalizedQuery);
             setUsers(result);
             setHasSearched(true);
-            setStatusMessage("");
-            setStatusType(null);
+            setStatus(null);
         } catch {
-            setStatusType("error");
-            setStatusMessage("Kunde inte söka efter användare.");
+            setStatus({ type: "error", message: "Kunde inte söka efter användare." });
         } finally {
             setIsSearching(false);
         }
@@ -58,11 +61,9 @@ export default function AdminUserRoles() {
             setEmailQuery("");
             setUsers([]);
             setHasSearched(false);
-            setStatusType("success");
-            setStatusMessage(`Rollen uppdaterades till ${role}.`);
+            setStatus({ type: "success", message: `Rollen uppdaterades till ${role}.` });
         } catch {
-            setStatusType("error");
-            setStatusMessage("Kunde inte spara rolländringen.");
+            setStatus({ type: "error", message: "Kunde inte spara rolländringen." });
         } finally {
             setActiveUserId(null);
         }
@@ -89,19 +90,19 @@ export default function AdminUserRoles() {
                 </button>
             </form>
 
-            {/* Statusmessage for role updates */}
-            {statusType && ( 
-                <p className={ statusType === "success" ? styles.statusSuccess : styles.statusError }
+            {/* Statusmessage when role updates */}
+            {status && ( 
+                <p className={ status.type === "success" ? styles.statusSuccess : styles.statusError }
                     role="status"
                     aria-live="polite">                     
-                    {statusMessage}
+                    {status.message}
                 </p>
             )}
 
             {/* List users with their current role and a form to update it. */}
             {!hasSearched ? (
                 <p>Ändra en roll för en användare på sidan.</p>
-            ) : users.length === 0 ? (
+            ) : users.length === 0 && hasSearched ? (
                 <p>Ingen användare hittades för den e-posten.</p>
             ) : (
                 <ul className={styles.userList}>
@@ -118,16 +119,16 @@ export default function AdminUserRoles() {
                                 onSubmit={(event) => {
                                     event.preventDefault();
                                     const formData = new FormData(event.currentTarget);
-                                    const roleFromForm = formData.get("role");
+                                    const role = formData.get("role");
 
                                     if (
-                                        roleFromForm !== UserRole.enum.user &&
-                                        roleFromForm !== UserRole.enum.admin
+                                        role !== UserRole.enum.user &&
+                                        role !== UserRole.enum.admin
                                     ) {
                                         return;
                                     }
                                     
-                                    handleRoleSave(currentUser.id, roleFromForm);
+                                    handleRoleSave(currentUser.id, role);
                                 }}>
                                 
                                 {/* Dropdown-meny */}
