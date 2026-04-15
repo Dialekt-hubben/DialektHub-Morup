@@ -6,7 +6,6 @@ import { getAdminSession } from "@/lib/auth";
 import { UserRole } from "@/types/auth";
 import { updateUserRoleSchema } from "@/types/updateUserRoleValidation";
 import { like, sql, asc, eq } from "drizzle-orm";
-// import { revalidatePath } from "next/cache";
 
 export async function searchUserByEmail(emailQuery: string) {
     await getAdminSession();
@@ -42,6 +41,5 @@ export async function updateUserRole(input: { userId: string; role: UserRole; })
         .update(user)
         .set({ role: parsed.data.role })
         .where(eq(user.id, parsed.data.userId));
-
-    // revalidatePath("/admin");
+        
 }
