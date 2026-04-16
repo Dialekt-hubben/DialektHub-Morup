@@ -5,13 +5,16 @@ import pageStyles from "@/app/page.module.css";
 import styles from "./AdminTable.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
 import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
+import { Status } from "@/types/status";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
 };
 
 export default function AdminTable({ tableData }: AdminTableProps) {
-    const [rows, setRows] = useState<DialectWordTableResponse[]>( tableData ?? [], );
+    const [rows, setRows] = useState<DialectWordTableResponse[]>(
+        tableData ?? [],
+    );
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
 
@@ -64,26 +67,35 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         setSavedRowId(updated.id);
     };
 
+    const handleStatusChange = (id: number, isPublished: Status) => {
+        console.log({ id, isPublished });
+
+        setRows((prevRows) =>
+            prevRows.map((row) =>
+                row.id === id ? { ...row, status: isPublished } : row,
+            ),
+        );
+    };
+
     return (
         <table className={`${pageStyles.table} ${styles.adminTable}`}>
             <thead>
                 <tr>
-                    <th className={pageStyles.tableHeaderCell}>{"Dialekt"}</th>
-                    <th className={pageStyles.tableHeaderCell}>{"Ljudfil"}</th>
-                    <th className={pageStyles.tableHeaderCell}>{"Svenska"}</th>
-                    <th className={pageStyles.tableHeaderCell}>
-                        {"Användare"}
-                    </th>
-                    <th className={pageStyles.tableHeaderCell}>
-                        {"Hantering"}
-                    </th>
+                    <th className={pageStyles.tableHeaderCell}>Dialekt</th>
+                    <th className={pageStyles.tableHeaderCell}>Ljudfil</th>
+                    <th className={pageStyles.tableHeaderCell}>Svenska</th>
+                    <th className={pageStyles.tableHeaderCell}>Användare</th>
+                    <th className={pageStyles.tableHeaderCell}>Publicerad</th>
+                    <th className={pageStyles.tableHeaderCell}>Hantering</th>
                 </tr>
             </thead>
             <tbody>
                 {rows.map((item) => (
                     <>
                         <tr key={item.id}>
-                            <td className={pageStyles.tableCell}>{item.word}</td>
+                            <td className={pageStyles.tableCell}>
+                                {item.word}
+                            </td>
                             <td className={pageStyles.tableCell}>
                                 {item.fileName && item.soundFileUrl && (
                                     <button
@@ -94,13 +106,36 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         }}
                                         type="button"
                                         aria-label="Spela upp ljud"
-                                        onClick={() => playSound(item.soundFileUrl!)}>
+                                        onClick={() =>
+                                            playSound(item.soundFileUrl!)
+                                        }>
                                         ▶️
                                     </button>
                                 )}
                             </td>
-                            <td className={pageStyles.tableCell}>{item.nationalWord}</td>
-                            <td className={pageStyles.tableCell}>{item.userName}</td>
+                            <td className={pageStyles.tableCell}>
+                                {item.nationalWord}
+                            </td>
+                            <td className={pageStyles.tableCell}>
+                                {item.userName}
+                            </td>
+                            <td className={pageStyles.tableCell}>
+                                <select
+                                    value={item.status}
+                                    onChange={(changeEvent) =>
+                                        handleStatusChange(
+                                            item.id,
+                                            changeEvent.target.value as Status,
+                                        )
+                                    }>
+                                    <option value={Status.enum.approved}>
+                                        Publicerad
+                                    </option>
+                                    <option value={Status.enum.rejected}>
+                                        Ej publicerad
+                                    </option>
+                                </select>
+                            </td>
                             <td
                                 className={`${pageStyles.tableCell} ${styles.adminActionCell}`}>
                                 <div className={styles.actionWrapper}>
@@ -111,7 +146,9 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         Edit
                                     </button>
                                     {savedRowId === item.id && (
-                                        <span className={styles.savedText}>Sparat</span>
+                                        <span className={styles.savedText}>
+                                            Sparat
+                                        </span>
                                     )}
                                 </div>
                             </td>
@@ -119,7 +156,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
 
                         {editingId === item.id && (
                             <tr>
-                                <td className={styles.editRowCell} colSpan={5}>
+                                <td className={styles.editRowCell} colSpan={6}>
                                     <EditWordForm
                                         id={item.id}
                                         dialectWord={item.word}
