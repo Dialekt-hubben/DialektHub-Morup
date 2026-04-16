@@ -5,7 +5,6 @@ import { UserRole } from "@/types/auth";
 import { updateUserRoleSchema } from "@/types/updateUserRoleValidation";
 import { SubmitEvent, useState } from "react";
 import styles from "./AdminUserRoles.module.css";
-import { user } from "@/Drizzle/models/auth-schema";
 
 type RoleUser = {
     id: string;
