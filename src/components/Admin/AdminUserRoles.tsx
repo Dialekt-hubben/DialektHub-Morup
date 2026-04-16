@@ -2,8 +2,10 @@
 
 import { searchUserByEmail, updateUserRole } from "@/actions/user";
 import { UserRole } from "@/types/auth";
+import { updateUserRoleSchema } from "@/types/updateUserRoleValidation";
 import { SubmitEvent, useState } from "react";
 import styles from "./AdminUserRoles.module.css";
+import { user } from "@/Drizzle/models/auth-schema";
 
 type RoleUser = {
     id: string;
@@ -121,14 +123,17 @@ export default function AdminUserRoles() {
                                     const formData = new FormData(event.currentTarget);
                                     const role = formData.get("role");
 
-                                    if (
-                                        role !== UserRole.enum.user &&
-                                        role !== UserRole.enum.admin
-                                    ) {
+                                    const parsed = updateUserRoleSchema.safeParse({
+                                        userId: currentUser.id,
+                                        role,    
+                                    });
+
+                                    if (!parsed.success) {
+                                        setStatus({ type: "error", message: "Ogiltig roll vald." });
                                         return;
                                     }
                                     
-                                    handleRoleSave(currentUser.id, role);
+                                    handleRoleSave(parsed.data.userId, parsed.data.role);
                                 }}>
                                 
                                 {/* Dropdown-meny */}
