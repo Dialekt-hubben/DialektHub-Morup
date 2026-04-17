@@ -31,11 +31,13 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     const paginationOffset = (page - 1) * pageSize;
 
     const caseInsensitiveWordFilter = query
-        ? like(
-              sql`lower(${nationalWordTable.word})`,
-              `%${query.toLowerCase()}%`,
-          ) && // Case-insensitive search on the national word
-          eq(dialectWordTable.status, 1) // Only show approved words when searching
+        ? and(
+              like(
+                  sql`lower(${nationalWordTable.word})`,
+                  `%${query.toLowerCase()}%`,
+              ),
+              eq(dialectWordTable.status, 1), // Only show approved words when searching
+          )
         : eq(dialectWordTable.status, 1); // Only show approved words when no search query is provided;
 
     const rawData = await db
@@ -154,7 +156,6 @@ export async function CreateDialectWord(data: addDialectWord) {
             nationalWordId = insertedNationalWord[0].id;
         }
 
-        
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
             const arraybuffer = await audioFile.arrayBuffer();
@@ -163,7 +164,6 @@ export async function CreateDialectWord(data: addDialectWord) {
                 Key: audioFileName,
                 Body: new Uint8Array(arraybuffer),
                 ContentType: audioFile.type,
-                
             } satisfies PutObjectCommandInput;
 
             const command = new PutObjectCommand(uploadParams);
