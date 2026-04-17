@@ -25,14 +25,13 @@ export default function AdminUserRoles() {
     const [isSearching, setIsSearching] = useState(false); // Handle search is in progress to disable the search button and show loading state.
     const [activeUserId, setActiveUserId] = useState<string | null>(null); // Handle which user's role is currently being updated.
     const [status, setStatus] = useState<UpdateRoleStatus | null>(null); // Handle status messages for successful or failed role update and provide feedback when a role is updated.
-    // const [statusMessage, setStatusMessage] = useState<string>("");
 
     
     // Handle search functionality based on email.
     const handleSearch = async ( event: SubmitEvent<HTMLFormElement> ) => {
         event.preventDefault();
         const normalizedQuery = emailQuery.trim();
-
+        
         // If the search field is empty, clear the user list and reset search status.
         if (!normalizedQuery) {
             setUsers([]);
@@ -55,7 +54,21 @@ export default function AdminUserRoles() {
     };
 
     // Handle updating of user's role and manage UI state during the update process.
-    const handleRoleSave = async (userId: string, role: UserRole) => {
+    const handleRoleSave = async (userId: string, event: SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const role = formData.get("role") as UserRole;
+
+        // Validera datan
+        const parsed = updateUserRoleSchema.safeParse({ userId, role });
+        
+        if (!parsed.success) {
+            setStatus({ type: "error", message: "Ogiltig roll vald." });
+            setActiveUserId(null);
+            return;
+        }
+        
+        // Sätt den aktuella användarens ID som aktiv för att hantera UI-state under uppdateringen.
         setActiveUserId(userId);
         try {
             await updateUserRole({ userId, role });
@@ -118,21 +131,7 @@ export default function AdminUserRoles() {
                             <form
                                 className={styles.roleForm}
                                 onSubmit={(event) => {
-                                    event.preventDefault();
-                                    const formData = new FormData(event.currentTarget);
-                                    const role = formData.get("role");
-
-                                    const parsed = updateUserRoleSchema.safeParse({
-                                        userId: currentUser.id,
-                                        role,    
-                                    });
-
-                                    if (!parsed.success) {
-                                        setStatus({ type: "error", message: "Ogiltig roll vald." });
-                                        return;
-                                    }
-                                    
-                                    handleRoleSave(parsed.data.userId, parsed.data.role);
+                                    handleRoleSave(currentUser.id, event);
                                 }}>
                                 
                                 {/* Dropdown-meny */}
