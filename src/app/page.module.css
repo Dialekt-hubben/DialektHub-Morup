@@ -202,6 +202,7 @@ a.primary {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    white-space: pre-wrap;
 }
 
 .tableCell:nth-child(1),
@@ -274,4 +275,11 @@ a.primary {
     border-radius: 4px;
     font-weight: bold;
     font-size: 16px;
+}
+
+.extraAdminSection {
+    margin-top: 40px;
+    display: flex;
+    gap: 40px;
+    width: 100%;
 }
