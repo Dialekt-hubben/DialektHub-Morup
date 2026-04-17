@@ -195,14 +195,8 @@ export async function UpdateDialectWord(data: updateDialectWord) {
         throw new Error("User must be logged in to update a dialect word.");
     }
 
-    // Todo: Move this schema to a separate file since it cam be used in multiple places
-    const updateWordSchema = z.object({
-        id: z.number(),
-        dialectWord: z.string(),
-        nationalWord: z.string(),
-    });
 
-    const parsedData = updateWordSchema.safeParse(data);
+    const parsedData = updateDialectWord.safeParse(data);
 
     if (!parsedData.success) {
         throw new Error(
