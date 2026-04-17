@@ -156,6 +156,7 @@ export async function CreateDialectWord(data: addDialectWord) {
             nationalWordId = insertedNationalWord[0].id;
         }
 
+        
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
             const arraybuffer = await audioFile.arrayBuffer();
@@ -164,6 +165,7 @@ export async function CreateDialectWord(data: addDialectWord) {
                 Key: audioFileName,
                 Body: new Uint8Array(arraybuffer),
                 ContentType: audioFile.type,
+                
             } satisfies PutObjectCommandInput;
 
             const command = new PutObjectCommand(uploadParams);
