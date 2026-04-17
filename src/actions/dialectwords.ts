@@ -154,7 +154,6 @@ export async function CreateDialectWord(data: addDialectWord) {
             nationalWordId = insertedNationalWord[0].id;
         }
 
-        
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
             const arraybuffer = await audioFile.arrayBuffer();
@@ -163,7 +162,6 @@ export async function CreateDialectWord(data: addDialectWord) {
                 Key: audioFileName,
                 Body: new Uint8Array(arraybuffer),
                 ContentType: audioFile.type,
-                
             } satisfies PutObjectCommandInput;
 
             const command = new PutObjectCommand(uploadParams);
@@ -188,7 +186,7 @@ export async function CreateDialectWord(data: addDialectWord) {
     });
 }
 
-export async function UpdateDialectword(data: updateDialectWord) {
+export async function UpdateDialectWord(data: updateDialectWord) {
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });

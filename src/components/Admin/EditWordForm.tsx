@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { UpdateDialectword } from "@/actions/dialectwords";
+import { UpdateDialectWord } from "@/actions/dialectwords";
 import styles from "./AdminTable.module.css";
 import { editWordForm } from "@/types/editWordFormValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +33,7 @@ export default function EditWordForm({
         handleSubmit,
         reset,
         formState: { errors },
-        setError // Missing setError from useForm
+        setError, // Missing setError from useForm
     } = useForm<editWordForm>({
         resolver: zodResolver(editWordForm), // missing resolver for validation
         defaultValues: {
@@ -57,7 +57,7 @@ export default function EditWordForm({
         // setError("");
 
         try {
-            await UpdateDialectword({
+            await UpdateDialectWord({
                 id,
                 dialectWord: values.dialectWord,
                 nationalWord: values.nationalWord,
@@ -127,7 +127,9 @@ export default function EditWordForm({
                 <p className={styles.errorText}>{errors.dialectWord.message}</p>
             )}
             {errors.nationalWord && (
-                <p className={styles.errorText}>{errors.nationalWord.message}</p>
+                <p className={styles.errorText}>
+                    {errors.nationalWord.message}
+                </p>
             )}
         </form>
     );
