@@ -18,7 +18,6 @@ import { GetNumberFromStatus } from "@/utils/enumConverter";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { count, eq, sql, like, or, and } from "drizzle-orm";
 import { headers } from "next/headers";
-import z from "zod";
 
 type GetParams = {
     query: string;
@@ -32,10 +31,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
 
     const caseInsensitiveWordFilter = query
         ? and(
-              like(
-                  sql`lower(${nationalWordTable.word})`,
-                  `%${query.toLowerCase()}%`,
-              ),
+              like(sql`lower(${nationalWordTable.word})`, `%${query}%`),
               eq(dialectWordTable.status, 1), // Only show approved words when searching
           )
         : eq(dialectWordTable.status, 1); // Only show approved words when no search query is provided;
@@ -156,7 +152,6 @@ export async function CreateDialectWord(data: addDialectWord) {
             nationalWordId = insertedNationalWord[0].id;
         }
 
-        
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
             const arraybuffer = await audioFile.arrayBuffer();
@@ -165,7 +160,6 @@ export async function CreateDialectWord(data: addDialectWord) {
                 Key: audioFileName,
                 Body: new Uint8Array(arraybuffer),
                 ContentType: audioFile.type,
-                
             } satisfies PutObjectCommandInput;
 
             const command = new PutObjectCommand(uploadParams);
@@ -199,14 +193,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
         throw new Error("User must be logged in to update a dialect word.");
     }
 
-    // Todo: Move this schema to a separate file since it cam be used in multiple places
-    const updateWordSchema = z.object({
-        id: z.number(),
-        dialectWord: z.string(),
-        nationalWord: z.string(),
-    });
-
-    const parsedData = updateWordSchema.safeParse(data);
+    const parsedData = updateDialectWord.safeParse(data);
 
     if (!parsedData.success) {
         throw new Error(
@@ -215,36 +202,50 @@ export async function UpdateDialectword(data: updateDialectWord) {
     }
 
     const updateWord = parsedData.data;
+    const normalizedDialectWord = updateWord.dialectWord.toLowerCase();
+    const normalizedNationalWord = updateWord.nationalWord.toLowerCase();
 
     try {
-        // Uppdaterar dialektordet i databasen med det nya värdet
-        await db
-            .update(dialectWordTable)
-            .set({ word: updateWord.dialectWord })
-            .where(eq(dialectWordTable.id, updateWord.id));
+        await db.transaction(async (transactionContext) => {
+            // Kolla om det finns ett dialektord med det angivna id:t
+            const existingDialectWord = await transactionContext
+                .select({ id: dialectWordTable.id })
+                .from(dialectWordTable)
+                .where(eq(dialectWordTable.id, updateWord.id))
+                .limit(1);
 
-        // Hämta nationalWordId för att kunna uppdatera nationalordet
-        const fetchedNationalWordId = await db
-            .select({ nationalWordId: dialectWordTable.nationalWordId })
-            .from(dialectWordTable)
-            .where(eq(dialectWordTable.id, updateWord.id));
-
-        // Om nationalWordId finns, uppdatera nationalordet i databasen
-        if (fetchedNationalWordId.length > 0) {
-            await db
-                .update(nationalWordTable)
-                .set({ word: updateWord.nationalWord })
-                .where(
-                    eq(
-                        nationalWordTable.id,
-                        fetchedNationalWordId[0].nationalWordId,
-                    ),
+            if (existingDialectWord.length === 0) {
+                throw new Error(
+                    "Kunde inte hitta dialektordet för det angivna id:t.",
                 );
-        } else {
-            throw new Error(
-                "Kunde inte hitta nationalWordId för det angivna id:t.",
-            );
-        }
+            }
+
+            // Kolla om det redan finns en annan rad med samma dialektord och nationellt ord
+            const existingNationalWord = await transactionContext
+                .select({ id: nationalWordTable.id })
+                .from(nationalWordTable)
+                .where(eq(nationalWordTable.word, normalizedNationalWord))
+                .limit(1);
+            // Om det redan finns en rad med samma dialektord och nationellt ord, och det inte är den rad som uppdateras, kasta ett fel
+            let nationalWordId = existingNationalWord.at(0)?.id;
+
+            // Om det inte finns ett nationellt ord som matchar det inmatade, skapa ett nytt och använd dess ID
+            if (!nationalWordId) {
+                const insertedNationalWord = await transactionContext
+                    .insert(nationalWordTable)
+                    .values({ word: normalizedNationalWord })
+                    .$returningId();
+                nationalWordId = insertedNationalWord[0].id;
+            }
+
+            await transactionContext
+                .update(dialectWordTable)
+                .set({
+                    word: normalizedDialectWord,
+                    nationalWordId,
+                })
+                .where(eq(dialectWordTable.id, updateWord.id));
+        });
     } catch {
         throw new Error("Ett fel uppstod vid uppdatering av dialektordet.");
     }
