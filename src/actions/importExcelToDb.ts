@@ -73,7 +73,7 @@ export async function importExcelRows(rows: ExcelWordRow[]) {
         // Also if the combination of dialect word and national word already exists, log a warning and skip the row.
         if (!nationalWordId) {
             console.error(
-                `Failed to get or create national word or sound file for row: ${JSON.stringify(row)}`,
+                `Failed to get or create national word file for row: ${JSON.stringify(row)}`,
             );
             continue;
         } else if (await CheckMachingRows(row.dialectWord, row.nationalWord)) {
