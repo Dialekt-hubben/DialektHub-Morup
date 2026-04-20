@@ -54,8 +54,6 @@ export default function EditWordForm({
     }, [id, dialectWord, nationalWord, reset]);
 
     const onSubmit = async (values: editWordForm) => {
-        // setError("");
-
         try {
             await UpdateDialectword({
                 id,
@@ -122,13 +120,6 @@ export default function EditWordForm({
                     </button>
                 </div>
             </div>
-
-            {errors.dialectWord && (
-                <p className={styles.errorText}>{errors.dialectWord.message}</p>
-            )}
-            {errors.nationalWord && (
-                <p className={styles.errorText}>{errors.nationalWord.message}</p>
-            )}
         </form>
     );
 }
