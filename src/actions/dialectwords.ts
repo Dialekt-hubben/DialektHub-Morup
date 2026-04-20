@@ -201,13 +201,13 @@ export async function UpdateDialectword(data: updateDialectWord) {
         );
     }
 
-    // Normalisera inmatade ord till gemener för att säkerställa konsekvens i databasen.
+    // Normalize the input words to ensure consistency in the database.
     const updateWord = parsedData.data;
     const normalizedDialectWord = updateWord.dialectWord.toLowerCase();
     const normalizedNationalWord = updateWord.nationalWord.toLowerCase();
 
     try {
-        // Kolla om det finns ett dialektord med det angivna id:t.
+        // Check if a dialect word with the given id exists.
         await db.transaction(async (transactionContext) => {
             const existingDialectWord = await transactionContext
                 .select({ id: dialectWordTable.id })
@@ -221,7 +221,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
                 );
             }
 
-            // Hämta id för det nationella ordet (nationalWord) från nationalWordTable.
+            // Get the ID for the national word (nationalWord) from the nationalWordTable.
             const existingNationalWord = await transactionContext
                 .select({ id: nationalWordTable.id })
                 .from(nationalWordTable)
@@ -230,7 +230,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
 
             let nationalWordId = existingNationalWord.at(0)?.id;
 
-            // Om det inte finns ett nationellt ord som matchar det inmatade, skapa ett nytt och använd dess ID.
+            // If there isn't an existing national word that matches the input, create a new one and use its ID.
             if (!nationalWordId) {
                 const insertedNationalWord = await transactionContext
                     .insert(nationalWordTable)
@@ -239,7 +239,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
                 nationalWordId = insertedNationalWord[0].id;
             }
 
-            // Blockera dubblettpar av dialektord och nationellt ord.
+            // Block duplicate pairs of dialect word and national word.
             const duplicatePair = await transactionContext
                 .select({ id: dialectWordTable.id })
                 .from(dialectWordTable)
@@ -247,7 +247,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
                     and(
                         eq(dialectWordTable.word, normalizedDialectWord),
                         eq(dialectWordTable.nationalWordId, nationalWordId),
-                        sql`${dialectWordTable.id} <> ${updateWord.id}`, // Exkludera den aktuella raden från sökningen efter dubbletter.
+                        sql`${dialectWordTable.id} <> ${updateWord.id}`, // Exclude the current row from the duplicate check.
                     ),
                 )
                 .limit(1);
@@ -258,7 +258,7 @@ export async function UpdateDialectword(data: updateDialectWord) {
                 );
             }
 
-            // Om alla kontroller passerar, uppdatera.
+            // If all checks pass, update the dialect word with the new values.
             await transactionContext
                 .update(dialectWordTable)
                 .set({
