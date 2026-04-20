@@ -6,6 +6,7 @@ import styles from "./AdminTable.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
 import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
+import { UpdateDialectWordStatus } from "@/actions/dialectwords";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -67,7 +68,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         setSavedRowId(updated.id);
     };
 
-    const handleStatusChange = (id: number, isPublished: Status) => {
+    const handleStatusChange = async (id: number, isPublished: Status) => {
         console.log({ id, isPublished });
 
         setRows((prevRows) =>
@@ -75,6 +76,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                 row.id === id ? { ...row, status: isPublished } : row,
             ),
         );
+        await UpdateDialectWordStatus(id, isPublished);
     };
 
     return (
@@ -131,8 +133,11 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                     <option value={Status.enum.approved}>
                                         Publicerad
                                     </option>
-                                    <option value={Status.enum.rejected}>
+                                    <option value={Status.enum.pending}>
                                         Ej publicerad
+                                    </option>
+                                    <option value={Status.enum.rejected}>
+                                        Avslagen
                                     </option>
                                 </select>
                             </td>
