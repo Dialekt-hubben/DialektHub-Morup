@@ -201,13 +201,14 @@ export async function UpdateDialectword(data: updateDialectWord) {
         );
     }
 
+    // Normalisera inmatade ord till gemener för att säkerställa konsekvens i databasen.
     const updateWord = parsedData.data;
     const normalizedDialectWord = updateWord.dialectWord.toLowerCase();
     const normalizedNationalWord = updateWord.nationalWord.toLowerCase();
 
     try {
+        // Kolla om det finns ett dialektord med det angivna id:t.
         await db.transaction(async (transactionContext) => {
-            // Kolla om det finns ett dialektord med det angivna id:t
             const existingDialectWord = await transactionContext
                 .select({ id: dialectWordTable.id })
                 .from(dialectWordTable)
@@ -220,16 +221,16 @@ export async function UpdateDialectword(data: updateDialectWord) {
                 );
             }
 
-            // Kolla om det redan finns en annan rad med samma dialektord och nationellt ord
+            // Hämta id för det nationella ordet (nationalWord) från nationalWordTable.
             const existingNationalWord = await transactionContext
                 .select({ id: nationalWordTable.id })
                 .from(nationalWordTable)
                 .where(eq(nationalWordTable.word, normalizedNationalWord))
                 .limit(1);
-            // Om det redan finns en rad med samma dialektord och nationellt ord, och det inte är den rad som uppdateras, kasta ett fel
+
             let nationalWordId = existingNationalWord.at(0)?.id;
 
-            // Om det inte finns ett nationellt ord som matchar det inmatade, skapa ett nytt och använd dess ID
+            // Om det inte finns ett nationellt ord som matchar det inmatade, skapa ett nytt och använd dess ID.
             if (!nationalWordId) {
                 const insertedNationalWord = await transactionContext
                     .insert(nationalWordTable)
@@ -238,6 +239,26 @@ export async function UpdateDialectword(data: updateDialectWord) {
                 nationalWordId = insertedNationalWord[0].id;
             }
 
+            // Blockera dubblettpar av dialektord och nationellt ord.
+            const duplicatePair = await transactionContext
+                .select({ id: dialectWordTable.id })
+                .from(dialectWordTable)
+                .where(
+                    and(
+                        eq(dialectWordTable.word, normalizedDialectWord),
+                        eq(dialectWordTable.nationalWordId, nationalWordId),
+                        sql`${dialectWordTable.id} <> ${updateWord.id}`, // Exkludera den aktuella raden från sökningen efter dubbletter.
+                    ),
+                )
+                .limit(1);
+
+            if (duplicatePair.length > 0) {
+                throw new Error(
+                    "Det finns redan en identisk rad med dessa ord.",
+                );
+            }
+
+            // Om alla kontroller passerar, uppdatera.
             await transactionContext
                 .update(dialectWordTable)
                 .set({
@@ -246,8 +267,10 @@ export async function UpdateDialectword(data: updateDialectWord) {
                 })
                 .where(eq(dialectWordTable.id, updateWord.id));
         });
-    } catch {
-        throw new Error("Ett fel uppstod vid uppdatering av dialektordet.");
+    } catch (error) {
+        throw error instanceof Error
+            ? error
+            : new Error("Ett fel uppstod vid uppdatering av dialektordet.");
     }
     return {
         message: "Word updated successfully",
