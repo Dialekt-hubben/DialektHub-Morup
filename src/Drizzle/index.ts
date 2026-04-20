@@ -19,10 +19,9 @@ export const connection = mysql.createPool({
     user: env.MYSQL_USER,
     password: env.MYSQL_PASSWORD,
     database: env.MYSQL_DATABASE,
-    pool: {
-        min: 2,
-        max: 10,
-    },
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 });
 const db = drizzle(connection, { schema, mode: "default" });
 
