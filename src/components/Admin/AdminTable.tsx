@@ -132,13 +132,13 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         )
                                     }>
                                     <option value={Status.enum.approved}>
-                                        Publicerad
+                                        Publicera
                                     </option>
                                     <option value={Status.enum.pending}>
                                         Ej publicerad
                                     </option>
                                     <option value={Status.enum.rejected}>
-                                        Avslagen
+                                        Neka
                                     </option>
                                 </select>
                             </td>
