@@ -7,13 +7,11 @@ import { eq, and } from "drizzle-orm";
 import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 
-// Typ för en rad från Excel-filen
 export type ExcelWordRow = {
     dialectWord: string;
     nationalWord: string;
 };
 
-// Hämta eller skapa nationellt ord
 async function getOrCreateNationalWord(word: string) {
     const existing = await db
         .select({ id: nationalWordTable.id })
@@ -30,21 +28,20 @@ async function getOrCreateNationalWord(word: string) {
     return createdNationalWord[0].id;
 }
 
-
 async function CheckMachingRows(dialectWord: string, nationalWord: string) {
-    // Hämta id för det nationella ordet (nationalWord) från nationalWordTable
+    // Get the ID for the national word (nationalWord) from the nationalWordTable
     const nationalWordRow = await db
         .select({ id: nationalWordTable.id })
         .from(nationalWordTable)
         .where(eq(nationalWordTable.word, nationalWord));
 
-    // Om det nationella ordet inte finns, returnera null (ingen matchning kan finnas)
+    // If the national word does not exist, return null (no match can be found)
     if (nationalWordRow.length === 0) {
         return null;
     }
     const nationalWordId = nationalWordRow[0].id;
 
-    // Sök i dialectWordTable efter en rad där både dialektordet och nationalWordId matchar
+    // Search in dialectWordTable for a row where both the dialect word and nationalWordId match
     const existing = await db
         .select({ id: dialectWordTable.id })
         .from(dialectWordTable)
@@ -55,12 +52,12 @@ async function CheckMachingRows(dialectWord: string, nationalWord: string) {
             ),
         );
 
-    // Om raden finns, returnera dess id (dvs. denna kombination finns redan)
-    // Annars returnera null (kombinationen finns inte, så raden ska läggas till)
+    // If the row exists, return its id (i.e. this combination already exists)
+    // Otherwise return null (the combination does not exist, so the row should be added)
     return existing.length > 0 ? existing[0].id : null;
 }
 
-// Tar emot en array av rader och sparar dem i databasen (endast dialektalt och nationellt ord)
+// Receives an array of rows and saves them to the database (only dialect and national word)
 export async function importExcelRows(rows: ExcelWordRow[]) {
     const currentUser = await auth.api.getSession({
         headers: await headers(),
@@ -72,13 +69,11 @@ export async function importExcelRows(rows: ExcelWordRow[]) {
     for (const row of rows) {
         const nationalWordId = await getOrCreateNationalWord(row.nationalWord);
 
-        // Om något är fel med nationalWordId eller soundFileId,
-        // logga felet, lägg inte till raden och fortsätt till nästa rad.
-        // om dialektordet redan finns, logga en varning, lägg inte till raden och fortsätt till nästa rad.
+        // if there was an issue getting or creating the national word, log an error and skip the row.
+        // Also if the combination of dialect word and national word already exists, log a warning and skip the row.
         if (!nationalWordId) {
             console.error(
-                `Failed to get or create national word or sound file for row: ${JSON.stringify(row)}
-                )}`,
+                `Failed to get or create national word file for row: ${JSON.stringify(row)}`,
             );
             continue;
         } else if (await CheckMachingRows(row.dialectWord, row.nationalWord)) {
@@ -88,7 +83,7 @@ export async function importExcelRows(rows: ExcelWordRow[]) {
             continue;
         }
 
-        // Om allt är okej, lägg till raden i databasen
+        // If everything is fine, insert the new words into the database.
         await db.insert(dialectWordTable).values({
             word: row.dialectWord,
             nationalWordId,
@@ -100,5 +95,3 @@ export async function importExcelRows(rows: ExcelWordRow[]) {
     }
     return "Import klar!\n";
 }
-
-// Ska vi ens ha status?

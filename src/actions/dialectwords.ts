@@ -36,10 +36,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
 
     const caseInsensitiveWordFilter = query
         ? and(
-              like(
-                  sql`lower(${nationalWordTable.word})`,
-                  `%${query.toLowerCase()}%`,
-              ),
+              like(sql`lower(${nationalWordTable.word})`, `%${query}%`),
               eq(dialectWordTable.status, 1), // Only show approved words when searching
           )
         : eq(dialectWordTable.status, 1); // Only show approved words when no search query is provided;
@@ -209,39 +206,76 @@ export async function UpdateDialectWord(data: updateDialectWord) {
         );
     }
 
+    // Normalize the input words to ensure consistency in the database.
     const updateWord = parsedData.data;
+    const normalizedDialectWord = updateWord.dialectWord.toLowerCase();
+    const normalizedNationalWord = updateWord.nationalWord.toLowerCase();
 
     try {
-        // Uppdaterar dialektordet i databasen med det nya värdet
-        await db
-            .update(dialectWordTable)
-            .set({ word: updateWord.dialectWord })
-            .where(eq(dialectWordTable.id, updateWord.id));
+        // Check if a dialect word with the given id exists.
+        await db.transaction(async (transactionContext) => {
+            const existingDialectWord = await transactionContext
+                .select({ id: dialectWordTable.id })
+                .from(dialectWordTable)
+                .where(eq(dialectWordTable.id, updateWord.id))
+                .limit(1);
 
-        // Hämta nationalWordId för att kunna uppdatera nationalordet
-        const fetchedNationalWordId = await db
-            .select({ nationalWordId: dialectWordTable.nationalWordId })
-            .from(dialectWordTable)
-            .where(eq(dialectWordTable.id, updateWord.id));
-
-        // Om nationalWordId finns, uppdatera nationalordet i databasen
-        if (fetchedNationalWordId.length > 0) {
-            await db
-                .update(nationalWordTable)
-                .set({ word: updateWord.nationalWord })
-                .where(
-                    eq(
-                        nationalWordTable.id,
-                        fetchedNationalWordId[0].nationalWordId,
-                    ),
+            if (existingDialectWord.length === 0) {
+                throw new Error(
+                    "Kunde inte hitta dialektordet för det angivna id:t.",
                 );
-        } else {
-            throw new Error(
-                "Kunde inte hitta nationalWordId för det angivna id:t.",
-            );
-        }
-    } catch {
-        throw new Error("Ett fel uppstod vid uppdatering av dialektordet.");
+            }
+
+            // Get the ID for the national word (nationalWord) from the nationalWordTable.
+            const existingNationalWord = await transactionContext
+                .select({ id: nationalWordTable.id })
+                .from(nationalWordTable)
+                .where(eq(nationalWordTable.word, normalizedNationalWord))
+                .limit(1);
+
+            let nationalWordId = existingNationalWord.at(0)?.id;
+
+            // If there isn't an existing national word that matches the input, create a new one and use its ID.
+            if (!nationalWordId) {
+                const insertedNationalWord = await transactionContext
+                    .insert(nationalWordTable)
+                    .values({ word: normalizedNationalWord })
+                    .$returningId();
+                nationalWordId = insertedNationalWord[0].id;
+            }
+
+            // Block duplicate pairs of dialect word and national word.
+            const duplicatePair = await transactionContext
+                .select({ id: dialectWordTable.id })
+                .from(dialectWordTable)
+                .where(
+                    and(
+                        eq(dialectWordTable.word, normalizedDialectWord),
+                        eq(dialectWordTable.nationalWordId, nationalWordId),
+                        sql`${dialectWordTable.id} <> ${updateWord.id}`, // Exclude the current row from the duplicate check.
+                    ),
+                )
+                .limit(1);
+
+            if (duplicatePair.length > 0) {
+                throw new Error(
+                    "Det finns redan en identisk rad med dessa ord.",
+                );
+            }
+
+            // If all checks pass, update the dialect word with the new values.
+            await transactionContext
+                .update(dialectWordTable)
+                .set({
+                    word: normalizedDialectWord,
+                    nationalWordId,
+                })
+                .where(eq(dialectWordTable.id, updateWord.id));
+        });
+    } catch (error) {
+        throw error instanceof Error
+            ? error
+            : new Error("Ett fel uppstod vid uppdatering av dialektordet.");
     }
     return {
         message: "Word updated successfully",
