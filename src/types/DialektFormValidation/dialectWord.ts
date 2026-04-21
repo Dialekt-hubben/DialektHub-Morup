@@ -41,6 +41,7 @@ export type addDialectWord = z.infer<typeof addDialectWord>;
 
 export const updateDialectWord = z.object({
     id: z.number(),
+    status: Status.default("pending").optional(),
     dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
     nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
 });

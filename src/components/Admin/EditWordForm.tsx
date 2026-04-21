@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { UpdateDialectword } from "@/actions/dialectwords";
+import { UpdateDialectWord } from "@/actions/dialectwords";
 import styles from "./AdminTable.module.css";
 import { editWordForm } from "@/types/editWordFormValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,7 +53,7 @@ export default function EditWordForm({
     // Handle form submission by calling the UpdateDialectword action and passing the updated data.
     const onSubmit = async (values: editWordForm) => {
         try {
-            await UpdateDialectword({
+            await UpdateDialectWord({
                 id,
                 dialectWord: values.dialectWord,
                 nationalWord: values.nationalWord,

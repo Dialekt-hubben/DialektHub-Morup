@@ -6,7 +6,7 @@ import { dialectWordTable } from "@/Drizzle/models/DialectWord";
 import { nationalWordTable } from "@/Drizzle/models/NationalWord";
 import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { env } from "@/env";
-import { auth } from "@/lib/auth";
+import { auth, getAdminSession } from "@/lib/auth";
 import { s3Client } from "@/lib/s3Client";
 import {
     addDialectWord,
@@ -15,7 +15,12 @@ import {
 import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
 import { GetNumberFromStatus } from "@/utils/enumConverter";
-import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
+import {
+    DeleteObjectCommand,
+    DeleteObjectCommandInput,
+    PutObjectCommand,
+    PutObjectCommandInput,
+} from "@aws-sdk/client-s3";
 import { count, eq, sql, like, or, and } from "drizzle-orm";
 import { headers } from "next/headers";
 
@@ -184,7 +189,7 @@ export async function CreateDialectWord(data: addDialectWord) {
     });
 }
 
-export async function UpdateDialectword(data: updateDialectWord) {
+export async function UpdateDialectWord(data: updateDialectWord) {
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });
@@ -279,6 +284,75 @@ export async function UpdateDialectword(data: updateDialectWord) {
             nationalWord: updateWord.nationalWord,
         },
     };
+}
+
+export async function UpdateDialectWordStatus(
+    dialectWordId: number,
+    newStatus: Status,
+) {
+    const currentUser = await getAdminSession();
+
+    if (!currentUser) {
+        throw new Error("User must be logged in to update a dialect word.");
+    }
+
+    try {
+        if (
+            newStatus === Status.enum.approved ||
+            newStatus === Status.enum.pending
+        ) {
+            await db
+                .update(dialectWordTable)
+                .set({ status: GetNumberFromStatus(newStatus) })
+                .where(eq(dialectWordTable.id, dialectWordId));
+        }
+        if (newStatus === Status.enum.rejected) {
+            const wordToDelete = (
+                await db
+                    .select({
+                        soundFileName: soundFileTable.fileName,
+                    })
+                    .from(dialectWordTable)
+                    .leftJoin(
+                        soundFileTable,
+                        eq(dialectWordTable.soundFileId, soundFileTable.id),
+                    )
+                    .where(eq(dialectWordTable.id, dialectWordId))
+                    .limit(1)
+            ).at(0);
+
+            // Om det finns en ljudfil kopplad till ordet, ta bort den från S3
+            if (wordToDelete && wordToDelete.soundFileName) {
+                const deleteCommandInput = {
+                    Bucket: env.S3_BUCKET_NAME,
+                    Key: wordToDelete.soundFileName,
+                } satisfies DeleteObjectCommandInput;
+                const deleteCommand = new DeleteObjectCommand(
+                    deleteCommandInput,
+                );
+                await s3Client.send(deleteCommand);
+
+                await db
+                    .delete(dialectWordTable)
+                    .where(eq(dialectWordTable.id, dialectWordId));
+
+                await db
+                    .delete(soundFileTable)
+                    .where(
+                        eq(soundFileTable.fileName, wordToDelete.soundFileName),
+                    );
+                return;
+            }
+
+            await db
+                .delete(dialectWordTable)
+                .where(eq(dialectWordTable.id, dialectWordId));
+        }
+    } catch {
+        throw new Error(
+            "Ett fel uppstod vid uppdatering av dialektordets status.",
+        );
+    }
 }
 
 export async function SearchDialectWords({ page, pageSize, query }: GetParams) {
