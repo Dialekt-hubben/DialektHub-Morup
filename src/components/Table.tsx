@@ -1,6 +1,7 @@
 "use client";
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
+import PlayIcon from "./PlayIcon";
 
 type TableRow = DialectWordTableResponse & {
     soundFileUrl: string | null;
@@ -53,7 +54,7 @@ export default function Table({ tableData }: TableProps) {
                                                 playSound(item.soundFileUrl);
                                             }
                                         }}>
-                                        ▶️
+                                        <PlayIcon />
                                     </button>
                                 )}
                             </td>

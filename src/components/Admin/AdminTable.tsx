@@ -7,6 +7,7 @@ import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectW
 import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
+import PlayIcon from "../PlayIcon";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -111,7 +112,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         onClick={() =>
                                             playSound(item.soundFileUrl!)
                                         }>
-                                        ▶️
+                                        <PlayIcon />
                                     </button>
                                 )}
                             </td>
