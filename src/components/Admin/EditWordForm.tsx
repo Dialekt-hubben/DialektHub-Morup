@@ -5,14 +5,11 @@ import styles from "./AdminTable.module.css";
 import { editWordForm } from "@/types/editWordFormValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// Typ för data som skickas tillbaka när ett ord har uppdaterats
 export type EditWordFormUpdatedData = {
     id: number;
     dialectWord: string;
     nationalWord: string;
 };
-
-// Props för EditWordForm-komponenten
 interface EditWordFormProps {
     id: number;
     dialectWord: string;
@@ -33,9 +30,9 @@ export default function EditWordForm({
         handleSubmit,
         reset,
         formState: { errors },
-        setError // Missing setError from useForm
+        setError
     } = useForm<editWordForm>({
-        resolver: zodResolver(editWordForm), // missing resolver for validation
+        resolver: zodResolver(editWordForm),
         defaultValues: {
             id,
             dialectWord,
@@ -43,8 +40,8 @@ export default function EditWordForm({
         },
     });
 
-    // Uppdatera formulärets default values så att det alltid visar rätt data när
-    // EditWordForm öppnas eller när ett nytt ord väljs att redigera.
+    // Update the form's default values so that it always shows the correct data
+    // when EditWordForm is opened or when a new word is selected for editing.
     useEffect(() => {
         reset({
             id,
@@ -53,9 +50,8 @@ export default function EditWordForm({
         });
     }, [id, dialectWord, nationalWord, reset]);
 
+    // Handle form submission by calling the UpdateDialectword action and passing the updated data.
     const onSubmit = async (values: editWordForm) => {
-        // setError("");
-
         try {
             await UpdateDialectword({
                 id,
@@ -122,13 +118,6 @@ export default function EditWordForm({
                     </button>
                 </div>
             </div>
-
-            {errors.dialectWord && (
-                <p className={styles.errorText}>{errors.dialectWord.message}</p>
-            )}
-            {errors.nationalWord && (
-                <p className={styles.errorText}>{errors.nationalWord.message}</p>
-            )}
         </form>
     );
 }
