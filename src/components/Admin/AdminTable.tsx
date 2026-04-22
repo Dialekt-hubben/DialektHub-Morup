@@ -106,6 +106,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                             border: "none",
                                             fontSize: "20px",
                                             cursor: "pointer",
+                                            backgroundColor: "transparent",
                                         }}
                                         type="button"
                                         aria-label="Spela upp ljud"
