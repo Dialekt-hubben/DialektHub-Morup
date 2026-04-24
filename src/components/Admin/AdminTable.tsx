@@ -7,7 +7,7 @@ import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectW
 import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
-import PlayIcon from "../PlayIcon";
+import {PlayIcon, PauseIcon} from "../SoundIcon";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -19,6 +19,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
     );
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
+    const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
 
     // Uppdatera "rows" varje gång "tableData" ändras.
     useEffect(() => {
@@ -40,7 +41,18 @@ export default function AdminTable({ tableData }: AdminTableProps) {
     // Funktion för att spela upp ljudfilen
     const playSound = (url: string) => {
         const audio = new window.Audio(url);
-        audio.play();
+        // När ljudet slutar spela, återställ activeSoundUrl så att rätt ikon visas.
+        audio.onended = () => {
+            setActiveSoundUrl((currentUrl) =>
+                currentUrl === url ? null : currentUrl,
+            );
+        };
+        // Försök spela upp ljudet, och om det misslyckas, återställ activeSoundUrl.
+        audio.play().catch(() => {
+            setActiveSoundUrl((currentUrl) =>
+                currentUrl === url ? null : currentUrl,
+            );
+        });
     };
 
     // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
@@ -109,11 +121,24 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                             backgroundColor: "transparent",
                                         }}
                                         type="button"
-                                        aria-label="Spela upp ljud"
-                                        onClick={() =>
-                                            playSound(item.soundFileUrl!)
-                                        }>
-                                        <PlayIcon />
+                                        aria-label={
+                                            activeSoundUrl === item.soundFileUrl
+                                                ? "Pausa ljud"
+                                                : "Spela upp ljud"
+                                        }
+                                        onClick={() => {
+                                            if (activeSoundUrl === item.soundFileUrl) {
+                                                setActiveSoundUrl(null);
+                                            } else {
+                                                setActiveSoundUrl(item.soundFileUrl!);
+                                                playSound(item.soundFileUrl!);
+                                            }
+                                        }}>
+                                        {activeSoundUrl === item.soundFileUrl ? (
+                                            <PauseIcon />
+                                        ) : (
+                                            <PlayIcon />
+                                        )}
                                     </button>
                                 )}
                             </td>
