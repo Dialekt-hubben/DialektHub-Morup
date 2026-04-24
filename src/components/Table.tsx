@@ -46,6 +46,7 @@ export default function Table({ tableData }: TableProps) {
                                             border: "none",
                                             fontSize: "20px",
                                             cursor: "pointer",
+                                            backgroundColor: "transparent",
                                         }}
                                         type="button"
                                         aria-label="Spela upp ljud"
