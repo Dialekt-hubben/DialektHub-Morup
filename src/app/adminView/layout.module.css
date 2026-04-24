@@ -1,0 +1,40 @@
+
+.layoutContainer {
+    display: flex;
+}
+.sidebar {
+    width: 200px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-right: solid 1px #e0e0e0;
+}
+
+.navContainer {
+    display: flex;
+    margin-bottom: auto;
+    border-bottom: solid 1px #e0e0e0;
+    width: 100%;
+    .navItem {
+        padding: 10px 10px;
+        font-weight: bold;
+        color: var(--color-blue);
+        list-style: none;
+        &.active {
+            color: white;
+            background-color: var(--color-blue);
+        }
+    } 
+    .navItem:not(.active):hover {
+        scale: 1.05;
+    }
+}
+
+
+
+.contentContainer {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
