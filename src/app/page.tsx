@@ -45,6 +45,7 @@ export default async function Home({ searchParams }: params) {
                 <div>
                     <div className={styles.tableContainer}>
                         <SearchField />
+                        <Pagination page={+page} totalPages={totalPages} />
                         <div className={styles.tableHeader}>
                             <h2>Ordlista</h2>
                             {userSession && (
