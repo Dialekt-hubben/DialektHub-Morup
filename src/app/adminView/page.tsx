@@ -62,10 +62,6 @@ export default async function AdminView({ searchParams }: Params) {
                         <AdminTable tableData={tableDataWithUrls} />
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
-                    <div className={styles.extraAdminSection}>
-                    <ImportExcelSection />
-                    <AdminUserRoles />
-                    </div>
                 </div>
             </div>
         </main>
