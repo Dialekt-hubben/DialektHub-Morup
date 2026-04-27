@@ -7,7 +7,7 @@ function Footer() {
         <footer className={style.footer}>
             <div>
                 <h2>Morpekanska</h2>
-                <p>Bevara dialekt i ord & ljud</p>
+                <p>Bevara den morpekanska dialekten i ord & ljud.</p>
             </div>
             <div>
                 <h2>Om projektet</h2>
@@ -30,7 +30,7 @@ function Footer() {
             </div>
             <hr />
             <p className={style.copyright}>
-                &copy; {currentYear} Morupsakademin. Med kärlek för den Morpekanska
+                &copy; {currentYear} Morupsakademin - Med kärlek för den Morpekanska
                 dialekten.
             </p>
         </footer>
