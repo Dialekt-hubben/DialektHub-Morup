@@ -6,29 +6,32 @@ function Footer() {
     return (
         <footer className={style.footer}>
             <div>
-                <h2>DialektHub</h2>
+                <h2>Morpekanska</h2>
                 <p>Bevara dialekt i ord & ljud</p>
             </div>
             <div>
                 <h2>Om projektet</h2>
                 <p>
-                    En plattform för att dokumentera och bevara svenska
-                    dialekter för framtida generationer.
+                    En plattform för att dokumentera och bevara den Morpekanska dialekten för framtida generationer.
                 </p>
             </div>
             <div>
                 <h2>Kontakt</h2>
                 <p>
-                    Hjälp till att bygga det största dialektlexikonet! Email:{" "}
-                    <Link href="mailto:kontakt@dialekthub.se">
-                        kontakt@dialekthub.se
-                    </Link>
+                    <b>Namn:</b> Håkan Petersson
+                    <br />
+                    <b>Adress:</b> Sandhavrevägen 8, 311 54, Glommen, Hallands län
+                    <br />
+                    <b>Email:</b> {" "}
+                    <Link href="mailto:hakan@glommen.eu">
+                        hakan@glommen.eu 
+                    </Link> 
                 </p>
             </div>
             <hr />
             <p className={style.copyright}>
-                &copy; {currentYear} DialektHub. Med kärlek för svenska
-                dialekter.
+                &copy; {currentYear} Morupsakademin. Med kärlek för den Morpekanska
+                dialekten.
             </p>
         </footer>
     );
