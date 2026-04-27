@@ -12,11 +12,11 @@ async function Header() {
             <Link href="/" className={style.logo}>
                 <Image
                     src="/logo.png"
-                    alt="DialektHub Logo"
+                    alt="Morpekanska Logo"
                     width={50}
                     height={50}
                 />
-                <h1>DialektHub • Dialektlexikon</h1>
+                <h1>Morpekanska</h1>
             </Link>
 
             <nav>
@@ -24,7 +24,7 @@ async function Header() {
                     <li>
                         {userSession ? (
                             <form action={signOut}>
-                                <h5>Välkommen,{userSession?.name}</h5>
+                                <h5>Välkommen, {userSession?.name}</h5>
                                 <button type="submit" className="btn secondary">
                                     Logga ut
                                 </button>
