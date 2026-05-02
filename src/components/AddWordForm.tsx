@@ -5,13 +5,17 @@ import { useForm } from "react-hook-form";
 import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
 import { useAudio } from "./Audio";
 import styles from "./AddWordForm.module.css";
-import { useState } from "react";
 import Link from "next/link";
 import { CreateDialectWord } from "@/actions/dialectwords";
 
 function AddWordForm() {
-    const [isRrecording, setisRrecording] = useState(false);
-    const { startRecording, stopRecording } = useAudio();
+    const {
+        startRecording,
+        stopRecording,
+        audioFile,
+        isRecording,
+        playBase64Audio,
+    } = useAudio();
     const {
         handleSubmit,
         register,
@@ -20,18 +24,6 @@ function AddWordForm() {
     } = useForm({
         resolver: zodResolver(addDialectWord),
     });
-
-    const startAudioRecording = () => {
-        console.log("Record button clicked");
-        setisRrecording(true);
-        startRecording();
-    };
-
-    const stopAudioRecording = () => {
-        console.log("Stop button clicked");
-        setisRrecording(false);
-        stopRecording();
-    };
 
     const onSubmit = async (data: addDialectWord) => {
         try {
@@ -73,24 +65,29 @@ function AddWordForm() {
                     {...register("audioFile")}
                     errorMessage={errors.audioFile?.message?.toString()}
                 />
-                {errors.root && (
-                    <p>{errors.root.message}</p>
-                )}
+                {errors.root && <p>{errors.root.message}</p>}
                 <div>
-                    {!isRrecording ? (
+                    {!isRecording ? (
                         <button
                             type="button"
                             className="btn primary"
-                            disabled
-                            onClick={startAudioRecording}>
+                            onClick={startRecording}>
                             Spela in
                         </button>
                     ) : (
                         <button
                             type="button"
                             className="btn primary"
-                            onClick={stopAudioRecording}>
+                            onClick={stopRecording}>
                             Stoppa inspelning
+                        </button>
+                    )}
+                    {audioFile && (
+                        <button
+                            type="button"
+                            className="btn primary"
+                            onClick={() => playBase64Audio(audioFile)}>
+                            Spela upp inspelning
                         </button>
                     )}
                 </div>
@@ -99,8 +96,13 @@ function AddWordForm() {
                     Avbryt
                 </Link>
             </form>
+            {audioFile && (
+                <>
+                    <p>Inspelning pågår...</p>
+                    <pre>{audioFile}</pre>
+                </>
+            )}
         </div>
     );
 }
-
 export default AddWordForm;
