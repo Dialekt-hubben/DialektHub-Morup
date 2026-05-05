@@ -1,7 +1,9 @@
 "use client";
+import { useState } from "react";
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
-import PlayIcon from "./PlayIcon";
+import {PlayIcon, PauseIcon} from "./SoundIcon";
+import playSound from "@/utils/soundhandler";
 
 type TableRow = DialectWordTableResponse & {
     soundFileUrl: string | null;
@@ -15,10 +17,7 @@ type TableProps = {
 // "tableData" is an object fetched from the API containing words, pronunciation, sound file, etc.
 // Table renders a row for each object in "tableData.data".
 export default function Table({ tableData }: TableProps) {
-    const playSound = (url: string) => {
-        const audio = new window.Audio(url);
-        audio.play();
-    };
+    const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
 
     return (
         <>
@@ -49,13 +48,26 @@ export default function Table({ tableData }: TableProps) {
                                             backgroundColor: "transparent",
                                         }}
                                         type="button"
-                                        aria-label="Spela upp ljud"
+                                        aria-label={
+                                            activeSoundUrl === item.soundFileUrl
+                                                ? "Pausa ljud"
+                                                : "Spela upp ljud"
+                                        }
                                         onClick={() => {
                                             if (item.soundFileUrl) {
-                                                playSound(item.soundFileUrl);
+                                                if (activeSoundUrl === item.soundFileUrl) {
+                                                    setActiveSoundUrl(null);
+                                                } else {
+                                                    setActiveSoundUrl(item.soundFileUrl);
+                                                    playSound(item.soundFileUrl, setActiveSoundUrl);
+                                                }
                                             }
                                         }}>
-                                        <PlayIcon />
+                                        {activeSoundUrl === item.soundFileUrl ? (
+                                            <PauseIcon />
+                                        ) : (
+                                            <PlayIcon />
+                                        )}
                                     </button>
                                 )}
                             </td>
