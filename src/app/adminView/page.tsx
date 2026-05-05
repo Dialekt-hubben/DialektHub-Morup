@@ -1,9 +1,7 @@
 import styles from "../page.module.css";
 import Pagination from "../../components/Pagination";
 import AdminTable from "@/components/Admin/AdminTable";
-import AdminUserRoles from "@/components/Admin/AdminUserRoles";
 import SearchField from "@/components/Searchfield";
-import ImportExcelSection from "@/components/Admin/ImportExcelSection";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 import { getAdminSession } from "@/lib/auth";
@@ -62,10 +60,6 @@ export default async function AdminView({ searchParams }: Params) {
                         <AdminTable tableData={tableDataWithUrls} />
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
-                    <div className={styles.extraAdminSection}>
-                    <ImportExcelSection />
-                    <AdminUserRoles />
-                    </div>
                 </div>
             </div>
         </main>
