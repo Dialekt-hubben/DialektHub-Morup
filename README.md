@@ -45,5 +45,10 @@ Then that value is used by the app when you run the dev server.
 
 ```bash
 Remove-Item Env:S3_ENDPOINT
-$env:S3_ENDPOINT # This one might not be needed to run.
+Remove-Item Env:MYSQL_DATABASE
+Remove-Item Env:DATABASE_URL
+
+$env:S3_ENDPOINT
+$env:MYSQL_DATABASE
+$env:DATABASE_URL
 ```
