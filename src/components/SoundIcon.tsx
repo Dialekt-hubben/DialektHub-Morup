@@ -12,10 +12,11 @@ export function PlayIcon() {
 export function PauseIcon() {
     // !Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.
     return (
-        <svg 
-        style={{ width: "20px", height: "20px", fill: "var(--color-blue)" }}
-        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-            <path d="M224 128C224 110.3 209.7 96 192 96C174.3 96 160 110.3 160 128L160 512C160 529.7 174.3 544 192 544C209.7 544 224 529.7 224 512L224 128zM448 128C448 110.3 433.7 96 416 96C398.3 96 384 110.3 384 128L384 512C384 529.7 398.3 544 416 544C433.7 544 448 529.7 448 512L448 128z" />
-        </svg>
+        <svg
+    style={{ width: "20px", height: "20px", fill: "var(--color-blue)" }}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 384 512">
+    <path d="M48 32C21.5 32 0 53.5 0 80L0 432c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-352c0-26.5-21.5-48-48-48L48 32zm224 0c-26.5 0-48 21.5-48 48l0 352c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-352c0-26.5-21.5-48-48-48l-64 0z" />
+</svg>
     );
 }
