@@ -8,6 +8,7 @@ import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
 import {PlayIcon, PauseIcon} from "../SoundIcon";
+import playSound from "@/utils/soundhandler";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -38,22 +39,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         return () => clearTimeout(timerId);
     }, [savedRowId]);
 
-    // Funktion för att spela upp ljudfilen
-    const playSound = (url: string) => {
-        const audio = new window.Audio(url);
-        // När ljudet slutar spela, återställ activeSoundUrl så att rätt ikon visas.
-        audio.onended = () => {
-            setActiveSoundUrl((currentUrl) =>
-                currentUrl === url ? null : currentUrl,
-            );
-        };
-        // Försök spela upp ljudet, och om det misslyckas, återställ activeSoundUrl.
-        audio.play().catch(() => {
-            setActiveSoundUrl((currentUrl) =>
-                currentUrl === url ? null : currentUrl,
-            );
-        });
-    };
 
     // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
     const startEdit = (item: DialectWordTableResponse) => {
@@ -131,7 +116,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                                 setActiveSoundUrl(null);
                                             } else {
                                                 setActiveSoundUrl(item.soundFileUrl!);
-                                                playSound(item.soundFileUrl!);
+                                                playSound(item.soundFileUrl!, setActiveSoundUrl);
                                             }
                                         }}>
                                         {activeSoundUrl === item.soundFileUrl ? (
