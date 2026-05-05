@@ -3,6 +3,7 @@ import { useState } from "react";
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
 import {PlayIcon, PauseIcon} from "./SoundIcon";
+import playSound from "@/utils/soundhandler";
 
 type TableRow = DialectWordTableResponse & {
     soundFileUrl: string | null;
@@ -17,20 +18,6 @@ type TableProps = {
 // Table renders a row for each object in "tableData.data".
 export default function Table({ tableData }: TableProps) {
     const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
-
-    const playSound = (url: string) => {
-        const audio = new window.Audio(url);
-        audio.onended = () => {
-            setActiveSoundUrl((currentUrl) =>
-                currentUrl === url ? null : currentUrl,
-            );
-        };
-        audio.play().catch(() => {
-            setActiveSoundUrl((currentUrl) =>
-                currentUrl === url ? null : currentUrl,
-            );
-        });
-    };
 
     return (
         <>
@@ -72,7 +59,7 @@ export default function Table({ tableData }: TableProps) {
                                                     setActiveSoundUrl(null);
                                                 } else {
                                                     setActiveSoundUrl(item.soundFileUrl);
-                                                    playSound(item.soundFileUrl);
+                                                    playSound(item.soundFileUrl, setActiveSoundUrl);
                                                 }
                                             }
                                         }}>
