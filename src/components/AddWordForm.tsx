@@ -59,7 +59,7 @@ function AddWordForm() {
                 />
                 <InputGroup
                     label="Svenskt ord"
-                    placeholder="Skriv det svenska ordet här..."
+                    placeholder="Skriv det översatta ordet här..."
                     {...register("nationalWord")}
                     errorMessage={errors.nationalWord?.message}
                 />

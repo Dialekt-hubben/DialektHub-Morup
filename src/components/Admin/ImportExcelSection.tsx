@@ -134,13 +134,13 @@ const ImportExcelSection = () => {
             <hr />
             <p>
                 Se till att Excel-filen är i rätt format innan du importerar.
-                Första kolumnen ska innehålla det dialektala ordet och Andra
-                kolumnen dess motsvarande nationella ord.
+                Första kolumnen ska innehålla det Morpekanska ordet och Andra
+                kolumnen dess motsvarande Översatta ordet.
                 <br />
                 <strong>
-                    [A] Dialektalt ord
+                    [A] Morpekanska ordet
                     <br />
-                    [B] Nationellt ord
+                    [B] Översätta ordet
                     <br />
                 </strong>
                 <br />

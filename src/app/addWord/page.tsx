@@ -8,7 +8,6 @@ export default async function AddWord() {
     return (
         <main>
             <div className={styles.Container}>
-                <h2 className={styles.Title}>Lägg till nytt Dialektalt ord</h2>
                 <AddWordForm />
             </div>
         </main>
