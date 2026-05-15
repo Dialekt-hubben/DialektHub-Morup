@@ -26,6 +26,16 @@ export function useAudio() {
         });
     }
 
+    function base64ToFileList(): FileList {
+        const file = new File(recordedChunksRef.current, "recording.wav", { type: "audio/wav" });
+        
+        // Skapa en FileList med det nya filobjektet
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        
+        return dataTransfer.files;
+    }
+
     async function startRecording() {
         recordedChunksRef.current = [];
         try {
@@ -101,5 +111,6 @@ export function useAudio() {
         startRecording,
         stopRecording,
         playBase64Audio,
+        base64ToFileList,
     };
 }

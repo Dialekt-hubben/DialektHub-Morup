@@ -15,18 +15,26 @@ function AddWordForm() {
         audioFile,
         isRecording,
         playBase64Audio,
+        base64ToFileList,
     } = useAudio();
     const {
         handleSubmit,
         register,
         formState: { errors },
         setError,
+        setValue,
     } = useForm({
         resolver: zodResolver(addDialectWord),
     });
 
     const onSubmit = async (data: addDialectWord) => {
-        try {
+        try {            
+            if (audioFile) {
+                
+                const fileList = base64ToFileList();
+                
+                setValue("audioFile", fileList, { shouldValidate: true });
+            }
             await CreateDialectWord(data);
         } catch (error) {
             if (error instanceof Error) {
