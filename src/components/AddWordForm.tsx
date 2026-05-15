@@ -33,7 +33,7 @@ function AddWordForm() {
                 
                 const fileList = base64ToFileList();
                 
-                setValue("audioFile", fileList, { shouldValidate: true });
+                setValue("audioFile", fileList, { shouldValidate: false });
             }
             await CreateDialectWord(data);
         } catch (error) {

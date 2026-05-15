@@ -27,7 +27,7 @@ export function useAudio() {
     }
 
     function base64ToFileList(): FileList {
-        const file = new File(recordedChunksRef.current, "recording.wav", { type: "audio/wav" });
+        const file = new File(recordedChunksRef.current, "recording.mp3", { type: "audio/mp3" });
         
         // Skapa en FileList med det nya filobjektet
         const dataTransfer = new DataTransfer();
