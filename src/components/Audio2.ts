@@ -21,11 +21,7 @@ function useAudio2() {
     async function stopRecording({
         setValue,
     }: {
-        setValue: UseFormSetValue<{
-            dialectWord: string;
-            nationalWord: string;
-            audioFile?: FileList | null | undefined;
-        }>;
+        setValue: UseFormSetValue<addDialectWord>;
     }) {
         if (!mediaRecorderRef.current) {
             return;
@@ -37,17 +33,19 @@ function useAudio2() {
         // När data är tillgänglig, skapa en fil och spara den i state
         mediaRecorderRef.current.ondataavailable = (event: BlobEvent) => {
             const audioBlob = event.data;
-            console.log({ type: audioBlob.type });
 
             const audioFile = new File([audioBlob], "recording.webm", {
                 type: "audio/webm",
             });
 
+            console.log("Audio file created:", audioFile);
             const fileList = new DataTransfer();
             fileList.items.add(audioFile);
 
+            console.log({ types: fileList.files.item(0)?.type });
+
             setRecordingSoundFile(fileList.files);
-            setValue("audioFile", fileList.files, { shouldValidate: false });
+            setValue("audioFile", fileList.files);
         };
 
         // Stäng av mikrofonen
