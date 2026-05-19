@@ -26,14 +26,14 @@ export const addDialectWord = z.object({
         )
         .nullable()
         .optional()
-        .transform((files) => (files && files.length > 0 ? files[0] : null))
+        // .transform((files) => (files && files.length > 0 ? files[0] : null))
         .refine(
             (file) =>
-                !file || AllowedFileTypes.includes(file.type.toLowerCase()),
+                !file || !file[0] || !AllowedFileTypes.includes(file[0].type.toLowerCase()),
             "Bara ljudfiler av typen mp3, wav, ogg eller mpeg är tillåtna",
         )
         .refine(
-            (file) => !file || file.size <= MaxFileSize,
+            (file) => !file || !file[0] || file[0].size <= MaxFileSize,
             "Filen får inte vara större än 5MB",
         ),
 });
