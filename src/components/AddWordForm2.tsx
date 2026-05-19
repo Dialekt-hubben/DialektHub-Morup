@@ -15,7 +15,6 @@ function AddWordForm2() {
         startRecording,
         stopRecording,
         playRecording,
-        pauseRecording,
     } = useAudio2();
     const {
         handleSubmit,
@@ -25,8 +24,8 @@ function AddWordForm2() {
         setValue,
     } = useForm({
         defaultValues: {
-            dialectWord: "test",
-            nationalWord: "test",
+            dialectWord: "test1",
+            nationalWord: "test1",
         },
         resolver: zodResolver(addDialectWord),
     });
@@ -82,12 +81,7 @@ function AddWordForm2() {
                         <button
                             type="button"
                             className="btn primary"
-                            onClick={() => {
-                                stopRecording({ setValue });
-                                console.log({
-                                    recordingSoundFile: recordingSoundFile
-                                });
-                            }}>
+                            onClick={() => stopRecording({ setValue })}>
                             Stoppa inspelning
                         </button>
                     )}

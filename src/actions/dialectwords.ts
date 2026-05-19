@@ -12,7 +12,6 @@ import {
     addDialectWord,
     updateDialectWord,
 } from "@/types/DialektFormValidation/dialectWord";
-import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
 import { Status } from "@/types/status";
 import { GetNumberFromStatus } from "@/utils/enumConverter";
 import {
@@ -81,6 +80,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
 }
 
 export async function CreateDialectWord(data: addDialectWord) {
+    console.log({ data });
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });
@@ -89,20 +89,22 @@ export async function CreateDialectWord(data: addDialectWord) {
         throw new Error("User must be logged in to create a dialect word.");
     }
 
-    const fileParseResult = dialectWordApi.safeParse(data);
+    // TODO: Fixa zod validering av fil. Den misslyckas på grund av att typen Filelist inte finns på servern men typen File finns.
+    // const fileParseResult = addDialectWord.safeParse(data);
 
-    if (!fileParseResult.success) {
-        throw new Error(
-            "Invalid input data: " + JSON.stringify(fileParseResult.error.message),
-        );
-    }
+    // if (!fileParseResult.success) {
+    //     throw new Error(
+    //         "Invalid input data: " + JSON.stringify(fileParseResult.error.message),
+    //     );
+    // }
 
     // När vi skapar ett nytt ord och det redan finns ett nationellt ord behöver vi ta till vara på NationalWordId
     // och koppla det in inmatade DialectWord ifrån inputen.
-    const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
-    const audioFileName = audioFile
-        ? Date.now() + "-" + audioFile.name.toLowerCase()
-        : null;
+    const { dialectWord, nationalWord, audioFile } = data;
+    const audioFileName =
+        audioFile && audioFile[0]
+            ? Date.now() + "-" + audioFile[0].name.toLowerCase()
+            : null;
 
     return;
     const existingDialectWord = await db
@@ -151,12 +153,12 @@ export async function CreateDialectWord(data: addDialectWord) {
 
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
-            const arraybuffer = await audioFile.arrayBuffer();
+            const arraybuffer = await audioFile[0].arrayBuffer();
             const uploadParams = {
                 Bucket: env.S3_BUCKET_NAME,
                 Key: audioFileName,
                 Body: new Uint8Array(arraybuffer),
-                ContentType: audioFile.type,
+                ContentType: audioFile[0].type,
             } satisfies PutObjectCommandInput;
 
             const command = new PutObjectCommand(uploadParams);
