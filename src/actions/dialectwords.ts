@@ -100,7 +100,6 @@ export async function CreateDialectWord(data: addDialectWordServer) {
     const { dialectWord, nationalWord, audioFile } = data;
     const audioFileName =
         audioFile && audioFile ? Date.now() + "-" + audioFile.name.toLowerCase() : null;
-    return;
     const existingDialectWord = await db
         .select({ word: dialectWordTable.word })
         .from(dialectWordTable)
