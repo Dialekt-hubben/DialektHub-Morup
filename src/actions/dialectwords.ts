@@ -8,10 +8,8 @@ import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { env } from "@/env";
 import { auth, getAdminSession } from "@/lib/auth";
 import { s3Client } from "@/lib/s3Client";
-import {
-    addDialectWord,
-    updateDialectWord,
-} from "@/types/DialektFormValidation/dialectWord";
+import { addDialectWordServer } from "@/types/DialektFormValidation/addDialectWordServer";
+import { updateDialectWord } from "@/types/DialektFormValidation/dialectWord";
 import { Status } from "@/types/status";
 import { GetNumberFromStatus } from "@/utils/enumConverter";
 import {
@@ -79,7 +77,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     };
 }
 
-export async function CreateDialectWord(data: addDialectWord) {
+export async function CreateDialectWord(data: addDialectWordServer) {
     console.log({ data });
     const currentUser = await auth.api.getSession({
         headers: await headers(),
@@ -102,9 +100,7 @@ export async function CreateDialectWord(data: addDialectWord) {
     // och koppla det in inmatade DialectWord ifrån inputen.
     const { dialectWord, nationalWord, audioFile } = data;
     const audioFileName =
-        audioFile && audioFile[0]
-            ? Date.now() + "-" + audioFile[0].name.toLowerCase()
-            : null;
+        audioFile && audioFile ? Date.now() + "-" + audioFile.name.toLowerCase() : null;
 
     return;
     const existingDialectWord = await db
@@ -153,12 +149,12 @@ export async function CreateDialectWord(data: addDialectWord) {
 
         let soundFileId: { id: number } | undefined = undefined;
         if (audioFile && audioFileName) {
-            const arraybuffer = await audioFile[0].arrayBuffer();
+            const arraybuffer = await audioFile.arrayBuffer();
             const uploadParams = {
                 Bucket: env.S3_BUCKET_NAME,
                 Key: audioFileName,
                 Body: new Uint8Array(arraybuffer),
-                ContentType: audioFile[0].type,
+                ContentType: audioFile.type,
             } satisfies PutObjectCommandInput;
 
             const command = new PutObjectCommand(uploadParams);
