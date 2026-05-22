@@ -14,10 +14,13 @@ export const DialectWordTableResponse = z.object({
 });
 export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
-// TypeScript interface for add word
-export const addDialectWordClient = z.object({
+export const baseDialectWordSchema = z.object({
     dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
     nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
+});
+
+// TypeScript interface for add word
+export const addDialectWordClient = baseDialectWordSchema.extend({
     audioFile: z
         .custom<FileList | File>()
         .nullable()
@@ -38,10 +41,8 @@ export const addDialectWordClient = z.object({
 });
 export type addDialectWordClient = z.infer<typeof addDialectWordClient>;
 
-export const updateDialectWord = z.object({
+export const updateDialectWord = baseDialectWordSchema.extend({
     id: z.number(),
     status: Status.default("pending").optional(),
-    dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
-    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
 });
 export type updateDialectWord = z.infer<typeof updateDialectWord>;

@@ -87,21 +87,19 @@ export async function CreateDialectWord(data: addDialectWordServer) {
         throw new Error("User must be logged in to create a dialect word.");
     }
 
-    // TODO: Fixa zod validering av fil. Den misslyckas på grund av att typen Filelist inte finns på servern men typen File finns.
-    // const fileParseResult = addDialectWord.safeParse(data);
+    const fileParseResult = addDialectWordServer.safeParse(data);
 
-    // if (!fileParseResult.success) {
-    //     throw new Error(
-    //         "Invalid input data: " + JSON.stringify(fileParseResult.error.message),
-    //     );
-    // }
+    if (!fileParseResult.success) {
+        throw new Error(
+            "Invalid input data: " + JSON.stringify(fileParseResult.error.message),
+        );
+    }
 
     // När vi skapar ett nytt ord och det redan finns ett nationellt ord behöver vi ta till vara på NationalWordId
     // och koppla det in inmatade DialectWord ifrån inputen.
     const { dialectWord, nationalWord, audioFile } = data;
     const audioFileName =
         audioFile && audioFile ? Date.now() + "-" + audioFile.name.toLowerCase() : null;
-
     return;
     const existingDialectWord = await db
         .select({ word: dialectWordTable.word })

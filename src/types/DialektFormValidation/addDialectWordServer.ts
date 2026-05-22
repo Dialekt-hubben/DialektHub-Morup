@@ -1,15 +1,14 @@
 import z from "zod";
 import { AllowedFileTypes, MaxFileSize } from "./audioFileConstraints";
+import { baseDialectWordSchema } from "./dialectWord";
 
-export const addDialectWordServer = z.object({
-    dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
-    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
+export const addDialectWordServer = baseDialectWordSchema.extend({
     audioFile: z
         .file()
         .nullable()
         .refine(
             (file) =>
-                !file || !file || !AllowedFileTypes.includes(file.type.toLowerCase()),
+                !file || AllowedFileTypes.includes(file.type.toLowerCase()),
             "Bara ljudfiler av typen mp3, wav, ogg eller mpeg är tillåtna",
         )
         .refine(
