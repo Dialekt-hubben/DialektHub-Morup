@@ -7,7 +7,6 @@ export const addDialectWordServer = z.object({
     audioFile: z
         .file()
         .nullable()
-        .optional()
         .refine(
             (file) =>
                 !file || !file || !AllowedFileTypes.includes(file.type.toLowerCase()),

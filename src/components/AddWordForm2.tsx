@@ -7,7 +7,6 @@ import styles from "./AddWordForm.module.css";
 import Link from "next/link";
 import { CreateDialectWord } from "@/actions/dialectwords";
 import useAudio2 from "./Audio2";
-import { addDialectWordServer } from "@/types/DialektFormValidation/addDialectWordServer";
 
 function AddWordForm2() {
     const {
@@ -28,10 +27,10 @@ function AddWordForm2() {
             dialectWord: "test1",
             nationalWord: "test1",
         },
-        resolver: zodResolver(addDialectWordServer),
+        resolver: zodResolver(addDialectWordClient),
     });
 
-    const onSubmit = async (data: addDialectWordServer) => {
+    const onSubmit = async (data: addDialectWordClient) => {
         try {
             await CreateDialectWord(data);
         } catch (error) {

@@ -19,16 +19,16 @@ export const addDialectWordClient = z.object({
     dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
     nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
     audioFile: z
-        .custom<FileList>(
-            (value) => typeof value !== "undefined" && value instanceof FileList,
-            "Förväntat en FileList",
-        )
+        .custom<FileList | File>()
         .nullable()
-        .optional()
-        .transform((files) => (files && files.length > 0 ? files[0] : null))
+        .transform((value) => {
+            if (value instanceof FileList) {
+                return value.length > 0 ? value[0] : null;
+            }
+            return value || null;
+        })
         .refine(
-            (file) =>
-                !file || !file || !AllowedFileTypes.includes(file.type.toLowerCase()),
+            (file) => !file || AllowedFileTypes.includes(file.type.toLowerCase()),
             "Bara ljudfiler av typen mp3, wav, ogg eller mpeg är tillåtna",
         )
         .refine(
