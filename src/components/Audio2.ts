@@ -1,13 +1,11 @@
-import { addDialectWordServer } from "@/types/DialektFormValidation/addDialectWordServer";
-import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord";
 import { useRef, useState } from "react";
-import { UseFormSetValue } from "react-hook-form";
+import { UseFormSetValue, FieldValues, Path, PathValue } from "react-hook-form";
 
 function useAudio2() {
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-    const [recordingSoundFile, setRecordingSoundFile] = useState<FileList | null>(null);
+    const [recordingSoundFile, setRecordingSoundFile] = useState<File | null>(null);
 
     async function startRecording() {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -19,10 +17,12 @@ function useAudio2() {
         setIsRecording(true);
     }
 
-    async function stopRecording({
+    async function stopRecording<T extends FieldValues>({
         setValue,
+        fieldName,
     }: {
-        setValue: UseFormSetValue<addDialectWordServer>;
+        setValue: UseFormSetValue<T>;
+        fieldName: Path<T>;
     }) {
         if (!mediaRecorderRef.current) {
             return;
@@ -39,14 +39,8 @@ function useAudio2() {
                 type: "audio/webm",
             });
 
-            console.log("Audio file created:", audioFile);
-            const fileList = new DataTransfer();
-            fileList.items.add(audioFile);
-
-            console.log({ types: fileList.files.item(0)?.type });
-
-            setRecordingSoundFile(fileList.files);
-            setValue("audioFile", audioFile);
+            setRecordingSoundFile(audioFile);
+            setValue(fieldName, audioFile as PathValue<T, typeof fieldName>);
         };
 
         // Stäng av mikrofonen
@@ -60,7 +54,7 @@ function useAudio2() {
         }
         const mediaAudio = new Audio();
         const file = recordingSoundFile;
-        mediaAudio.src = URL.createObjectURL(file[0]);
+        mediaAudio.src = URL.createObjectURL(file);
         setAudio(mediaAudio);
         mediaAudio.play();
     }

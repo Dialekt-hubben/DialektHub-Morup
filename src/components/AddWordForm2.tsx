@@ -81,7 +81,9 @@ function AddWordForm2() {
                         <button
                             type="button"
                             className="btn primary"
-                            onClick={() => stopRecording({ setValue })}>
+                            onClick={() =>
+                                stopRecording({ setValue, fieldName: "audioFile" })
+                            }>
                             Stoppa inspelning
                         </button>
                     )}
@@ -102,7 +104,7 @@ function AddWordForm2() {
             {recordingSoundFile && (
                 <>
                     <p>Inspelning pågår...</p>
-                    <pre>{recordingSoundFile[0].name}</pre>
+                    <pre>{recordingSoundFile.name}</pre>
                 </>
             )}
         </div>
