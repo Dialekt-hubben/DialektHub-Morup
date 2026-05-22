@@ -2,11 +2,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
-import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord";
 import styles from "./AddWordForm.module.css";
 import Link from "next/link";
 import { CreateDialectWord } from "@/actions/dialectwords";
 import useAudio2 from "./Audio2";
+import { addDialectWordServer } from "@/types/DialektFormValidation/addDialectWordServer";
 
 function AddWordForm2() {
     const {
@@ -27,10 +28,10 @@ function AddWordForm2() {
             dialectWord: "test1",
             nationalWord: "test1",
         },
-        resolver: zodResolver(addDialectWord),
+        resolver: zodResolver(addDialectWordServer),
     });
 
-    const onSubmit = async (data: addDialectWord) => {
+    const onSubmit = async (data: addDialectWordServer) => {
         try {
             await CreateDialectWord(data);
         } catch (error) {

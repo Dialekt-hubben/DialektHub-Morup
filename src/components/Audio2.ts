@@ -1,4 +1,5 @@
-import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import { addDialectWordServer } from "@/types/DialektFormValidation/addDialectWordServer";
+import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord";
 import { useRef, useState } from "react";
 import { UseFormSetValue } from "react-hook-form";
 
@@ -21,7 +22,7 @@ function useAudio2() {
     async function stopRecording({
         setValue,
     }: {
-        setValue: UseFormSetValue<addDialectWord>;
+        setValue: UseFormSetValue<addDialectWordServer>;
     }) {
         if (!mediaRecorderRef.current) {
             return;
@@ -45,7 +46,7 @@ function useAudio2() {
             console.log({ types: fileList.files.item(0)?.type });
 
             setRecordingSoundFile(fileList.files);
-            setValue("audioFile", fileList.files);
+            setValue("audioFile", audioFile);
         };
 
         // Stäng av mikrofonen
