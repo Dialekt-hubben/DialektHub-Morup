@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
-import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord";
 import { useAudio } from "./Audio";
 import styles from "./AddWordForm.module.css";
 import Link from "next/link";
@@ -24,15 +24,14 @@ function AddWordForm() {
         setError,
         setValue,
     } = useForm({
-        resolver: zodResolver(addDialectWord),
+        resolver: zodResolver(addDialectWordClient),
     });
 
-    const onSubmit = async (data: addDialectWord) => {
-        try {            
+    const onSubmit = async (data: addDialectWordClient) => {
+        try {
             if (audioFile) {
-                
                 const fileList = base64ToFileList();
-                
+
                 setValue("audioFile", fileList, { shouldValidate: false });
             }
             await CreateDialectWord(data);
@@ -47,9 +46,7 @@ function AddWordForm() {
 
     return (
         <div>
-            <form
-                className={styles.addWordForm}
-                onSubmit={handleSubmit(onSubmit)}>
+            <form className={styles.addWordForm} onSubmit={handleSubmit(onSubmit)}>
                 <h2>Lägg till nytt ord</h2>
                 <InputGroup
                     label="Dialekt ord"
