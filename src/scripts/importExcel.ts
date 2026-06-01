@@ -21,7 +21,7 @@ De rader som inte imorterades på grund av valideringsfel lämnas kvar i Excel-f
 
 type Row = {
     Dialekt: string;
-    Svenska: string;
+    Översättning: string;
 };
 
 const EXCEL_FILE_PATH = "ordlista1.xlsx";
@@ -73,7 +73,7 @@ class ExcelSuperClass {
 
     public GetRows() {
         const rows = XLSX.utils.sheet_to_json(this.Page, {
-            header: ["Dialekt", "Svenska"], // Vi specificerar headern så att vi får rätt nycklar i objektet
+            header: ["Dialekt", "Översättning"], // Vi specificerar headern så att vi får rätt nycklar i objektet
             blankrows: false, // Vi vill inte ha med tomma rader
             skipHidden: true, // Vi vill inte ha med dolda rader
         }) as Row[];
@@ -98,7 +98,7 @@ class ExcelSuperClass {
         this.SaveWorkbook();
     }
     public RemoveRow(index: number) {
-        XLSX.utils.sheet_add_json(this.Page, [{ Dialekt: "", Svenska: "" }], {
+        XLSX.utils.sheet_add_json(this.Page, [{ Dialekt: "", Översättning: "" }], {
             skipHeader: true,
             origin: index + 1, // +1 eftersom headern är på index 0
         });
@@ -108,7 +108,7 @@ class ExcelSuperClass {
 
 function shouldSkipRow(row: Row) {
     const dialectWord = row.Dialekt.toString().trim();
-    const nationalWord = row.Svenska.toString().trim();
+    const nationalWord = row.Översättning.toString().trim();
 
     if (!dialectWord || !nationalWord) {
         return {
