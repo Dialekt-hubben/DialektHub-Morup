@@ -23,10 +23,6 @@ function AddWordForm2() {
         setError,
         setValue,
     } = useForm({
-        defaultValues: {
-            dialectWord: "test1",
-            nationalWord: "test1",
-        },
         resolver: zodResolver(addDialectWordClient),
     });
 
