@@ -2,38 +2,31 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
-import { addDialectWord } from "@/types/DialektFormValidation/dialectWord";
-import { useAudio } from "./Audio";
+import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord";
 import styles from "./AddWordForm.module.css";
-import { useState } from "react";
 import Link from "next/link";
 import { CreateDialectWord } from "@/actions/dialectwords";
+import useAudio2 from "./Audio";
 
 function AddWordForm() {
-    const [isRrecording, setisRrecording] = useState(false);
-    const { startRecording, stopRecording } = useAudio();
+    const {
+        recordingSoundFile,
+        isRecording,
+        startRecording,
+        stopRecording,
+        playRecording,
+    } = useAudio2();
     const {
         handleSubmit,
         register,
         formState: { errors },
         setError,
+        setValue,
     } = useForm({
-        resolver: zodResolver(addDialectWord),
+        resolver: zodResolver(addDialectWordClient),
     });
 
-    const startAudioRecording = () => {
-        console.log("Record button clicked");
-        setisRrecording(true);
-        startRecording();
-    };
-
-    const stopAudioRecording = () => {
-        console.log("Stop button clicked");
-        setisRrecording(false);
-        stopRecording();
-    };
-
-    const onSubmit = async (data: addDialectWord) => {
+    const onSubmit = async (data: addDialectWordClient) => {
         try {
             await CreateDialectWord(data);
         } catch (error) {
@@ -47,9 +40,7 @@ function AddWordForm() {
 
     return (
         <div>
-            <form
-                className={styles.addWordForm}
-                onSubmit={handleSubmit(onSubmit)}>
+            <form className={styles.addWordForm} onSubmit={handleSubmit(onSubmit)}>
                 <h2>Lägg till nytt ord</h2>
                 <InputGroup
                     label="Dialekt ord"
@@ -59,7 +50,7 @@ function AddWordForm() {
                 />
                 <InputGroup
                     label="Svenskt ord"
-                    placeholder="Skriv det översatta ordet här..."
+                    placeholder="Skriv det svenska ordet här..."
                     {...register("nationalWord")}
                     errorMessage={errors.nationalWord?.message}
                 />
@@ -73,24 +64,31 @@ function AddWordForm() {
                     {...register("audioFile")}
                     errorMessage={errors.audioFile?.message?.toString()}
                 />
-                {errors.root && (
-                    <p>{errors.root.message}</p>
-                )}
+                {errors.root && <p>{errors.root.message}</p>}
                 <div>
-                    {!isRrecording ? (
+                    {!isRecording ? (
                         <button
                             type="button"
                             className="btn primary"
-                            disabled
-                            onClick={startAudioRecording}>
+                            onClick={startRecording}>
                             Spela in
                         </button>
                     ) : (
                         <button
                             type="button"
                             className="btn primary"
-                            onClick={stopAudioRecording}>
+                            onClick={() =>
+                                stopRecording({ setValue, fieldName: "audioFile" })
+                            }>
                             Stoppa inspelning
+                        </button>
+                    )}
+                    {recordingSoundFile && (
+                        <button
+                            type="button"
+                            className="btn primary"
+                            onClick={() => playRecording()}>
+                            Spela upp inspelning
                         </button>
                     )}
                 </div>
@@ -99,8 +97,13 @@ function AddWordForm() {
                     Avbryt
                 </Link>
             </form>
+            {recordingSoundFile && (
+                <>
+                    <p>Inspelning pågår...</p>
+                    <pre>{recordingSoundFile.name}</pre>
+                </>
+            )}
         </div>
     );
 }
-
 export default AddWordForm;

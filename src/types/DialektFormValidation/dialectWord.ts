@@ -14,22 +14,24 @@ export const DialectWordTableResponse = z.object({
 });
 export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
-// TypeScript interface for add word
-export const addDialectWord = z.object({
+export const baseDialectWordSchema = z.object({
     dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
     nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
+});
+
+// TypeScript interface for add word
+export const addDialectWordClient = baseDialectWordSchema.extend({
     audioFile: z
-        .custom<FileList>(
-            (value) =>
-                typeof value !== "undefined" && value instanceof FileList,
-            "Förväntat en FileList",
-        )
+        .custom<FileList | File>()
         .nullable()
-        .optional()
-        .transform((files) => (files && files.length > 0 ? files[0] : null))
+        .transform((value) => {
+            if (value instanceof FileList) {
+                return value.length > 0 ? value[0] : null;
+            }
+            return value || null;
+        })
         .refine(
-            (file) =>
-                !file || AllowedFileTypes.includes(file.type.toLowerCase()),
+            (file) => !file || AllowedFileTypes.includes(file.type.toLowerCase()),
             "Bara ljudfiler av typen mp3, wav, ogg eller mpeg är tillåtna",
         )
         .refine(
@@ -37,12 +39,10 @@ export const addDialectWord = z.object({
             "Filen får inte vara större än 5MB",
         ),
 });
-export type addDialectWord = z.infer<typeof addDialectWord>;
+export type addDialectWordClient = z.infer<typeof addDialectWordClient>;
 
-export const updateDialectWord = z.object({
+export const updateDialectWord = baseDialectWordSchema.extend({
     id: z.number(),
     status: Status.default("pending").optional(),
-    dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
-    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
 });
 export type updateDialectWord = z.infer<typeof updateDialectWord>;

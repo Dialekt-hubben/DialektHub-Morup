@@ -8,11 +8,8 @@ import { soundFileTable } from "@/Drizzle/models/SoundFile";
 import { env } from "@/env";
 import { auth, getAdminSession } from "@/lib/auth";
 import { s3Client } from "@/lib/s3Client";
-import {
-    addDialectWord,
-    updateDialectWord,
-} from "@/types/DialektFormValidation/dialectWord";
-import { dialectWordApi } from "@/types/DialektFormValidation/dialectWordApiSchema";
+import { addDialectWordServer } from "@/types/DialektFormValidation/addDialectWordServer";
+import { updateDialectWord } from "@/types/DialektFormValidation/dialectWord";
 import { Status } from "@/types/status";
 import { GetNumberFromStatus } from "@/utils/enumConverter";
 import {
@@ -56,10 +53,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
             nationalWordTable,
             eq(dialectWordTable.nationalWordId, nationalWordTable.id),
         )
-        .leftJoin(
-            soundFileTable,
-            eq(dialectWordTable.soundFileId, soundFileTable.id),
-        )
+        .leftJoin(soundFileTable, eq(dialectWordTable.soundFileId, soundFileTable.id))
         .where(caseInsensitiveWordFilter)
         .limit(paginationSize)
         .offset(paginationOffset);
@@ -83,7 +77,7 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
     };
 }
 
-export async function CreateDialectWord(data: addDialectWord) {
+export async function CreateDialectWord(data: addDialectWordServer) {
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });
@@ -92,21 +86,19 @@ export async function CreateDialectWord(data: addDialectWord) {
         throw new Error("User must be logged in to create a dialect word.");
     }
 
-    const fileParseResult = dialectWordApi.safeParse(data);
+    const fileParseResult = addDialectWordServer.safeParse(data);
 
     if (!fileParseResult.success) {
         throw new Error(
-            "Invalid input data: " +
-                JSON.stringify(fileParseResult.error.message),
+            "Invalid input data: " + JSON.stringify(fileParseResult.error.message),
         );
     }
 
     // När vi skapar ett nytt ord och det redan finns ett nationellt ord behöver vi ta till vara på NationalWordId
     // och koppla det in inmatade DialectWord ifrån inputen.
-    const { dialectWord, nationalWord, audioFile } = fileParseResult.data;
-    const audioFileName = audioFile
-        ? Date.now() + "-" + audioFile.name.toLowerCase()
-        : null;
+    const { dialectWord, nationalWord, audioFile } = data;
+    const audioFileName =
+        audioFile && audioFile ? Date.now() + "-" + audioFile.name.toLowerCase() : null;
     const existingDialectWord = await db
         .select({ word: dialectWordTable.word })
         .from(dialectWordTable)
@@ -124,14 +116,8 @@ export async function CreateDialectWord(data: addDialectWord) {
         .from(dialectWordTable)
         .where(
             and(
-                eq(
-                    dialectWordTable.word,
-                    existingDialectWord.at(0)?.word || "",
-                ),
-                eq(
-                    dialectWordTable.nationalWordId,
-                    existingNationalWord.at(0)?.id || 0,
-                ),
+                eq(dialectWordTable.word, existingDialectWord.at(0)?.word || ""),
+                eq(dialectWordTable.nationalWordId, existingNationalWord.at(0)?.id || 0),
             ),
         );
 
@@ -201,9 +187,7 @@ export async function UpdateDialectWord(data: updateDialectWord) {
     const parsedData = updateDialectWord.safeParse(data);
 
     if (!parsedData.success) {
-        throw new Error(
-            "Ogiltig data: id, dialectWord och nationalWord krävs.",
-        );
+        throw new Error("Ogiltig data: id, dialectWord och nationalWord krävs.");
     }
 
     // Normalize the input words to ensure consistency in the database.
@@ -221,9 +205,7 @@ export async function UpdateDialectWord(data: updateDialectWord) {
                 .limit(1);
 
             if (existingDialectWord.length === 0) {
-                throw new Error(
-                    "Kunde inte hitta dialektordet för det angivna id:t.",
-                );
+                throw new Error("Kunde inte hitta dialektordet för det angivna id:t.");
             }
 
             // Get the ID for the national word (nationalWord) from the nationalWordTable.
@@ -258,9 +240,7 @@ export async function UpdateDialectWord(data: updateDialectWord) {
                 .limit(1);
 
             if (duplicatePair.length > 0) {
-                throw new Error(
-                    "Det finns redan en identisk rad med dessa ord.",
-                );
+                throw new Error("Det finns redan en identisk rad med dessa ord.");
             }
 
             // If all checks pass, update the dialect word with the new values.
@@ -286,10 +266,7 @@ export async function UpdateDialectWord(data: updateDialectWord) {
     };
 }
 
-export async function UpdateDialectWordStatus(
-    dialectWordId: number,
-    newStatus: Status,
-) {
+export async function UpdateDialectWordStatus(dialectWordId: number, newStatus: Status) {
     const currentUser = await getAdminSession();
 
     if (!currentUser) {
@@ -297,10 +274,7 @@ export async function UpdateDialectWordStatus(
     }
 
     try {
-        if (
-            newStatus === Status.enum.approved ||
-            newStatus === Status.enum.pending
-        ) {
+        if (newStatus === Status.enum.approved || newStatus === Status.enum.pending) {
             await db
                 .update(dialectWordTable)
                 .set({ status: GetNumberFromStatus(newStatus) })
@@ -327,9 +301,7 @@ export async function UpdateDialectWordStatus(
                     Bucket: env.S3_BUCKET_NAME,
                     Key: wordToDelete.soundFileName,
                 } satisfies DeleteObjectCommandInput;
-                const deleteCommand = new DeleteObjectCommand(
-                    deleteCommandInput,
-                );
+                const deleteCommand = new DeleteObjectCommand(deleteCommandInput);
                 await s3Client.send(deleteCommand);
 
                 await db
@@ -338,9 +310,7 @@ export async function UpdateDialectWordStatus(
 
                 await db
                     .delete(soundFileTable)
-                    .where(
-                        eq(soundFileTable.fileName, wordToDelete.soundFileName),
-                    );
+                    .where(eq(soundFileTable.fileName, wordToDelete.soundFileName));
                 return;
             }
 
@@ -349,9 +319,7 @@ export async function UpdateDialectWordStatus(
                 .where(eq(dialectWordTable.id, dialectWordId));
         }
     } catch {
-        throw new Error(
-            "Ett fel uppstod vid uppdatering av dialektordets status.",
-        );
+        throw new Error("Ett fel uppstod vid uppdatering av dialektordets status.");
     }
 }
 
