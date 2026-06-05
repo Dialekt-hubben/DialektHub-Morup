@@ -78,7 +78,6 @@ export async function GetAllDialectwords({ query, page, pageSize }: GetParams) {
 }
 
 export async function CreateDialectWord(data: addDialectWordServer) {
-    console.log({ data });
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });
