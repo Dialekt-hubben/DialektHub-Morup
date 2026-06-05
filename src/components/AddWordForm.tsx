@@ -3,20 +3,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { InputGroup } from "./InputGroup";
 import { useForm } from "react-hook-form";
 import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord";
-import { useAudio } from "./Audio";
 import styles from "./AddWordForm.module.css";
 import Link from "next/link";
 import { CreateDialectWord } from "@/actions/dialectwords";
+import useAudio2 from "./Audio";
 
 function AddWordForm() {
     const {
+        recordingSoundFile,
+        isRecording,
         startRecording,
         stopRecording,
-        audioFile,
-        isRecording,
-        playBase64Audio,
-        base64ToFileList,
-    } = useAudio();
+        playRecording,
+    } = useAudio2();
     const {
         handleSubmit,
         register,
@@ -29,11 +28,6 @@ function AddWordForm() {
 
     const onSubmit = async (data: addDialectWordClient) => {
         try {
-            if (audioFile) {
-                const fileList = base64ToFileList();
-
-                setValue("audioFile", fileList, { shouldValidate: false });
-            }
             await CreateDialectWord(data);
         } catch (error) {
             if (error instanceof Error) {
@@ -56,7 +50,7 @@ function AddWordForm() {
                 />
                 <InputGroup
                     label="Svenskt ord"
-                    placeholder="Skriv det översatta ordet här..."
+                    placeholder="Skriv det svenska ordet här..."
                     {...register("nationalWord")}
                     errorMessage={errors.nationalWord?.message}
                 />
@@ -83,15 +77,17 @@ function AddWordForm() {
                         <button
                             type="button"
                             className="btn primary"
-                            onClick={stopRecording}>
+                            onClick={() =>
+                                stopRecording({ setValue, fieldName: "audioFile" })
+                            }>
                             Stoppa inspelning
                         </button>
                     )}
-                    {audioFile && (
+                    {recordingSoundFile && (
                         <button
                             type="button"
                             className="btn primary"
-                            onClick={() => playBase64Audio(audioFile)}>
+                            onClick={() => playRecording()}>
                             Spela upp inspelning
                         </button>
                     )}
@@ -101,10 +97,10 @@ function AddWordForm() {
                     Avbryt
                 </Link>
             </form>
-            {audioFile && (
+            {recordingSoundFile && (
                 <>
                     <p>Inspelning pågår...</p>
-                    <pre>{audioFile}</pre>
+                    <pre>{recordingSoundFile.name}</pre>
                 </>
             )}
         </div>
