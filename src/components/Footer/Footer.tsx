@@ -6,13 +6,14 @@ function Footer() {
     return (
         <footer className={style.footer}>
             <div>
-                <h2>Morpekanska</h2>
-                <p>Bevara den morpekanska dialekten i ord & ljud.</p>
+                <h2>Mårpekanska</h2>
+                <p>Bevara den mårpekanska dialekten i ord & ljud.</p>
             </div>
             <div>
                 <h2>Om projektet</h2>
                 <p>
-                    En plattform för att dokumentera och bevara den Morpekanska dialekten för framtida generationer.
+                    En plattform för att dokumentera och bevara den Mårpekanska dialekten
+                    för framtida generationer.
                 </p>
             </div>
             <div>
@@ -22,15 +23,13 @@ function Footer() {
                     <br />
                     <b>Adress:</b> Sandhavrevägen 8, 311 54, Glommen, Hallands län
                     <br />
-                    <b>Email:</b> {" "}
-                    <Link href="mailto:hakan@glommen.eu">
-                        hakan@glommen.eu 
-                    </Link> 
+                    <b>Email:</b>{" "}
+                    <Link href="mailto:hakan@glommen.eu">hakan@glommen.eu</Link>
                 </p>
             </div>
             <hr />
             <p className={style.copyright}>
-                &copy; {currentYear} Morupsakademin - Med kärlek för den Morpekanska
+                &copy; {currentYear} Mårpeakademin - Det ligaste vi hann för den Mårpekanska
                 dialekten.
             </p>
         </footer>
