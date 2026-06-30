@@ -24,6 +24,13 @@
         }
     }
 
+    .infoText {
+        /* font-size: 1.2rem; */
+        font-weight: 500;
+        color: white;
+        margin: 0;
+    }
+
     nav ul {
         list-style: none;
         display: flex;

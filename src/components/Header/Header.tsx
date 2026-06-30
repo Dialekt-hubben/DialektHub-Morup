@@ -14,6 +14,11 @@ async function Header() {
                 <h1>Mårpeakademins ordlista</h1>
             </Link>
 
+            <p className={style.infoText}>
+                Här är en placeholder för en hjälptext eller en informationstext som kan
+                vara relevant för användaren.
+            </p>
+
             <nav>
                 <ul>
                     <li>
