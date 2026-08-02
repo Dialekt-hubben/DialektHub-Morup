@@ -29,8 +29,7 @@ function Footer() {
             </div>
             <hr />
             <p className={style.copyright}>
-                &copy; {currentYear} Mårpeakademin - Det ligaste vi hann för den Mårpekanska
-                dialekten.
+                &copy; {currentYear} Mårpeakademien - Det ligaste vi hann.
             </p>
         </footer>
     );
