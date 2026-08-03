@@ -11,7 +11,7 @@ async function Header() {
         <header className={style.header}>
             <Link href="/" className={style.logo}>
                 <Image src="/logo.svg" alt="Morpekanska Logo" width={50} height={50} />
-                <h1>Mårpeakademins orlesta</h1>
+                <h1>Mårpeakademiens orlesta</h1>
             </Link>
 
             
