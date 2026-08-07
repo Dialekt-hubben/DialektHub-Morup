@@ -2,7 +2,9 @@
     /*Sweden palette*/
     --color-yellow: #fecb00;
     --color-light-yellow: #f9f9c5;
+    --color-light-blue: #7fc8f0;
     --color-blue: #1e90ff;
+    /* 7fc8f0 */
     --color-light-blue: #add8e6;
 }
 
@@ -39,7 +41,7 @@ a {
     padding: 1rem;
     text-align: center;
     font-size: 0.875rem;
-    color: #888;
+    /* color: #888; */
 }
 
 .btn {
