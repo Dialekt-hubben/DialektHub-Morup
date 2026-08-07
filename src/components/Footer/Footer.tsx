@@ -21,8 +21,8 @@ function Footer() {
                 <p>
                     <b>Namn:</b> Håkan Petersson
                     <br />
-                    <b>Adress:</b> Sandhavrevägen 8, 311 54, Glommen, Hallands län
-                    <br />
+                    {/* <b>Adress:</b> Sandhavrevägen 8, 311 54, Glommen, Hallands län
+                    <br /> */}
                     <b>Email:</b>{" "}
                     <Link href="mailto:hakan@glommen.eu">hakan@glommen.eu</Link>
                 </p>
