@@ -12,8 +12,9 @@
     h2 {
         margin-bottom: 0.25em;
     }
-    p {
-        /* color: #65590f; */
+    
+    a {
+        text-decoration: underline;
     }
 
     hr {
