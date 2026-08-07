@@ -4,8 +4,8 @@
     grid-template-columns: 1fr;
     gap: 1rem;
 
-    color: #786a12;
-    background-color: var(--color-yellow);
+    /* color: #786a12; */
+    background-color: var(--color-light-blue);
 
     padding: 3rem 1rem;
 
@@ -13,12 +13,12 @@
         margin-bottom: 0.25em;
     }
     p {
-        color: #65590f;
+        /* color: #65590f; */
     }
 
     hr {
         grid-column: 1 / -1;
-        border-color: #786a12;
+        /* border-color: #786a12; */
     }
 
     .copyright {
