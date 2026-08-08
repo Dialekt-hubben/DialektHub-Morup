@@ -46,18 +46,18 @@ function LoginPage() {
         <main className={style.main}>
             <div className={style.authContainer}>
                 <div className={style.header}>
-                    <h1>Login</h1>
+                    <h1>Logga in</h1>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <InputGroup
-                        label="Email"
+                        label="E-post"
                         type="email"
                         id="email"
                         {...register("email")}
                         errorMessage={errors.email?.message}
                     />
                     <InputGroup
-                        label="Password"
+                        label="Lösenord"
                         type="password"
                         id="password"
                         {...register("password")}
@@ -73,15 +73,15 @@ function LoginPage() {
                             type="submit"
                             className="btn primary"
                             disabled={isSubmitting}>
-                            Login
+                            Logga in
                         </button>
                         <Link href="/" className="btn">
                             Avbryt
                         </Link>
                     </div>
                     <p>
-                        Don&apos;t have an account?{" "}
-                        <Link href="/signup">Sign up here</Link>
+                        Har du inget konto?{" "}
+                        <Link href="/signup">Registera dig här</Link>
                     </p>
                 </form>
             </div>
