@@ -27,10 +27,10 @@ async function Header() {
                         ) : (
                             <div>
                                 <Link href="/login" className="btn primary">
-                                    Login
+                                    Logga in
                                 </Link>
                                 <Link href="/signup" className="btn">
-                                    Sign Up
+                                    Registrea dig
                                 </Link>
                             </div>
                         )}
