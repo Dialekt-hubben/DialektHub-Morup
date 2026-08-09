@@ -16,7 +16,7 @@ type RoleUser = {
 type UpdateRoleStatus = {
     type: "success" | "error";
     message: string;
-}
+};
 
 export default function AdminUserRoles() {
     const [emailQuery, setEmailQuery] = useState("");
@@ -26,12 +26,11 @@ export default function AdminUserRoles() {
     const [activeUserId, setActiveUserId] = useState<string | null>(null); // Handle which user's role is currently being updated.
     const [status, setStatus] = useState<UpdateRoleStatus | null>(null); // Handle status messages for successful or failed role update and provide feedback when a role is updated.
 
-    
     // Handle search functionality based on email.
-    const handleSearch = async ( event: SubmitEvent<HTMLFormElement> ) => {
+    const handleSearch = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         const normalizedQuery = emailQuery.trim();
-        
+
         // If the search field is empty, clear the user list and reset search status.
         if (!normalizedQuery) {
             setUsers([]);
@@ -54,20 +53,23 @@ export default function AdminUserRoles() {
     };
 
     // Handle updating of user's role and manage UI state during the update process.
-    const handleRoleSave = async (userId: string, event: SubmitEvent<HTMLFormElement>) => {
+    const handleRoleSave = async (
+        userId: string,
+        event: SubmitEvent<HTMLFormElement>,
+    ) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const role = formData.get("role") as UserRole;
 
         // Validera datan
         const parsed = updateUserRoleSchema.safeParse({ userId, role });
-        
+
         if (!parsed.success) {
             setStatus({ type: "error", message: "Ogiltig roll vald." });
             setActiveUserId(null);
             return;
         }
-        
+
         // Sätt den aktuella användarens ID som aktiv för att hantera UI-state under uppdateringen.
         setActiveUserId(userId);
         try {
@@ -105,10 +107,15 @@ export default function AdminUserRoles() {
             </form>
 
             {/* Statusmessage when role updates */}
-            {status && ( 
-                <p className={ status.type === "success" ? styles.statusSuccess : styles.statusError }
+            {status && (
+                <p
+                    className={
+                        status.type === "success"
+                            ? styles.statusSuccess
+                            : styles.statusError
+                    }
                     role="status"
-                    aria-live="polite">                     
+                    aria-live="polite">
                     {status.message}
                 </p>
             )}
@@ -133,7 +140,6 @@ export default function AdminUserRoles() {
                                 onSubmit={(event) => {
                                     handleRoleSave(currentUser.id, event);
                                 }}>
-                                
                                 {/* Dropdown-meny */}
                                 <select
                                     name="role"
@@ -141,8 +147,10 @@ export default function AdminUserRoles() {
                                     className={styles.roleSelect}
                                     aria-label={`Välj roll för ${currentUser.email}`}
                                     disabled={activeUserId === currentUser.id}>
-                                    <option value={UserRole.enum.user}>user</option>
-                                    <option value={UserRole.enum.admin}>admin</option>
+                                    <option value={UserRole.enum.user}>Användare</option>
+                                    <option value={UserRole.enum.admin}>
+                                        Administratör
+                                    </option>
                                 </select>
 
                                 {/* Save button */}
@@ -154,7 +162,6 @@ export default function AdminUserRoles() {
                                         ? "Sparar..."
                                         : "Spara"}
                                 </button>
-
                             </form>
                         </li>
                     ))}

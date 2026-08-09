@@ -38,7 +38,7 @@ function SignupPage() {
             }
 
             // Fallback error message
-            setError("root", { message: "Invalid email or password" });
+            setError("root", { message: "Inkorrekt e-post eller lösenord" });
         }
     };
 
@@ -46,32 +46,32 @@ function SignupPage() {
         <main className={style.main}>
             <div className={style.authContainer}>
                 <div className={style.header}>
-                    <h1>Sign Up</h1>
+                    <h1>Registrea dig</h1>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <InputGroup
-                        label="Name"
+                        label="Namn"
                         type="text"
                         id="name"
                         {...register("name")}
                         errorMessage={errors.name?.message}
                     />
                     <InputGroup
-                        label="Email"
+                        label="E-post"
                         type="email"
                         id="email"
                         {...register("email")}
                         errorMessage={errors.email?.message}
                     />
                     <InputGroup
-                        label="Password"
+                        label="Lösenord"
                         type="password"
                         id="password"
                         {...register("password")}
                         errorMessage={errors.password?.message}
                     />
                     <InputGroup
-                        label="Confirm Password"
+                        label="Bekräfta Lösenord"
                         type="password"
                         id="confirmPassword"
                         {...register("confirmPassword")}
@@ -87,15 +87,15 @@ function SignupPage() {
                             type="submit"
                             className="btn primary"
                             disabled={isSubmitting}>
-                            Signup
+                            Registrea dig
                         </button>
                         <Link href="/" className="btn">
                             Avbryt
                         </Link>
                     </div>
                     <p>
-                        Already have an account?{" "}
-                        <Link href="/login">login here</Link>
+                        Har du redan ett konto?{" "}
+                        <Link href="/login">Logga in här</Link>
                     </p>
                 </form>
             </div>
