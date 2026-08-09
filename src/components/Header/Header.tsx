@@ -29,9 +29,6 @@ async function Header() {
                                 <Link href="/login" className="btn primary">
                                     Login
                                 </Link>
-                                <Link href="/signup" className="btn">
-                                    Sign Up
-                                </Link>
                             </div>
                         )}
                     </li>
