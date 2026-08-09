@@ -38,7 +38,7 @@ function SignupPage() {
             }
 
             // Fallback error message
-            setError("root", { message: "Inkorrekt email eller lösenord" });
+            setError("root", { message: "Inkorrekt e-post eller lösenord" });
         }
     };
 

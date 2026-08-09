@@ -38,7 +38,7 @@ function LoginPage() {
             }
 
             // Fallback error message
-            setError("root", { message: "Invalid email or password" });
+            setError("root", { message: "Inkorrekt e-post eller lösenord" });
         }
     };
 
@@ -80,8 +80,7 @@ function LoginPage() {
                         </Link>
                     </div>
                     <p>
-                        Har du inget konto?{" "}
-                        <Link href="/signup">Registera dig här</Link>
+                        Har du inget konto? <Link href="/signup">Registera dig här</Link>
                     </p>
                 </form>
             </div>
