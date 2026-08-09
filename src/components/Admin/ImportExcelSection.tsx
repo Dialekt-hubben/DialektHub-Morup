@@ -129,9 +129,13 @@ const ImportExcelSection = () => {
             <h2>Läs in en Excel-fil</h2>
             <hr />
             <p>
-                Se till att Excel-filen är i rätt format innan du importerar. Första
-                kolumnen ska innehålla det Morpekanska ordet och Andra kolumnen dess
-                motsvarande Översatta ordet.
+                Se till att Excel-filen är i rätt format innan du importerar.
+                <p>
+                    <strong>Första</strong> kolumnen ska innehålla det Morpekanska ordet.
+                </p>
+                <p>
+                    <strong>Andra</strong> kolumnen dess motsvarande Översatta ordet.
+                </p>
                 <br />
                 <strong>
                     [A] Morpekanska ordet
