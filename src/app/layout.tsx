@@ -14,6 +14,7 @@ export const metadata: Metadata = {
         description: "Mårpeakademiens orlesta",
         images: "/logo.svg",
     },
+    metadataBase: new URL("https://www.glommen.eu"),
     title: "Mårpeakademien orlesta",
     description: "Mårpeakademiens orlesta",
 };

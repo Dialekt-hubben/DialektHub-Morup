@@ -61,7 +61,7 @@ const ImportExcelSection = () => {
     // Handles the import process when the user clicks the import button,
     const handleImport = async () => {
         const file = fileInput.current?.files?.[0];
-        
+
         if (!file) {
             setMessage("Välj en fil först.");
             return;
@@ -87,12 +87,10 @@ const ImportExcelSection = () => {
                     header: 1,
                 });
 
-                // Skip header row, then validate each data row.
-                const rowsToValidate = rows.slice(1).map((row) =>
-                    shouldSkipRow(row),
-                );
+                // Validate each row and determine if it should be imported or skipped.
+                const rowsToValidate = rows.map((row) => shouldSkipRow(row));
 
-                // Separate valid rows and invalid rows. 
+                // Separate valid rows and invalid rows.
                 for (const parsedRow of rowsToValidate) {
                     if (parsedRow.skip) {
                         rowsSkipped.push(parsedRow);
@@ -112,15 +110,13 @@ const ImportExcelSection = () => {
             // Create a summary of the import results to display to the user.
             const importSummary =
                 "Import klar!\n" +
-                    `\nAntal rader kontrollerade: ${rowsToImport.length + rowsSkipped.length}` +
-                    `\nAntal rader tillagda: ${rowsToImport.length}` +
-                    `\nAntal skippade: ${rowsSkipped.length}`;
+                `\nAntal rader kontrollerade: ${rowsToImport.length + rowsSkipped.length}` +
+                `\nAntal rader tillagda: ${rowsToImport.length}` +
+                `\nAntal skippade: ${rowsSkipped.length}`;
 
             setMessage(importSummary);
-
         } catch (error: unknown) {
-            const errorMessage =
-                error instanceof Error ? error.message : "Okänt fel";
+            const errorMessage = error instanceof Error ? error.message : "Okänt fel";
             setMessage("Fel vid import: " + errorMessage);
         } finally {
             sessionStorage.removeItem(EXCEL_IMPORT_IN_PROGRESS);
@@ -134,8 +130,12 @@ const ImportExcelSection = () => {
             <hr />
             <p>
                 Se till att Excel-filen är i rätt format innan du importerar.
-                Första kolumnen ska innehålla det Morpekanska ordet och Andra
-                kolumnen dess motsvarande Översatta ordet.
+                <p>
+                    <strong>Första</strong> kolumnen ska innehålla det Morpekanska ordet.
+                </p>
+                <p>
+                    <strong>Andra</strong> kolumnen dess motsvarande Översatta ordet.
+                </p>
                 <br />
                 <strong>
                     [A] Morpekanska ordet
@@ -154,11 +154,8 @@ const ImportExcelSection = () => {
                 disabled={importLock}
                 accept=".xlsx,.xls,.csv"
                 ref={fileInput}
-                />
-            <button
-                className="btn primary"
-                onClick={handleImport}
-                disabled={importLock}>
+            />
+            <button className="btn primary" onClick={handleImport} disabled={importLock}>
                 {importLock ? "Importerar..." : "Importera Fil"}
             </button>
             {message && (

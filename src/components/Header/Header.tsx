@@ -27,7 +27,7 @@ async function Header() {
                         ) : (
                             <div>
                                 <Link href="/login" className="btn primary">
-                                    Login
+                                    Logga in
                                 </Link>
                             </div>
                         )}
