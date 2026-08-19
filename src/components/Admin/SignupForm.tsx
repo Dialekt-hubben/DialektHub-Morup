@@ -36,35 +36,35 @@ export function SignupForm() {
                 return;
             }
 
-            setError("root", { message: "Invalid email or password" });
+            setError("root", { message: "Inkorrekt e-post eller lösenord" });
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <InputGroup
-                label="Name"
+                label="Namn"
                 type="text"
                 id="name"
                 {...register("name")}
                 errorMessage={errors.name?.message}
             />
             <InputGroup
-                label="Email"
+                label="E-post"
                 type="email"
                 id="email"
                 {...register("email")}
                 errorMessage={errors.email?.message}
             />
             <InputGroup
-                label="Password"
+                label="Lösenord"
                 type="password"
                 id="password"
                 {...register("password")}
                 errorMessage={errors.password?.message}
             />
             <InputGroup
-                label="Confirm Password"
+                label="Bekräfta Lösenord"
                 type="password"
                 id="confirmPassword"
                 {...register("confirmPassword")}
@@ -77,14 +77,14 @@ export function SignupForm() {
             )}
             <div className={style.buttonGroup}>
                 <button type="submit" className="btn primary" disabled={isSubmitting}>
-                    Signup
+                    Registrea dig
                 </button>
                 <Link href="/" className="btn">
                     Avbryt
                 </Link>
             </div>
             <p>
-                Already have an account? <Link href="/login">login here</Link>
+                Har du redan ett konto? <Link href="/login">Logga in här</Link>
             </p>
         </form>
     );
