@@ -9,7 +9,7 @@ async function SignupPage() {
         <main className={style.main}>
             <div className={style.authContainer}>
                 <div className={style.header}>
-                    <h1>Sign Up</h1>
+                    <h1>Registrea dig</h1>
                 </div>
                 <SignupForm />
             </div>
