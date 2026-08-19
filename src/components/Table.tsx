@@ -18,7 +18,7 @@ type TableProps = {
 export default function Table({ tableData }: TableProps) {
     const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
     const audio = new window.Audio();
-    
+
     const playSound = (url: string) => {
         audio.src = url;
         audio.play();
@@ -56,7 +56,11 @@ export default function Table({ tableData }: TableProps) {
                                             backgroundColor: "transparent",
                                         }}
                                         type="button"
-                                        aria-label="Spela upp ljud"
+                                        aria-label={
+                                            activeSoundUrl === item.soundFileUrl
+                                                ? "Pausa ljud"
+                                                : "Spela upp ljud"
+                                        }
                                         onClick={() => {
                                             if (item.soundFileUrl) {
                                                 playSound(item.soundFileUrl);

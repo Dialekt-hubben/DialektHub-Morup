@@ -112,7 +112,11 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                             backgroundColor: "transparent",
                                         }}
                                         type="button"
-                                        aria-label="Spela upp ljud"
+                                        aria-label={
+                                            activeSoundUrl === item.soundFileUrl
+                                                ? "Pausa ljud"
+                                                : "Spela upp ljud"
+                                        }
                                         onClick={() => playSound(item.soundFileUrl!)}>
                                         {activeSoundUrl === item.soundFileUrl ? (
                                             <PauseIcon />
