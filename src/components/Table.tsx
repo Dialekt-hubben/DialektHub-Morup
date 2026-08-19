@@ -1,7 +1,8 @@
 "use client";
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
-import { PlayIcon } from "./SoundIcon";
+import { PauseIcon, PlayIcon } from "./SoundIcon";
+import { useState } from "react";
 
 type TableRow = DialectWordTableResponse & {
     soundFileUrl: string | null;
@@ -15,9 +16,17 @@ type TableProps = {
 // "tableData" is an object fetched from the API containing words, pronunciation, sound file, etc.
 // Table renders a row for each object in "tableData.data".
 export default function Table({ tableData }: TableProps) {
+    const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
+    const audio = new window.Audio();
+    
     const playSound = (url: string) => {
-        const audio = new window.Audio(url);
+        audio.src = url;
         audio.play();
+        setActiveSoundUrl(url);
+    };
+
+    audio.onended = () => {
+        setActiveSoundUrl(null);
     };
 
     return (
@@ -53,7 +62,11 @@ export default function Table({ tableData }: TableProps) {
                                                 playSound(item.soundFileUrl);
                                             }
                                         }}>
-                                        <PlayIcon />
+                                        {activeSoundUrl === item.soundFileUrl ? (
+                                            <PauseIcon />
+                                        ) : (
+                                            <PlayIcon />
+                                        )}
                                     </button>
                                 )}
                             </td>

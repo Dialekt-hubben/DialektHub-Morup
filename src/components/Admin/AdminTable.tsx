@@ -7,7 +7,7 @@ import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectW
 import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
-import { PlayIcon } from "../SoundIcon";
+import { PauseIcon, PlayIcon } from "../SoundIcon";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -17,6 +17,8 @@ export default function AdminTable({ tableData }: AdminTableProps) {
     const [rows, setRows] = useState<DialectWordTableResponse[]>(tableData ?? []);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
+    const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
+    const audio = new window.Audio();
 
     // Uppdatera "rows" varje gång "tableData" ändras.
     useEffect(() => {
@@ -37,8 +39,13 @@ export default function AdminTable({ tableData }: AdminTableProps) {
 
     // Funktion för att spela upp ljudfilen
     const playSound = (url: string) => {
-        const audio = new window.Audio(url);
+        audio.src = url;
         audio.play();
+        setActiveSoundUrl(url);
+    };
+
+    audio.onended = () => {
+        setActiveSoundUrl(null);
     };
 
     // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
@@ -107,7 +114,11 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         type="button"
                                         aria-label="Spela upp ljud"
                                         onClick={() => playSound(item.soundFileUrl!)}>
-                                        <PlayIcon />
+                                        {activeSoundUrl === item.soundFileUrl ? (
+                                            <PauseIcon />
+                                        ) : (
+                                            <PlayIcon />
+                                        )}
                                     </button>
                                 )}
                             </td>
