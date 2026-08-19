@@ -7,20 +7,16 @@ import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectW
 import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
-import {PlayIcon, PauseIcon} from "../SoundIcon";
-import playSound from "@/utils/soundhandler";
+import { PlayIcon } from "../SoundIcon";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
 };
 
 export default function AdminTable({ tableData }: AdminTableProps) {
-    const [rows, setRows] = useState<DialectWordTableResponse[]>(
-        tableData ?? [],
-    );
+    const [rows, setRows] = useState<DialectWordTableResponse[]>(tableData ?? []);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
-    const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
 
     // Uppdatera "rows" varje gång "tableData" ändras.
     useEffect(() => {
@@ -39,6 +35,11 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         return () => clearTimeout(timerId);
     }, [savedRowId]);
 
+    // Funktion för att spela upp ljudfilen
+    const playSound = (url: string) => {
+        const audio = new window.Audio(url);
+        audio.play();
+    };
 
     // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
     const startEdit = (item: DialectWordTableResponse) => {
@@ -83,7 +84,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                 <tr>
                     <th className={pageStyles.tableHeaderCell}>Dialekt</th>
                     <th className={pageStyles.tableHeaderCell}>Ljudfil</th>
-                    <th className={pageStyles.tableHeaderCell}>Översättning</th>
+                    <th className={pageStyles.tableHeaderCell}>Svenska</th>
                     <th className={pageStyles.tableHeaderCell}>Användare</th>
                     <th className={pageStyles.tableHeaderCell}>Publicerad</th>
                     <th className={pageStyles.tableHeaderCell}>Hantering</th>
@@ -93,9 +94,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                 {rows.map((item) => (
                     <>
                         <tr key={item.id}>
-                            <td className={pageStyles.tableCell}>
-                                {item.word}
-                            </td>
+                            <td className={pageStyles.tableCell}>{item.word}</td>
                             <td className={pageStyles.tableCell}>
                                 {item.fileName && item.soundFileUrl && (
                                     <button
@@ -106,33 +105,14 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                             backgroundColor: "transparent",
                                         }}
                                         type="button"
-                                        aria-label={
-                                            activeSoundUrl === item.soundFileUrl
-                                                ? "Pausa ljud"
-                                                : "Spela upp ljud"
-                                        }
-                                        onClick={() => {
-                                            if (activeSoundUrl === item.soundFileUrl) {
-                                                setActiveSoundUrl(null);
-                                            } else {
-                                                setActiveSoundUrl(item.soundFileUrl!);
-                                                playSound(item.soundFileUrl!, setActiveSoundUrl);
-                                            }
-                                        }}>
-                                        {activeSoundUrl === item.soundFileUrl ? (
-                                            <PauseIcon />
-                                        ) : (
-                                            <PlayIcon />
-                                        )}
+                                        aria-label="Spela upp ljud"
+                                        onClick={() => playSound(item.soundFileUrl!)}>
+                                        <PlayIcon />
                                     </button>
                                 )}
                             </td>
-                            <td className={pageStyles.tableCell}>
-                                {item.nationalWord}
-                            </td>
-                            <td className={pageStyles.tableCell}>
-                                {item.userName}
-                            </td>
+                            <td className={pageStyles.tableCell}>{item.nationalWord}</td>
+                            <td className={pageStyles.tableCell}>{item.userName}</td>
                             <td className={pageStyles.tableCell}>
                                 <select
                                     value={item.status}
@@ -148,9 +128,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                     <option value={Status.enum.pending}>
                                         Ej publicerad
                                     </option>
-                                    <option value={Status.enum.rejected}>
-                                        Neka
-                                    </option>
+                                    <option value={Status.enum.rejected}>Neka</option>
                                 </select>
                             </td>
                             <td
@@ -163,9 +141,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         Edit
                                     </button>
                                     {savedRowId === item.id && (
-                                        <span className={styles.savedText}>
-                                            Sparat
-                                        </span>
+                                        <span className={styles.savedText}>Sparat</span>
                                     )}
                                 </div>
                             </td>
