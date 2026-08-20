@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+"use client";
 import { useForm } from "react-hook-form";
 import { UpdateDialectWord } from "@/actions/dialectwords";
 import styles from "./AdminTable.module.css";
@@ -6,6 +6,7 @@ import styles from "./AdminTable.module.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAudio from "../Audio";
 import { updateDialectWord } from "@/types/DialektFormValidation/dialectWord";
+import { InputGroup } from "../InputGroup";
 
 export type EditWordFormUpdatedData = {
     id: number;
@@ -37,100 +38,52 @@ export default function EditWordForm({
         stopRecording,
         playRecording,
     } = useAudio();
+
     const {
-        register,
         handleSubmit,
-        reset,
-        setValue,
+        register,
         formState: { errors },
-        setError,
+        setValue,
     } = useForm({
         resolver: zodResolver(updateDialectWord),
         defaultValues: {
+            dialectWord: dialectWord,
+            nationalWord: nationalWord,
+            audioFile: null,
             id,
-            dialectWord,
-            nationalWord,
         },
     });
 
-    // Update the form's default values so that it always shows the correct data
-    // when EditWordForm is opened or when a new word is selected for editing.
-    useEffect(() => {
-        reset({
-            id,
-            dialectWord,
-            nationalWord,
-        });
-    }, [id, dialectWord, nationalWord, reset]);
+    const onSubmit = async (data: updateDialectWord) => {
+        console.log({ data });
 
-    // Handle form submission by calling the UpdateDialectword action and passing the updated data.
-    const onSubmit = async (values: updateDialectWord) => {
         try {
-            // const selectedAudioFile =
-            //     recordingSoundFile ??
-            //     (values.audioFile instanceof File
-            //         ? values.audioFile
-            //         : values.audioFile instanceof FileList
-            //           ? (values.audioFile.item(0) ?? null)
-            //           : null);
-
-            const selectedAudioFile =
-                recordingSoundFile ??
-                (values.audioFile instanceof File ? values.audioFile : null);
-
-            await UpdateDialectWord({
-                id,
-                dialectWord: values.dialectWord,
-                nationalWord: values.nationalWord,
-                audioFile: selectedAudioFile,
-            });
-
-            onUpdated?.({
-                id,
-                dialectWord: values.dialectWord,
-                nationalWord: values.nationalWord,
-                audioFile: selectedAudioFile,
-            });
-
-            onClose();
-        } catch (error) {
-            if (error instanceof Error) {
-                setError("nationalWord", { message: error.message });
+            if (onUpdated) {
+                onUpdated(data);
             }
+
+            await UpdateDialectWord(data);
+        } catch (error) {
+            console.error("Error updating word:", error);
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.editForm}>
-                <label className={styles.inputGroup}>
-                    Dialektord
-                    <input
-                        type="text"
-                        {...register("dialectWord", {
-                            required: "Dialektord är obligatoriskt",
-                        })}
-                    />
-                </label>
-                {errors.dialectWord && (
-                    <p className={styles.errorText}>{errors.dialectWord.message}</p>
-                )}
-
-                <label className={styles.inputGroup}>
-                    Svenskt ord
-                    <input
-                        type="text"
-                        {...register("nationalWord", {
-                            required: "Svenskt ord är obligatoriskt",
-                        })}
-                    />
-                </label>
-                {errors.nationalWord && (
-                    <p className={styles.errorText}>{errors.nationalWord.message}</p>
-                )}
+                <InputGroup
+                    label="Dialektord"
+                    errorMessage={errors.dialectWord?.message}
+                    {...register("dialectWord")}
+                />
+                <InputGroup
+                    label="Svenskt ord"
+                    errorMessage={errors.nationalWord?.message}
+                    {...register("nationalWord")}
+                />
                 <div className={styles.inputGroup}>
                     <p>Ljudfil</p>
-                    <div className={styles.audioActions}>
+                    <div>
                         {!isRecording ? (
                             <button
                                 type="button"
@@ -143,10 +96,7 @@ export default function EditWordForm({
                                 type="button"
                                 className="btn primary"
                                 onClick={() =>
-                                    stopRecording({
-                                        setValue,
-                                        fieldName: "audioFile",
-                                    })
+                                    stopRecording({ setValue, fieldName: "audioFile" })
                                 }>
                                 Stoppa inspelning
                             </button>
@@ -154,8 +104,8 @@ export default function EditWordForm({
                         {recordingSoundFile && (
                             <button
                                 type="button"
-                                className="btn secondary"
-                                onClick={playRecording}>
+                                className="btn primary"
+                                onClick={() => playRecording()}>
                                 Spela upp inspelning
                             </button>
                         )}
