@@ -16,7 +16,7 @@ export type DialectWordTableResponse = z.infer<typeof DialectWordTableResponse>;
 
 export const baseDialectWordSchema = z.object({
     dialectWord: z.string().min(1, "Dialekt ord är obligatoriskt"),
-    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt"),
+    nationalWord: z.string().min(1, "Nationellt ord är obligatoriskt")
 });
 
 // TypeScript interface for add word
@@ -41,8 +41,9 @@ export const addDialectWordClient = baseDialectWordSchema.extend({
 });
 export type addDialectWordClient = z.infer<typeof addDialectWordClient>;
 
-export const updateDialectWord = baseDialectWordSchema.extend({
+export const updateDialectWord = addDialectWordClient.extend({
     id: z.number(),
-    status: Status.default("pending").optional(),
+    // status: Status.default("pending").optional(),
+    // audioFile: z.file().optional(),
 });
 export type updateDialectWord = z.infer<typeof updateDialectWord>;
