@@ -17,16 +17,17 @@ type TableProps = {
 // Table renders a row for each object in "tableData.data".
 export default function Table({ tableData }: TableProps) {
     const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
-    const audio = new window.Audio();
 
     const playSound = (url: string) => {
+        const audio = new window.Audio();
+
         audio.src = url;
         audio.play();
         setActiveSoundUrl(url);
-    };
 
-    audio.onended = () => {
-        setActiveSoundUrl(null);
+        audio.onended = () => {
+            setActiveSoundUrl(null);
+        };
     };
 
     return (

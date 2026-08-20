@@ -18,7 +18,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
     const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
-    const audio = new window.Audio();
 
     // Uppdatera "rows" varje gång "tableData" ändras.
     useEffect(() => {
@@ -39,13 +38,15 @@ export default function AdminTable({ tableData }: AdminTableProps) {
 
     // Funktion för att spela upp ljudfilen
     const playSound = (url: string) => {
+        const audio = new window.Audio();
+
         audio.src = url;
         audio.play();
         setActiveSoundUrl(url);
-    };
 
-    audio.onended = () => {
-        setActiveSoundUrl(null);
+        audio.onended = () => {
+            setActiveSoundUrl(null);
+        };
     };
 
     // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
