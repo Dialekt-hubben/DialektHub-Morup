@@ -1,9 +1,8 @@
 "use client";
-import { useState } from "react";
 import styles from "../app/page.module.css";
 import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
-import {PlayIcon, PauseIcon} from "./SoundIcon";
-import playSound from "@/utils/soundhandler";
+import { PauseIcon, PlayIcon } from "./SoundIcon";
+import { useState } from "react";
 
 type TableRow = DialectWordTableResponse & {
     soundFileUrl: string | null;
@@ -19,17 +18,27 @@ type TableProps = {
 export default function Table({ tableData }: TableProps) {
     const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
 
+    const playSound = (url: string) => {
+        const audio = new window.Audio();
+
+        audio.src = url;
+        audio.play();
+        setActiveSoundUrl(url);
+
+        audio.onended = () => {
+            setActiveSoundUrl(null);
+        };
+    };
+
     return (
         <>
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <th className={styles.tableHeaderCell}>{"Dialekt"}</th>
-                        <th className={styles.tableHeaderCell}>{"Ljudfil"}</th>
-                        <th className={styles.tableHeaderCell}>{"Översättning"}</th>
-                        <th className={styles.tableHeaderCell}>
-                            {"Användare"}
-                        </th>
+                        <th className={styles.tableHeaderCell}>Dialekt</th>
+                        <th className={styles.tableHeaderCell}>Ljudfil</th>
+                        <th className={styles.tableHeaderCell}>Svenska</th>
+                        <th className={styles.tableHeaderCell}>Användare</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,12 +64,7 @@ export default function Table({ tableData }: TableProps) {
                                         }
                                         onClick={() => {
                                             if (item.soundFileUrl) {
-                                                if (activeSoundUrl === item.soundFileUrl) {
-                                                    setActiveSoundUrl(null);
-                                                } else {
-                                                    setActiveSoundUrl(item.soundFileUrl);
-                                                    playSound(item.soundFileUrl, setActiveSoundUrl);
-                                                }
+                                                playSound(item.soundFileUrl);
                                             }
                                         }}>
                                         {activeSoundUrl === item.soundFileUrl ? (
@@ -71,12 +75,8 @@ export default function Table({ tableData }: TableProps) {
                                     </button>
                                 )}
                             </td>
-                            <td className={styles.tableCell}>
-                                {item.nationalWord}
-                            </td>
-                            <td className={styles.tableCell}>
-                                {item.userName}
-                            </td>
+                            <td className={styles.tableCell}>{item.nationalWord}</td>
+                            <td className={styles.tableCell}>{item.userName}</td>
                         </tr>
                     ))}
                 </tbody>

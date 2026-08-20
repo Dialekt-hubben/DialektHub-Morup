@@ -79,9 +79,6 @@ function LoginPage() {
                             Avbryt
                         </Link>
                     </div>
-                    <p>
-                        Har du inget konto? <Link href="/signup">Registera dig här</Link>
-                    </p>
                 </form>
             </div>
         </main>
