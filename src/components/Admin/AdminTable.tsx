@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 import pageStyles from "@/app/page.module.css";
 import styles from "./AdminTable.module.css";
-import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
-import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
+import {
+    DialectWordTableResponse,
+    updateDialectWord,
+} from "@/types/DialektFormValidation/dialectWord";
+// import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
 import { PauseIcon, PlayIcon } from "../SoundIcon";
+import EditWordForm from "./EditWordForm";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -60,7 +64,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         setEditingId(null);
     };
 
-    const handleUpdated = (updated: EditWordFormUpdatedData) => {
+    const handleUpdated = (updated: updateDialectWord) => {
         setRows((prevRows) =>
             prevRows.map((row) =>
                 row.id === updated.id
@@ -68,6 +72,12 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                           ...row,
                           word: updated.dialectWord,
                           nationalWord: updated.nationalWord,
+                          fileName: updated.audioFile
+                              ? updated.audioFile.name
+                              : row.fileName,
+                          soundFileUrl: updated.audioFile
+                              ? URL.createObjectURL(updated.audioFile)
+                              : row.soundFileUrl,
                       }
                     : row,
             ),
@@ -170,6 +180,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                         id={item.id}
                                         dialectWord={item.word}
                                         nationalWord={item.nationalWord ?? ""}
+                                        currentAudioFileName={item.fileName ?? null}
                                         onClose={cancelEdit}
                                         onUpdated={handleUpdated}
                                     />
