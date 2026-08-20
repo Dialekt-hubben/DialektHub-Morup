@@ -179,12 +179,13 @@ export async function UpdateDialectWord(data: updateDialectWord) {
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });
-
+    
     if (!currentUser) {
         throw new Error("User must be logged in to update a dialect word.");
     }
-
+    
     const parsedData = updateDialectWord.safeParse(data);
+    console.log("Updating dialect word with data:", data);
 
     if (!parsedData.success) {
         throw new Error("Ogiltig data: id, dialectWord och nationalWord krävs.");
