@@ -199,7 +199,10 @@ export async function UpdateDialectWord(data: updateDialectWord) {
         // Check if a dialect word with the given id exists.
         await db.transaction(async (transactionContext) => {
             const existingDialectWord = await transactionContext
-                .select({ id: dialectWordTable.id })
+                .select({
+                    id: dialectWordTable.id,
+                    soundFileId: dialectWordTable.soundFileId,
+                })
                 .from(dialectWordTable)
                 .where(eq(dialectWordTable.id, updateWord.id))
                 .limit(1);
@@ -243,12 +246,59 @@ export async function UpdateDialectWord(data: updateDialectWord) {
                 throw new Error("Det finns redan en identisk rad med dessa ord.");
             }
 
+            let nextSoundFileId: number | null =
+                existingDialectWord.at(0)?.soundFileId ?? null;
+
+            if (updateWord.audioFile instanceof File && updateWord.audioFile.size > 0) {
+                const audioFileName = `${Date.now()}-${updateWord.audioFile.name.toLowerCase()}`;
+                const arraybuffer = await updateWord.audioFile.arrayBuffer();
+                const uploadParams = {
+                    Bucket: env.S3_BUCKET_NAME,
+                    Key: audioFileName,
+                    Body: new Uint8Array(arraybuffer),
+                    ContentType: updateWord.audioFile.type,
+                } satisfies PutObjectCommandInput;
+
+                const command = new PutObjectCommand(uploadParams);
+                await s3Client.send(command);
+
+                const insertedSoundFile = await transactionContext
+                    .insert(soundFileTable)
+                    .values({ fileName: audioFileName })
+                    .$returningId();
+                nextSoundFileId = insertedSoundFile[0].id;
+
+                const currentSoundFileId = existingDialectWord[0]?.soundFileId;
+
+                if (typeof currentSoundFileId === "number") {
+                    const previousSoundFile = await transactionContext
+                        .select({ fileName: soundFileTable.fileName })
+                        .from(soundFileTable)
+                        .where(eq(soundFileTable.id, currentSoundFileId))
+                        .limit(1);
+
+                    if (previousSoundFile.at(0)?.fileName) {
+                        const deleteCommandInput = {
+                            Bucket: env.S3_BUCKET_NAME,
+                            Key: previousSoundFile.at(0)!.fileName,
+                        } satisfies DeleteObjectCommandInput;
+                        const deleteCommand = new DeleteObjectCommand(deleteCommandInput);
+                        await s3Client.send(deleteCommand);
+
+                        await transactionContext
+                            .delete(soundFileTable)
+                            .where(eq(soundFileTable.id, currentSoundFileId));
+                    }
+                }
+            }
+
             // If all checks pass, update the dialect word with the new values.
             await transactionContext
                 .update(dialectWordTable)
                 .set({
                     word: normalizedDialectWord,
                     nationalWordId,
+                    soundFileId: nextSoundFileId ?? null,
                 })
                 .where(eq(dialectWordTable.id, updateWord.id));
         });
