@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { UseFormSetValue, FieldValues, Path, PathValue } from "react-hook-form";
 
-function useAudio2() {
+function useAudio() {
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
@@ -78,4 +78,4 @@ function useAudio2() {
     };
 }
 
-export default useAudio2;
+export default useAudio;
