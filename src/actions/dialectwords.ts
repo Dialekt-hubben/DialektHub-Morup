@@ -250,6 +250,7 @@ export async function UpdateDialectWord(data: updateDialectWord) {
             let nextSoundFileId: number | null =
                 existingDialectWord.at(0)?.soundFileId ?? null;
 
+            // If a new audio file is provided, upload it to S3 and update the soundFileId.
             if (updateWord.audioFile instanceof File && updateWord.audioFile.size > 0) {
                 const audioFileName = `${Date.now()}-${updateWord.audioFile.name.toLowerCase()}`;
                 const arraybuffer = await updateWord.audioFile.arrayBuffer();
@@ -260,17 +261,19 @@ export async function UpdateDialectWord(data: updateDialectWord) {
                     ContentType: updateWord.audioFile.type,
                 } satisfies PutObjectCommandInput;
 
+                // Upload the new audio file to S3.
                 const command = new PutObjectCommand(uploadParams);
                 await s3Client.send(command);
 
+                // Insert the new sound file record into the database and get its ID.
                 const insertedSoundFile = await transactionContext
                     .insert(soundFileTable)
                     .values({ fileName: audioFileName })
                     .$returningId();
                 nextSoundFileId = insertedSoundFile[0].id;
 
+                // Delete the previous sound file from S3 and the database if it exists.
                 const currentSoundFileId = existingDialectWord[0]?.soundFileId;
-
                 if (typeof currentSoundFileId === "number") {
                     const previousSoundFile = await transactionContext
                         .select({ fileName: soundFileTable.fileName })
@@ -279,15 +282,16 @@ export async function UpdateDialectWord(data: updateDialectWord) {
                         .limit(1);
 
                     if (previousSoundFile.at(0)?.fileName) {
-                        const deleteCommandInput = {
+                        const updateCommandInput = {
                             Bucket: env.S3_BUCKET_NAME,
                             Key: previousSoundFile.at(0)!.fileName,
-                        } satisfies DeleteObjectCommandInput;
-                        const deleteCommand = new DeleteObjectCommand(deleteCommandInput);
-                        await s3Client.send(deleteCommand);
+                        } satisfies PutObjectCommandInput;
+                        const updateCommand = new PutObjectCommand(updateCommandInput);
+                        await s3Client.send(updateCommand);
 
                         await transactionContext
-                            .delete(soundFileTable)
+                            .update(soundFileTable)
+                            .set({ fileName: previousSoundFile.at(0)!.fileName })
                             .where(eq(soundFileTable.id, currentSoundFileId));
                     }
                 }
