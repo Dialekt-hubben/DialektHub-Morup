@@ -3,6 +3,10 @@ import { Status } from "../status";
 import { AllowedFileTypes, MaxFileSize } from "./audioFileConstraints";
 // TypeScript interface for the API response
 
+// isFileList makes sure that the value is a FileLists
+const isFileList = (value: File | FileList): value is FileList =>
+    typeof FileList !== "undefined" && value instanceof FileList;
+
 export const DialectWordTableResponse = z.object({
     id: z.number(),
     word: z.string(),
@@ -25,7 +29,7 @@ export const addDialectWordClient = baseDialectWordSchema.extend({
         .custom<FileList | File>()
         .nullable()
         .transform((value) => {
-            if (value instanceof FileList) {
+            if (value && isFileList(value)) {
                 return value.length > 0 ? value[0] : null;
             }
             return value || null;
