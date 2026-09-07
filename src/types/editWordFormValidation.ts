@@ -4,6 +4,11 @@ import {
     MaxFileSize,
 } from "./DialektFormValidation/audioFileConstraints";
 
+// isFileList makes sure that the value is a FileList, not a single File
+const isFileList = (value: File | FileList): value is FileList => {
+    return typeof FileList !== "undefined" && value instanceof FileList;
+};
+
 export type editWordForm = {
     id: number;
     dialectWord: string;
@@ -31,7 +36,8 @@ export const editWordFormSchema = z.object({
                 );
             }
 
-            if (value instanceof FileList) {
+            // If the value is a FileList, check the first file in the list
+            if (isFileList(value)) {
                 const file = value.item(0);
                 return (
                     !file ||
