@@ -2,7 +2,6 @@
 import { useForm } from "react-hook-form";
 import { UpdateDialectWord } from "@/actions/dialectwords";
 import styles from "./AdminTable.module.css";
-// import { editWordFormSchema, type editWordForm } from "@/types/editWordFormValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAudio from "../Audio";
 import { updateDialectWord } from "@/types/DialektFormValidation/dialectWord";
