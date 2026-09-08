@@ -1,0 +1,45 @@
+.tableContainer {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+
+    margin-top: 2rem;
+
+    .actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    & > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        background-color: var(--color-light-yellow);
+
+        padding: 1rem;
+        border: 1px solid var(--color-yellow);
+    }
+}
+
+.table {
+    border-collapse: collapse;
+    border: 1px solid var(--color-yellow);
+    width: 100%;
+
+    thead {
+        background-color: var(--color-light-yellow);
+
+        th {
+            border: 1px solid var(--color-yellow);
+            padding: 1rem 0.5rem;
+        }
+    }
+    tbody {
+        padding: 0.5rem 0;
+        td {
+            padding: 1rem 0.25em;
+            border: 1px solid var(--color-yellow);
+        }
+    }
+}
