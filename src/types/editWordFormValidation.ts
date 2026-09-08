@@ -1,13 +1,9 @@
+import { isFileList } from "../utils/fileListHandler";
 import z from "zod";
 import {
     AllowedFileTypes,
     MaxFileSize,
 } from "./DialektFormValidation/audioFileConstraints";
-
-// isFileList makes sure that the value is a FileList, not a single File
-const isFileList = (value: File | FileList): value is FileList => {
-    return typeof FileList !== "undefined" && value instanceof FileList;
-};
 
 export type editWordForm = {
     id: number;

@@ -1,11 +1,8 @@
 import { z } from "zod";
 import { Status } from "../status";
+import { isFileList } from "../../utils/fileListHandler";
 import { AllowedFileTypes, MaxFileSize } from "./audioFileConstraints";
 // TypeScript interface for the API response
-
-// isFileList makes sure that the value is a FileLists
-const isFileList = (value: File | FileList): value is FileList =>
-    typeof FileList !== "undefined" && value instanceof FileList;
 
 export const DialectWordTableResponse = z.object({
     id: z.number(),

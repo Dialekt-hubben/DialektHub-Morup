@@ -49,6 +49,13 @@
     font-size: 0.95rem;
 }
 
+.inputGroupRecording {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-right: 0.75rem;
+}
+
 .editActions {
     display: flex;
     gap: 0.5rem;

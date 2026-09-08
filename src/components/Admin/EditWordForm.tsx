@@ -60,8 +60,8 @@ export default function EditWordForm({
             if (onUpdated) {
                 onUpdated(data);
             }
-
             await UpdateDialectWord(data);
+            onClose();
         } catch (error) {
             console.error("Error updating word:", error);
         }
@@ -80,8 +80,8 @@ export default function EditWordForm({
                     errorMessage={errors.nationalWord?.message}
                     {...register("nationalWord")}
                 />
-                <div className={styles.inputGroup}>
-                    <p>Ljudfil</p>
+                <div className={styles.inputGroupRecording}>
+                    {currentAudioFileName ? <p>Ljud ✅</p> : <p>Ljud ❌</p>}
                     <div>
                         {!isRecording ? (
                             <button
@@ -113,14 +113,6 @@ export default function EditWordForm({
                         <p className={styles.errorText}>{errors.audioFile.message}</p>
                     )}
                 </div>
-                {currentAudioFileName ? (
-                    <p>Nuvarande ljudfil: {currentAudioFileName}</p>
-                ) : (
-                    <p>Ingen ljudfil är kopplad ännu.</p>
-                )}
-                {recordingSoundFile && (
-                    <p>Ny inspelning vald: {recordingSoundFile.name}</p>
-                )}
 
                 <div className={styles.editActions}>
                     <button type="submit" className="btn primary">
