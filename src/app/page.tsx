@@ -1,6 +1,6 @@
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
-import { TableCell, Table as TableNew, TableRow } from "@/components/TableNew";
+import { TableCell, Table, TableRow } from "@/components/TableNew";
 import SearchField from "@/components/Searchfield";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
@@ -47,7 +47,7 @@ export default async function Home({ searchParams }: params) {
                     <div className={styles.tableContainer}>
                         <SearchField />
                         <Pagination page={+page} totalPages={totalPages} />
-                        <TableNew
+                        <Table
                             headerColumns={["Dialekt", "Ljudfil", "Svenska", "Användare"]}
                             title="Ordlista"
                             actions={
@@ -78,7 +78,7 @@ export default async function Home({ searchParams }: params) {
                                     <TableCell>{item.userName}</TableCell>
                                 </TableRow>
                             ))}
-                        </TableNew>
+                        </Table>
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
                 </div>
