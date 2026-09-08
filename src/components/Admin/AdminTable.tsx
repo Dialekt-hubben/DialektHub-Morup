@@ -8,7 +8,7 @@ import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
 import SoundButton from "../SoundButton";
 import Link from "next/link";
-import { Table, TableCell, TableRow } from "../TableNew";
+import { Table, TableCell, TableRow } from "../Table";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;

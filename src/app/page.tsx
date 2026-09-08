@@ -1,6 +1,6 @@
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
-import { TableCell, Table, TableRow } from "@/components/TableNew";
+import { TableCell, Table, TableRow } from "@/components/Table";
 import SearchField from "@/components/Searchfield";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
