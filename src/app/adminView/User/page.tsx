@@ -1,8 +1,12 @@
 import { InputGroup } from "@/components/InputGroup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCog, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "@/components/Pagination";
+import { getAdminSession } from "@/lib/auth";
 
-function Page() {
+async function Page() {
+    await getAdminSession();
+
     return (
         <main>
             <form>
@@ -31,6 +35,10 @@ function Page() {
                         <td>Active</td>
                         <td>1 maj 2023</td>
                         <td>
+                            {/* 
+                                Remember to add size for the icons, otherwise they will be
+                                not visible 
+                            */}
                             <button>
                                 <span className="sr-only">Redigera</span>
                                 <FontAwesomeIcon icon={faUserCog} />
@@ -43,6 +51,8 @@ function Page() {
                     </tr>
                 </tbody>
             </table>
+
+            <Pagination page={3} totalPages={5} />
         </main>
     );
 }
