@@ -2,11 +2,15 @@
 
 import { Fragment, useEffect, useState } from "react";
 import styles from "./AdminTable.module.css";
-import { DialectWordTableResponse } from "@/types/DialektFormValidation/dialectWord";
-import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
+import {
+    DialectWordTableResponse,
+    updateDialectWord,
+} from "@/types/DialektFormValidation/dialectWord";
+// import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
 import SoundButton from "../SoundButton";
+import EditWordForm from "./EditWordForm";
 import Link from "next/link";
 import { Table, TableCell, TableRow } from "../Table";
 
@@ -47,7 +51,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         setEditingId(null);
     };
 
-    const handleUpdated = (updated: EditWordFormUpdatedData) => {
+    const handleUpdated = (updated: updateDialectWord) => {
         setRows((prevRows) =>
             prevRows.map((row) =>
                 row.id === updated.id
@@ -55,6 +59,12 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                           ...row,
                           word: updated.dialectWord,
                           nationalWord: updated.nationalWord,
+                          fileName: updated.audioFile
+                              ? updated.audioFile.name
+                              : row.fileName,
+                          soundFileUrl: updated.audioFile
+                              ? URL.createObjectURL(updated.audioFile)
+                              : row.soundFileUrl,
                       }
                     : row,
             ),
@@ -141,6 +151,7 @@ export default function AdminTable({ tableData }: AdminTableProps) {
                                     id={item.id}
                                     dialectWord={item.word}
                                     nationalWord={item.nationalWord ?? ""}
+                                    currentAudioFileName={item.fileName ?? null}
                                     onClose={cancelEdit}
                                     onUpdated={handleUpdated}
                                 />

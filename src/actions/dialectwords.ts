@@ -179,12 +179,13 @@ export async function UpdateDialectWord(data: updateDialectWord) {
     const currentUser = await auth.api.getSession({
         headers: await headers(),
     });
-
+    
     if (!currentUser) {
         throw new Error("User must be logged in to update a dialect word.");
     }
-
+    
     const parsedData = updateDialectWord.safeParse(data);
+    console.log("Updating dialect word with data:", data);
 
     if (!parsedData.success) {
         throw new Error("Ogiltig data: id, dialectWord och nationalWord krävs.");
@@ -199,7 +200,10 @@ export async function UpdateDialectWord(data: updateDialectWord) {
         // Check if a dialect word with the given id exists.
         await db.transaction(async (transactionContext) => {
             const existingDialectWord = await transactionContext
-                .select({ id: dialectWordTable.id })
+                .select({
+                    id: dialectWordTable.id,
+                    soundFileId: dialectWordTable.soundFileId,
+                })
                 .from(dialectWordTable)
                 .where(eq(dialectWordTable.id, updateWord.id))
                 .limit(1);
@@ -243,12 +247,63 @@ export async function UpdateDialectWord(data: updateDialectWord) {
                 throw new Error("Det finns redan en identisk rad med dessa ord.");
             }
 
+            let nextSoundFileId: number | null =
+                existingDialectWord.at(0)?.soundFileId ?? null;
+
+            // If a new audio file is provided, upload it to S3 and update the soundFileId.
+            if (updateWord.audioFile instanceof File && updateWord.audioFile.size > 0) {
+                const audioFileName = `${Date.now()}-${updateWord.audioFile.name.toLowerCase()}`;
+                const arraybuffer = await updateWord.audioFile.arrayBuffer();
+                const uploadParams = {
+                    Bucket: env.S3_BUCKET_NAME,
+                    Key: audioFileName,
+                    Body: new Uint8Array(arraybuffer),
+                    ContentType: updateWord.audioFile.type,
+                } satisfies PutObjectCommandInput;
+
+                // Upload the new audio file to S3.
+                const command = new PutObjectCommand(uploadParams);
+                await s3Client.send(command);
+
+                // Insert the new sound file record into the database and get its ID.
+                const insertedSoundFile = await transactionContext
+                    .insert(soundFileTable)
+                    .values({ fileName: audioFileName })
+                    .$returningId();
+                nextSoundFileId = insertedSoundFile[0].id;
+
+                // Delete the previous sound file from S3 and the database if it exists.
+                const currentSoundFileId = existingDialectWord[0]?.soundFileId;
+                if (typeof currentSoundFileId === "number") {
+                    const previousSoundFile = await transactionContext
+                        .select({ fileName: soundFileTable.fileName })
+                        .from(soundFileTable)
+                        .where(eq(soundFileTable.id, currentSoundFileId))
+                        .limit(1);
+
+                    if (previousSoundFile.at(0)?.fileName) {
+                        const updateCommandInput = {
+                            Bucket: env.S3_BUCKET_NAME,
+                            Key: previousSoundFile.at(0)!.fileName,
+                        } satisfies PutObjectCommandInput;
+                        const updateCommand = new PutObjectCommand(updateCommandInput);
+                        await s3Client.send(updateCommand);
+
+                        await transactionContext
+                            .update(soundFileTable)
+                            .set({ fileName: previousSoundFile.at(0)!.fileName })
+                            .where(eq(soundFileTable.id, currentSoundFileId));
+                    }
+                }
+            }
+
             // If all checks pass, update the dialect word with the new values.
             await transactionContext
                 .update(dialectWordTable)
                 .set({
                     word: normalizedDialectWord,
                     nationalWordId,
+                    soundFileId: nextSoundFileId ?? null,
                 })
                 .where(eq(dialectWordTable.id, updateWord.id));
         });
