@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import pageStyles from "@/app/page.module.css";
+import { Fragment, useEffect, useState } from "react";
 import styles from "./AdminTable.module.css";
 import {
     DialectWordTableResponse,
@@ -10,8 +9,10 @@ import {
 // import EditWordForm, { EditWordFormUpdatedData } from "./EditWordForm";
 import { Status } from "@/types/status";
 import { UpdateDialectWordStatus } from "@/actions/dialectwords";
-import { PauseIcon, PlayIcon } from "../SoundIcon";
+import SoundButton from "../SoundButton";
 import EditWordForm from "./EditWordForm";
+import Link from "next/link";
+import { Table, TableCell, TableRow } from "../Table";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
@@ -21,7 +22,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
     const [rows, setRows] = useState<DialectWordTableResponse[]>(tableData ?? []);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
-    const [activeSoundUrl, setActiveSoundUrl] = useState<string | null>(null);
 
     // Uppdatera "rows" varje gång "tableData" ändras.
     useEffect(() => {
@@ -39,19 +39,6 @@ export default function AdminTable({ tableData }: AdminTableProps) {
         }, 2500);
         return () => clearTimeout(timerId);
     }, [savedRowId]);
-
-    // Funktion för att spela upp ljudfilen
-    const playSound = (url: string) => {
-        const audio = new window.Audio();
-
-        audio.src = url;
-        audio.play();
-        setActiveSoundUrl(url);
-
-        audio.onended = () => {
-            setActiveSoundUrl(null);
-        };
-    };
 
     // Hanterar start av redigering av en rad, lägg till fler fält här om du vill redigera mer än orden
     const startEdit = (item: DialectWordTableResponse) => {
@@ -97,99 +84,82 @@ export default function AdminTable({ tableData }: AdminTableProps) {
     };
 
     return (
-        <table className={`${pageStyles.table} ${styles.adminTable}`}>
-            <thead>
-                <tr>
-                    <th className={pageStyles.tableHeaderCell}>Dialekt</th>
-                    <th className={pageStyles.tableHeaderCell}>Ljudfil</th>
-                    <th className={pageStyles.tableHeaderCell}>Svenska</th>
-                    <th className={pageStyles.tableHeaderCell}>Användare</th>
-                    <th className={pageStyles.tableHeaderCell}>Publicerad</th>
-                    <th className={pageStyles.tableHeaderCell}>Hantering</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rows.map((item) => (
-                    <>
-                        <tr key={item.id}>
-                            <td className={pageStyles.tableCell}>{item.word}</td>
-                            <td className={pageStyles.tableCell}>
-                                {item.fileName && item.soundFileUrl && (
-                                    <button
-                                        style={{
-                                            border: "none",
-                                            fontSize: "20px",
-                                            cursor: "pointer",
-                                            backgroundColor: "transparent",
-                                        }}
-                                        type="button"
-                                        aria-label={
-                                            activeSoundUrl === item.soundFileUrl
-                                                ? "Pausa ljud"
-                                                : "Spela upp ljud"
-                                        }
-                                        onClick={() => playSound(item.soundFileUrl!)}>
-                                        {activeSoundUrl === item.soundFileUrl ? (
-                                            <PauseIcon />
-                                        ) : (
-                                            <PlayIcon />
-                                        )}
-                                    </button>
+        <Table
+            title="Ordlista"
+            actions={
+                <>
+                    <Link href="/" className="btn primary">
+                        Till startsidan
+                    </Link>
+                    <Link href="/addWord" className="btn primary">
+                        Lägg till ord
+                    </Link>
+                </>
+            }
+            headerColumns={[
+                "Dialekt",
+                "Ljudfil",
+                "Svenska",
+                "Användare",
+                "Publicerad",
+                "Hantering",
+            ]}>
+            {rows.map((item) => (
+                <Fragment key={item.id}>
+                    <TableRow>
+                        <TableCell>{item.word}</TableCell>
+                        <TableCell>
+                            {item.fileName && item.soundFileUrl && (
+                                <SoundButton url={item.soundFileUrl} />
+                            )}
+                        </TableCell>
+                        <TableCell>{item.nationalWord}</TableCell>
+                        <TableCell>{item.userName}</TableCell>
+                        <TableCell>
+                            <select
+                                value={item.status}
+                                onChange={(changeEvent) =>
+                                    handleStatusChange(
+                                        item.id,
+                                        changeEvent.target.value as Status,
+                                    )
+                                }>
+                                <option value={Status.enum.approved}>Publicera</option>
+                                <option value={Status.enum.pending}>Ej publicerad</option>
+                                <option value={Status.enum.rejected}>Neka</option>
+                            </select>
+                        </TableCell>
+                        <TableCell className={styles.adminActionCell}>
+                            <div className={styles.actionWrapper}>
+                                <button
+                                    type="button"
+                                    className="btn primary"
+                                    onClick={() => startEdit(item)}>
+                                    Edit
+                                </button>
+                                {savedRowId === item.id && (
+                                    <span className={styles.savedText}>Sparat</span>
                                 )}
-                            </td>
-                            <td className={pageStyles.tableCell}>{item.nationalWord}</td>
-                            <td className={pageStyles.tableCell}>{item.userName}</td>
-                            <td className={pageStyles.tableCell}>
-                                <select
-                                    value={item.status}
-                                    onChange={(changeEvent) =>
-                                        handleStatusChange(
-                                            item.id,
-                                            changeEvent.target.value as Status,
-                                        )
-                                    }>
-                                    <option value={Status.enum.approved}>
-                                        Publicera
-                                    </option>
-                                    <option value={Status.enum.pending}>
-                                        Ej publicerad
-                                    </option>
-                                    <option value={Status.enum.rejected}>Neka</option>
-                                </select>
-                            </td>
-                            <td
-                                className={`${pageStyles.tableCell} ${styles.adminActionCell}`}>
-                                <div className={styles.actionWrapper}>
-                                    <button
-                                        type="button"
-                                        className="btn primary"
-                                        onClick={() => startEdit(item)}>
-                                        Edit
-                                    </button>
-                                    {savedRowId === item.id && (
-                                        <span className={styles.savedText}>Sparat</span>
-                                    )}
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </TableCell>
+                    </TableRow>
 
-                        {editingId === item.id && (
-                            <tr>
-                                <td className={styles.editRowCell} colSpan={6}>
-                                    <EditWordForm
-                                        id={item.id}
-                                        dialectWord={item.word}
-                                        nationalWord={item.nationalWord ?? ""}
-                                        currentAudioFileName={item.fileName ?? null}
-                                        onClose={cancelEdit}
-                                        onUpdated={handleUpdated}
-                                    />
-                                </td>
-                            </tr>
-                        )}
-                    </>
-                ))}
-            </tbody>
-        </table>
+                    {editingId === item.id && (
+                        <TableRow>
+                            <TableCell className={styles.editRowCell} colSpan={6}>
+                                <EditWordForm
+                                    id={item.id}
+                                    dialectWord={item.word}
+                                    nationalWord={item.nationalWord ?? ""}
+                                    currentAudioFileName={item.fileName ?? null}
+                                    onClose={cancelEdit}
+                                    onUpdated={handleUpdated}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </Fragment>
+            ))}
+        </Table>
     );
 }

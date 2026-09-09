@@ -2,7 +2,6 @@ import styles from "../page.module.css";
 import Pagination from "../../components/Pagination";
 import AdminTable from "@/components/Admin/AdminTable";
 import SearchField from "@/components/Searchfield";
-import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 import { getAdminSession } from "@/lib/auth";
 import { generateS3Urls } from "@/actions/soundfileUrl";
@@ -46,17 +45,6 @@ export default async function AdminView({ searchParams }: Params) {
                     <div className={styles.tableContainer}>
                         <SearchField />
                         <Pagination page={+page} totalPages={totalPages} />
-                        <div className={styles.tableHeader}>
-                            <h2>Ordlista</h2>
-                            <div>
-                                <Link href="/" className="btn primary">
-                                    Till startsidan
-                                </Link>
-                                <Link href="/addWord" className="btn primary">
-                                    Lägg till ord
-                                </Link>
-                            </div>
-                        </div>
                         <AdminTable tableData={tableDataWithUrls} />
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
