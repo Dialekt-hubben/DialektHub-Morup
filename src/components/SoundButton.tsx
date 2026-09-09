@@ -28,8 +28,7 @@ export default function SoundButton({ url }: SoundButtonProps) {
         try {
             await audio.play();
             setIsPlaying(true);
-        } catch (error) {
-            console.error("Error playing audio:", error);
+        } catch {
             setIsPlaying(false);
         }
     };
