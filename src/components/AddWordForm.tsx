@@ -6,7 +6,7 @@ import { addDialectWordClient } from "@/types/DialektFormValidation/dialectWord"
 import styles from "./AddWordForm.module.css";
 import Link from "next/link";
 import { CreateDialectWord } from "@/actions/dialectwords";
-import useAudio2 from "./Audio";
+import useAudio from "./Audio";
 
 function AddWordForm() {
     const {
@@ -15,7 +15,7 @@ function AddWordForm() {
         startRecording,
         stopRecording,
         playRecording,
-    } = useAudio2();
+    } = useAudio();
     const {
         handleSubmit,
         register,
