@@ -1,3 +1,5 @@
+import styles from "./page.module.css";
+
 import { InputGroup } from "@/components/InputGroup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCog, faTrashCan } from "@fortawesome/free-solid-svg-icons";
@@ -60,7 +62,7 @@ async function Page({ searchParams }: params) {
     const translateRole = (role: string) => {
         switch (role) {
             case "admin":
-                return "Administratör";
+                return "Admin";
             case "user":
                 return "Användare";
             default:
@@ -69,37 +71,85 @@ async function Page({ searchParams }: params) {
     };
 
     return (
-        <main>
+        <main className={styles.main}>
             <Table
-                headerColumns={["Email", "Roll", "Status", "Skapad", "Åtgärder"]}
+                headerColumns={["Email", "Roll", "Status", "Skapad", "Åtgärder"]} // Email, Role, Status, Created, Actions
                 title="Användarna"
                 actions={
-                    <>
+                    <div className={styles.headerActions}>
                         <form>
-                            <InputGroup label="Sök" placeholder="Sök på email..." />
-                            <button className="btn primary">Sök</button>
+                            <InputGroup
+                                type="search"
+                                name="query"
+                                placeholder="Sök på email..."
+                            />
+                            {/* <button className="btn primary">Sök</button> */}
                         </form>
 
                         <button className="btn primary">Lägg till användare</button>
-                    </>
+                    </div>
                 }>
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell>
                             <Link href={`mailto:${user.email}`}>{user.email}</Link>
                         </TableCell>
-                        <TableCell>{translateRole(user.role)}</TableCell>
-                        <TableCell>{isActive(user) ? "Active" : "Inactive"}</TableCell>
-                        <TableCell>{formatDate.format(user.createdAt)}</TableCell>
                         <TableCell>
+                            <span
+                                className={`btn ${user.role === "admin" ? "primary" : ""}`}>
+                                {translateRole(user.role)}
+                            </span>
+                        </TableCell>
+                        <TableCell>
+                            <span className={`btn ${isActive(user) ? "primary" : ""}`}>
+                                {isActive(user) ? "Active" : "Inbjuden"}
+                            </span>
+                        </TableCell>
+                        <TableCell>{formatDate.format(user.createdAt)}</TableCell>
+                        <TableCell className={styles.actions}>
                             <button>
                                 <span className="sr-only">Redigera</span>
-                                <FontAwesomeIcon icon={faUserCog} />
+                                <FontAwesomeIcon size="xl" icon={faUserCog} />
                             </button>
-                            <button>
+                            <button
+                                // @ts-expect-error - This is a custom attribute for the dialog component
+                                command="show-modal"
+                                commandfor={`my-dialog-${user.id}`}>
                                 <span className="sr-only">Ta bort</span>
-                                <FontAwesomeIcon icon={faTrashCan} />
+                                <FontAwesomeIcon size="xl" icon={faTrashCan} />
                             </button>
+                            <dialog id={`my-dialog-${user.id}`}>
+                                <h2>Bekräfta borttagning av användare</h2>
+                                <ul>
+                                    <li>
+                                        <strong>Email:</strong> {user.email}
+                                    </li>
+                                    <li>
+                                        <strong>Role:</strong> {translateRole(user.role)}
+                                    </li>
+                                </ul>
+                                <p>
+                                    Denna åtgärd är oåterkallelig. All data associerad med
+                                    användaren kommer att tas bort permanent.
+                                </p>
+                                <div className={styles.dialogActions}>
+                                    <form method="dialog">
+                                        <input
+                                            type="hidden"
+                                            name="userId"
+                                            value={user.id}
+                                        />
+                                        <button className="btn primary">Bekräfta</button>
+                                    </form>
+                                    <button
+                                        className="btn"
+                                        // @ts-expect-error - This is a custom attribute for the dialog component
+                                        commandfor={`my-dialog-${user.id}`}
+                                        command="close">
+                                        Avbryt
+                                    </button>
+                                </div>
+                            </dialog>
                         </TableCell>
                     </TableRow>
                 ))}
