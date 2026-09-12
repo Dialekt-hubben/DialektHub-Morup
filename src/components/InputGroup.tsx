@@ -2,7 +2,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
 import style from "./InputGroup.module.css";
 
 interface InputGroupProps extends InputHTMLAttributes<HTMLInputElement> {
-    label: string;
+    label?: string;
     errorMessage?: string;
 }
 
@@ -10,11 +10,9 @@ export const InputGroup = forwardRef<HTMLInputElement, InputGroupProps>(
     ({ label, id, errorMessage, className, ...props }, ref) => {
         return (
             <div className={`${style.formGroup} ${className || ""}`}>
-                <label htmlFor={id}>{label}</label>
+                {label && <label htmlFor={id}>{label}</label>}
                 <input id={id} ref={ref} {...props} />
-                {errorMessage && (
-                    <p className={style.errorMessage}>{errorMessage}</p>
-                )}
+                {errorMessage && <p className={style.errorMessage}>{errorMessage}</p>}
             </div>
         );
     },
