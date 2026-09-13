@@ -5,52 +5,45 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCog, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { Table, TableCell, TableRow } from "@/components/Table";
 import Pagination from "@/components/Pagination";
-import { InferSelectModel } from "drizzle-orm";
-import { user } from "@/Drizzle/models/auth-schema";
 import Link from "next/link";
+import { deleteUser, getUsers } from "@/actions/auth";
+import z from "zod";
+import { AuthUser, UserRole } from "@/types/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import ConfirmUserDeletionDialog from "@/components/Admin/ConfirmUserDeletionDialog";
 
-type params = {
-    searchParams: Promise<{
-        page: string;
-    }>;
-};
-type User = InferSelectModel<typeof user>;
+const Params = z.object({
+    searchParams: z.promise(
+        z.object({
+            page: z.coerce.number().int().nonnegative().default(1),
+            query: z.string().optional(),
+        }),
+    ),
+});
 
-async function Page({ searchParams }: params) {
-    const { page = "1" } = await searchParams;
+type Params = z.infer<typeof Params>;
+type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
 
-    const date = new Date();
-    const dateForTomorrow = new Date(date);
-    dateForTomorrow.setDate(dateForTomorrow.getDate() + 1);
+const formatDate = new Intl.DateTimeFormat("sv-SE", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+});
 
-    const formatDate = new Intl.DateTimeFormat("sv-SE", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
+async function Page(params: Params) {
+    const parsedParams = await Params.safeParseAsync(params);
+    const session = await auth.api.getSession({
+        headers: await headers(),
     });
 
-    const users = [
-        {
-            id: "1",
-            name: "John Doe",
-            email: "john.doe@example.com",
-            emailVerified: false,
-            image: null,
-            role: "admin",
-            createdAt: date,
-            updatedAt: date,
-        },
-        {
-            id: "2",
-            name: "Jane Smith",
-            email: "jane.smith@example.com",
-            emailVerified: true,
-            image: null,
-            role: "user",
-            createdAt: date,
-            updatedAt: dateForTomorrow, // Simulate an active user by setting updatedAt to tomorrow
-        },
-    ] satisfies User[];
+    let users: User[] = [];
+    let page = 1;
+
+    if (parsedParams.success) {
+        page = (await parsedParams?.data.searchParams)?.page;
+        users = await getUsers(10, (page - 1) * 10);
+    }
 
     const isActive = (user: User) => {
         const createdAt = formatDate.format(user.createdAt);
@@ -59,7 +52,19 @@ async function Page({ searchParams }: params) {
         return createdAt !== updatedAt;
     };
 
-    const translateRole = (role: string) => {
+    const handleDeleteUser = async (formdata: FormData) => {
+        "use server";
+        const userId = formdata.get("userId") as string;
+        if (!userId) {
+            throw new Error("User ID is required");
+        }
+
+        console.log({ userId });
+
+        // await deleteUser(userId);
+    };
+
+    const translateRole = (role: UserRole) => {
         switch (role) {
             case "admin":
                 return "Admin";
@@ -111,50 +116,17 @@ async function Page({ searchParams }: params) {
                                 <span className="sr-only">Redigera</span>
                                 <FontAwesomeIcon size="xl" icon={faUserCog} />
                             </button>
-                            <button
-                                // @ts-expect-error - This is a custom attribute for the dialog component
-                                command="show-modal"
-                                commandfor={`my-dialog-${user.id}`}>
-                                <span className="sr-only">Ta bort</span>
-                                <FontAwesomeIcon size="xl" icon={faTrashCan} />
-                            </button>
-                            <dialog id={`my-dialog-${user.id}`}>
-                                <h2>Bekräfta borttagning av användare</h2>
-                                <ul>
-                                    <li>
-                                        <strong>Email:</strong> {user.email}
-                                    </li>
-                                    <li>
-                                        <strong>Role:</strong> {translateRole(user.role)}
-                                    </li>
-                                </ul>
-                                <p>
-                                    Denna åtgärd är oåterkallelig. All data associerad med
-                                    användaren kommer att tas bort permanent.
-                                </p>
-                                <div className={styles.dialogActions}>
-                                    <form method="dialog">
-                                        <input
-                                            type="hidden"
-                                            name="userId"
-                                            value={user.id}
-                                        />
-                                        <button className="btn primary">Bekräfta</button>
-                                    </form>
-                                    <button
-                                        className="btn"
-                                        // @ts-expect-error - This is a custom attribute for the dialog component
-                                        commandfor={`my-dialog-${user.id}`}
-                                        command="close">
-                                        Avbryt
-                                    </button>
-                                </div>
-                            </dialog>
+                            {session && session.user.id !== user.id && (
+                                <ConfirmUserDeletionDialog
+                                    user={user}
+                                    handleDeleteUser={handleDeleteUser}
+                                />
+                            )}
                         </TableCell>
                     </TableRow>
                 ))}
             </Table>
-            <Pagination page={+page} totalPages={users.length / 10} />
+            <Pagination page={page} totalPages={users.length / 10} />
         </main>
     );
 }
