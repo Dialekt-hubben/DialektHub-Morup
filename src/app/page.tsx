@@ -1,12 +1,13 @@
 import styles from "./page.module.css";
 import Pagination from "../components/Pagination";
-import Table from "@/components/Table";
+import { TableCell, Table, TableRow } from "@/components/Table";
 import SearchField from "@/components/Searchfield";
 import Link from "next/link";
 import { GetAllDialectwords } from "@/actions/dialectwords";
 import { getInactiveUserSession } from "@/lib/auth";
 import { generateS3Urls } from "@/actions/soundfileUrl";
 import { UserRole } from "@/types/auth";
+import SoundButton from "@/components/SoundButton";
 
 type params = {
     searchParams: Promise<{
@@ -46,27 +47,38 @@ export default async function Home({ searchParams }: params) {
                     <div className={styles.tableContainer}>
                         <SearchField />
                         <Pagination page={+page} totalPages={totalPages} />
-                        <div className={styles.tableHeader}>
-                            <h2>Ordlista</h2>
-                            {userSession && (
-                                <div>
-                                    {userSession.role ===
-                                        UserRole.enum.admin && (
-                                        <Link
-                                            href="/adminView"
-                                            className="btn primary">
-                                            Adminvy
+                        <Table
+                            headerColumns={["Dialekt", "Ljudfil", "Svenska", "Användare"]}
+                            title="Ordlista"
+                            actions={
+                                userSession && (
+                                    <>
+                                        {userSession.role === UserRole.enum.admin && (
+                                            <Link
+                                                href="/adminView"
+                                                className="btn primary">
+                                                Adminvy
+                                            </Link>
+                                        )}
+                                        <Link href="/addWord" className="btn primary">
+                                            Lägg till ord
                                         </Link>
-                                    )}
-                                    <Link
-                                        href="/addWord"
-                                        className="btn primary">
-                                        Lägg till ord
-                                    </Link>
-                                </div>
-                            )}
-                        </div>
-                        <Table tableData={tableDataWithUrls} />
+                                    </>
+                                )
+                            }>
+                            {tableDataWithUrls.map((item) => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.word}</TableCell>
+                                    <TableCell>
+                                        {item.soundFileUrl && (
+                                            <SoundButton url={item.soundFileUrl} />
+                                        )}
+                                    </TableCell>
+                                    <TableCell>{item.nationalWord}</TableCell>
+                                    <TableCell>{item.userName}</TableCell>
+                                </TableRow>
+                            ))}
+                        </Table>
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
                 </div>
