@@ -5,6 +5,7 @@ import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import styles from "@/app/adminView/User/page.module.css";
+import { translateRoleToSwedish } from "@/lib/auth";
 
 type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
 
@@ -27,16 +28,6 @@ function ConfirmUserDeletionDialog({
         }
     };
 
-    const translateRoleToSwedish = (role: UserRole) => {
-        switch (role) {
-            case "admin":
-                return "Admin";
-            case "user":
-                return "Användare";
-            default:
-                return role;
-        }
-    };
     return (
         <>
             <button onClick={toggleDialog}>

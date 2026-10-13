@@ -9,7 +9,7 @@ import Link from "next/link";
 import { deleteUser, getUsers } from "@/actions/auth";
 import z from "zod";
 import { AuthUser, UserRole } from "@/types/auth";
-import { auth } from "@/lib/auth";
+import { auth, translateRoleToSwedish } from "@/lib/auth";
 import { headers } from "next/headers";
 import ConfirmUserDeletionDialog from "@/components/Admin/ConfirmUserDeletionDialog";
 
@@ -43,7 +43,6 @@ async function Page(params: Params) {
     if (parsedParams.success) {
         page = (await parsedParams?.data.searchParams)?.page;
         const query = (await parsedParams?.data.searchParams)?.query;
-        console.log({ page, query });
 
         users = await getUsers(10, (page - 1) * 10, query);
     }
@@ -55,16 +54,7 @@ async function Page(params: Params) {
         return createdAt !== updatedAt;
     };
 
-    const translateRole = (role: UserRole) => {
-        switch (role) {
-            case "admin":
-                return "Admin";
-            case "user":
-                return "Användare";
-            default:
-                return role;
-        }
-    };
+    
 
     return (
         <main className={styles.main}>
@@ -93,7 +83,7 @@ async function Page(params: Params) {
                         <TableCell>
                             <span
                                 className={`btn ${user.role === "admin" ? "primary" : ""}`}>
-                                {translateRole(user.role)}
+                                {translateRoleToSwedish(user.role)}
                             </span>
                         </TableCell>
                         <TableCell>
