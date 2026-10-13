@@ -4,6 +4,7 @@ import { AuthUser, UserRole } from "@/types/auth";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
+import styles from "@/app/adminView/User/page.module.css";
 
 type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
 
@@ -26,7 +27,7 @@ function ConfirmUserDeletionDialog({
         }
     };
 
-    const translateRole = (role: UserRole) => {
+    const translateRoleToSwedish = (role: UserRole) => {
         switch (role) {
             case "admin":
                 return "Admin";
@@ -42,30 +43,29 @@ function ConfirmUserDeletionDialog({
                 <span className="sr-only">Ta bort</span>
                 <FontAwesomeIcon size="xl" icon={faTrashCan} />
             </button>
-            <dialog ref={dialog}>
+            <dialog ref={dialog} className="confirmUserDeletionDialog">
                 <h2>Bekräfta borttagning av användare</h2>
                 <ul>
                     <li>
                         <strong>Email:</strong> {user.email}
                     </li>
                     <li>
-                        <strong>Role:</strong> {translateRole(user.role)}
+                        <strong>Role:</strong> {translateRoleToSwedish(user.role)}
                     </li>
                 </ul>
                 <p>
                     Denna åtgärd är oåterkallelig. All data associerad med användaren
                     kommer att tas bort permanent.
                 </p>
-                <div>
+                <div className={styles.dialogActions}>
                     <form
                         action={(data) => {
                             handleDeleteUser(data);
                             toggleDialog();
-                        }}
-                        method="dialog">
+                        }}>
                         <input type="hidden" name="userId" value={user.id} />
                         <button className="btn primary" type="submit">
-                            Bekräfta
+                            Ta bort användare
                         </button>
                     </form>
                     <button className="btn" onClick={toggleDialog}>
