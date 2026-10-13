@@ -2,7 +2,7 @@ import styles from "./page.module.css";
 
 import { InputGroup } from "@/components/InputGroup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCog, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { Table, TableCell, TableRow } from "@/components/Table";
 import Pagination from "@/components/Pagination";
 import Link from "next/link";
@@ -42,26 +42,17 @@ async function Page(params: Params) {
 
     if (parsedParams.success) {
         page = (await parsedParams?.data.searchParams)?.page;
-        users = await getUsers(10, (page - 1) * 10);
+        const query = (await parsedParams?.data.searchParams)?.query;
+        console.log({ page, query });
+
+        users = await getUsers(10, (page - 1) * 10, query);
     }
 
     const isActive = (user: User) => {
-        const createdAt = formatDate.format(user.createdAt);
-        const updatedAt = formatDate.format(user.updatedAt);
+        const createdAt = formatDate.format(new Date(user.createdAt));
+        const updatedAt = formatDate.format(new Date(user.updatedAt));
 
         return createdAt !== updatedAt;
-    };
-
-    const handleDeleteUser = async (formdata: FormData) => {
-        "use server";
-        const userId = formdata.get("userId") as string;
-        if (!userId) {
-            throw new Error("User ID is required");
-        }
-
-        console.log({ userId });
-
-        // await deleteUser(userId);
     };
 
     const translateRole = (role: UserRole) => {
@@ -110,7 +101,9 @@ async function Page(params: Params) {
                                 {isActive(user) ? "Active" : "Inbjuden"}
                             </span>
                         </TableCell>
-                        <TableCell>{formatDate.format(user.createdAt)}</TableCell>
+                        <TableCell>
+                            {formatDate.format(new Date(user.createdAt))}
+                        </TableCell>
                         <TableCell className={styles.actions}>
                             <button>
                                 <span className="sr-only">Redigera</span>
@@ -119,7 +112,7 @@ async function Page(params: Params) {
                             {session && session.user.id !== user.id && (
                                 <ConfirmUserDeletionDialog
                                     user={user}
-                                    handleDeleteUser={handleDeleteUser}
+                                    handleDeleteUser={deleteUser}
                                 />
                             )}
                         </TableCell>
