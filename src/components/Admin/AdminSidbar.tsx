@@ -23,14 +23,6 @@ export function AdminSidebar() {
                         className={`${styles.navItem} ${pathname === "/adminView/User" ? styles.active : ""}`}>
                         <Link href="/adminView/User">Användare</Link>
                     </li>
-                    {/* <li
-                        className={`${styles.navItem} ${pathname === "/adminView/signup" ? styles.active : ""}`}>
-                        <a href="/adminView/signup">Skapa ny användare</a>
-                    </li>
-                    <li
-                        className={`${styles.navItem} ${pathname === "/adminView/userRoles" ? styles.active : ""}`}>
-                        <a href="/adminView/userRoles">Ändra användarroller</a>
-                    </li> */}
                 </ul>
             </nav>
         </aside>
