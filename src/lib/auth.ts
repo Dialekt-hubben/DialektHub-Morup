@@ -22,6 +22,11 @@ export const auth = betterAuth({
                 required: false,
                 defaultValue: "user",
             },
+            mustChangePassword: {
+                type: "boolean",
+                required: false,
+                defaultValue: false,
+            },
         },
         deleteUser: {
             enabled: true,
@@ -30,6 +35,7 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         minPasswordLength: 8,
+        autoSignIn: false,
     },
     // "nextCookies" is always need to be placed last in the plugins array
     plugins: [nextCookies()],

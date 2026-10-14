@@ -1,0 +1,95 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgb(15 23 42 / 45%);
+}
+
+.modal {
+    position: relative;
+    display: block;
+    width: min(720px, 100%);
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    box-shadow: 0 1rem 3rem rgb(15 23 42 / 30%);
+}
+
+.formSection {
+    padding: 1.75em;
+}
+
+.formSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.formSection h2 {
+    margin: -1.75rem -1.75rem 1rem;
+    padding: 1.25rem 1.75rem;
+    color: black;
+    /* color: white; */
+    background: var(--color-light-blue);
+    font-size: 1.75rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-weight: 500;
+}
+
+.formGroup input,
+.formGroup select,
+.inlineField input {
+    min-height: 2.5rem;
+    padding: 0.45rem 0.75rem;
+    border: 2px solid #b6b6b6;
+    border-radius: 0.4rem;
+    background: transparent;
+    font: sans-serif;
+    font-size: 1.125rem;
+}
+
+.formGroup select {
+    color: #475569;
+}
+
+.inlineField {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0.4rem 0 1.75rem;
+}
+
+.inlineField input {
+    min-width: 0;
+    flex: 1;
+}
+
+.iconButton {
+    min-width: 2.5rem;
+    border: 2px solid #b6b6b6;
+    border-radius: 0.4rem;
+    background: transparent;
+    color: #475569;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.error {
+    color: #b42318;
+    font-size: 0.875rem;
+    font-weight: 500;
+}

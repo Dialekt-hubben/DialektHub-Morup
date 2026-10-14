@@ -2,7 +2,6 @@ import { user } from "@/Drizzle/models/auth-schema";
 import { z } from "zod";
 
 export const UserRole = z.enum(["user", "admin"]);
-export type UserRole = z.infer<typeof UserRole>;
 
 export const Login = z.object({
     email: z.email({ message: "Email är inte giltig" }),
@@ -13,9 +12,7 @@ export const Login = z.object({
 
 export const Signup = z
     .object({
-        name: z
-            .string()
-            .min(2, { message: "Namn måste vara minst 2 tecken långt" }),
+        name: z.string().min(2, { message: "Namn måste vara minst 2 tecken långt" }),
         email: z.email({ message: "Email är inte giltig" }),
         password: z
             .string()
@@ -29,6 +26,17 @@ export const Signup = z
         path: ["confirmPassword"],
     });
 
+export const AdminSignup = z.object({
+        name: z.string().min(2, { message: "Namn måste vara minst 2 tecken långt" }),
+        email: z.email({ message: "Email är inte giltig" }),
+        password: z
+            .string()
+            .min(8, { message: "Lösenordet måste vara minst 8 tecken långt" }),
+        role: UserRole,
+    });
+
+export type UserRole = z.infer<typeof UserRole>;
 export type Login = z.infer<typeof Login>;
 export type Signup = z.infer<typeof Signup>;
+export type AdminSignup = z.infer<typeof AdminSignup>;
 export type AuthUser = typeof user.$inferSelect;

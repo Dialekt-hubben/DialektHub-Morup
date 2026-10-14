@@ -26,6 +26,7 @@
     } 
     .navItem:not(.active):hover {
         scale: 1.05;
+        background-color: var(--color-light-blue);
     }
 }
 

@@ -3,6 +3,8 @@ import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import { getInactiveUserSession } from "@/lib/auth";
+import { ChangePasswordModal } from "@/components/Auth/ChangePasswordModal";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -23,15 +25,20 @@ export const metadata: Metadata = {
     description: "Mårpeakademiens orlesta",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const userSession = await getInactiveUserSession();
+
     return (
         <html lang="en">
             <body className={robotoMono.className}>
                 <Header />
+                {userSession?.mustChangePassword && (
+                    <ChangePasswordModal email={userSession.email} />
+                )}
 
                 {children}
 

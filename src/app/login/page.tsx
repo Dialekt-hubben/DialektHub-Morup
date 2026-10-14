@@ -10,7 +10,7 @@ import { BetterAuthError } from "better-auth";
 import style from "@/app/auth.module.css";
 
 function LoginPage() {
-    const { push } = useRouter();
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -23,7 +23,8 @@ function LoginPage() {
     const onSubmit = async (data: Login) => {
         try {
             await signIn(data);
-            push("/");
+            router.push("/");
+            router.refresh();
         } catch (error) {
             // Handle BetterAuthError specifically
             if (error instanceof BetterAuthError) {

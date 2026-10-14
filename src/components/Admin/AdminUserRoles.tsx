@@ -5,6 +5,7 @@ import { UserRole } from "@/types/auth";
 import { updateUserRoleSchema } from "@/types/updateUserRoleValidation";
 import { SubmitEvent, useState } from "react";
 import styles from "./AdminUserRoles.module.css";
+import { FeedbackMessage } from "../FeedbackMessage";
 
 type RoleUser = {
     id: string;
@@ -109,14 +110,9 @@ export default function AdminUserRoles() {
             {/* Statusmessage when role updates */}
             {status && (
                 <p
-                    className={
-                        status.type === "success"
-                            ? styles.statusSuccess
-                            : styles.statusError
-                    }
-                    role="status"
-                    aria-live="polite">
-                    {status.message}
+                 role="status"
+                 aria-live="polite">
+                    <FeedbackMessage message="Användarrollen sparades" />
                 </p>
             )}
 

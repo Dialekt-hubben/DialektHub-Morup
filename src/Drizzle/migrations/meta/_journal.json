@@ -29,6 +29,13 @@
       "when": 1775822994672,
       "tag": "0003_clammy_rictor",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1791968536319,
+      "tag": "0005_add_must_change_password",
+      "breakpoints": true
     }
   ]
 }
