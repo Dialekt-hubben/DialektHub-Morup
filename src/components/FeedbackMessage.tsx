@@ -8,10 +8,7 @@ type FeedbackMessageProps = {
     duration?: number;
 };
 
-export function FeedbackMessage({
-    message,
-    duration = 3000,
-}: FeedbackMessageProps) {
+export function FeedbackMessage({ message, duration = 5000 }: FeedbackMessageProps) {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
