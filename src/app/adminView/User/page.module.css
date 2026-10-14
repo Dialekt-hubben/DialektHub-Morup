@@ -16,11 +16,18 @@
     }
 }
 
+.emailColumn {
+    text-decoration: underline;
+    /* color: var(--color-blue); */
+}
+
+
 .actions {
     display: flex;
     gap: 0.5rem;
 
     > button {
+        position: relative;
         color: var(--color-blue);
         background: none;
         border: none;
@@ -29,8 +36,30 @@
         border-radius: 0.25rem;
         transition: background-color 0.2s;
 
+        span {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            
+            color: white;
+            background-color: var(--color-blue);
+            
+            white-space: nowrap;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25em;
+            opacity: 0;
+
+            transition: opacity 0.3s 0.8s;
+        }
+
         &:hover {
             background-color: hsl(from var(--color-blue) h s 90%);
+
+            span {
+                display: block;
+                opacity: 1;
+            }
         }
     }
 

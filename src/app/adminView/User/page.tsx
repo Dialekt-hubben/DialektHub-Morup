@@ -8,7 +8,7 @@ import Pagination from "@/components/Pagination";
 import Link from "next/link";
 import { deleteUser, getUsers } from "@/actions/auth";
 import z from "zod";
-import { AuthUser, UserRole } from "@/types/auth";
+import { AuthUser } from "@/types/auth";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import ConfirmUserDeletionDialog from "@/components/Admin/ConfirmUserDeletionDialog";
@@ -79,7 +79,7 @@ async function Page(params: Params) {
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell>
-                            <Link href={`mailto:${user.email}`}>{user.email}</Link>
+                            <Link className={styles.emailColumn} href={`mailto:${user.email}`}>{user.email}</Link>
                         </TableCell>
                         <TableCell>
                             <span
@@ -97,7 +97,7 @@ async function Page(params: Params) {
                         </TableCell>
                         <TableCell className={styles.actions}>
                             <button>
-                                <span className="sr-only">Redigera</span>
+                                <span>Redigera användare</span>
                                 <FontAwesomeIcon size="xl" icon={faUserCog} />
                             </button>
                             {session && session.user.id !== user.id && (

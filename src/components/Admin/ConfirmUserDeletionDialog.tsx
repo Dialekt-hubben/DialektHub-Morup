@@ -31,7 +31,7 @@ function ConfirmUserDeletionDialog({
     return (
         <>
             <button onClick={toggleDialog}>
-                <span className="sr-only">Ta bort</span>
+                <span>Ta bort användare</span>
                 <FontAwesomeIcon size="xl" icon={faTrashCan} />
             </button>
             <dialog ref={dialog} className="confirmUserDeletionDialog">
