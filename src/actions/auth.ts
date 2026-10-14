@@ -59,6 +59,7 @@ export async function signOut() {
 }
 
 export const getUsers = cache(async (limit: number, offset = 0, email?: string) => {
+    const emailFilterCaseInsensitive = email ? like(user.email, `%${email}%`) : undefined;
     try {
         const response = await db.query.user.findMany({
             columns: {
@@ -70,10 +71,17 @@ export const getUsers = cache(async (limit: number, offset = 0, email?: string) 
             },
             limit,
             offset,
-            where: email ? like(user.email, `%${email}%`) : undefined,
+            where: emailFilterCaseInsensitive,
         });
 
-        return response;
+        const totalCount = await db.query.user.findMany({
+            columns: {
+                id: true,
+            },
+            where: emailFilterCaseInsensitive,
+        });
+
+        return { users: response, totalCount: totalCount.length };
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);

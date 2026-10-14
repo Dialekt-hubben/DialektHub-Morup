@@ -39,13 +39,15 @@ async function Page(params: Params) {
     });
 
     let users: User[] = [];
+    let totalCount = 0;
     let page = 1;
 
     if (parsedParams.success) {
         page = (await parsedParams?.data.searchParams)?.page;
         const query = (await parsedParams?.data.searchParams)?.query;
 
-        users = await getUsers(10, (page - 1) * 10, query);
+        users = (await getUsers(10, (page - 1) * 10, query)).users;
+        totalCount = Math.ceil((await getUsers(10, (page - 1) * 10, query)).totalCount / 10);
     }
 
     const isActive = (user: User) => {
@@ -110,7 +112,7 @@ async function Page(params: Params) {
                     </TableRow>
                 ))}
             </Table>
-            <Pagination page={page} totalPages={users.length / 10} />
+            <Pagination page={page} totalPages={totalCount} />
         </main>
     );
 }
