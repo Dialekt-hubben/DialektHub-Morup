@@ -1,11 +1,11 @@
 "use client";
 
-import { AuthUser, UserRole } from "@/types/auth";
+import { AuthUser } from "@/types/auth";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import styles from "@/app/adminView/User/page.module.css";
-import { translateRoleToSwedish } from "@/lib/auth";
+import { translateRoleToSwedish } from "@/utils/role";
 
 type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
 

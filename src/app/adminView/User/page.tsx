@@ -9,9 +9,10 @@ import Link from "next/link";
 import { deleteUser, getUsers } from "@/actions/auth";
 import z from "zod";
 import { AuthUser, UserRole } from "@/types/auth";
-import { auth, translateRoleToSwedish } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import ConfirmUserDeletionDialog from "@/components/Admin/ConfirmUserDeletionDialog";
+import { translateRoleToSwedish } from "@/utils/role";
 
 const Params = z.object({
     searchParams: z.promise(
