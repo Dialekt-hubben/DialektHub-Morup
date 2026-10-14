@@ -6,6 +6,7 @@ import { user } from "@/Drizzle/models/auth-schema";
 import { AdminSignup, Login, Signup } from "@/types/auth";
 import { headers } from "next/headers";
 import { getAdminSession } from "@/lib/auth";
+import { getActiveUserSession } from "@/lib/auth";
 import { randomBytes } from "crypto";
 import { eq } from "drizzle-orm";
 
@@ -16,6 +17,39 @@ function generatePassword() {
 export async function generateRandomPassword() {
     await getAdminSession();
     return generatePassword();
+}
+
+export async function changeOwnPassword(data: {
+    currentPassword: string;
+    newPassword: string;
+}) {
+    const currentUser = await getActiveUserSession();
+
+    if (
+        data.currentPassword.length < 8 ||
+        data.newPassword.length < 8 ||
+        data.currentPassword === data.newPassword
+    ) {
+        throw new Error("Lösenorden måste vara minst 8 tecken och skilja sig åt");
+    }
+
+    try {
+        await auth.api.changePassword({
+            headers: await headers(),
+            body: {
+                currentPassword: data.currentPassword,
+                newPassword: data.newPassword,
+                revokeOtherSessions: true,
+            },
+        });
+    } catch {
+        throw new Error("Det gamla lösenordet är fel");
+    }
+
+    await db
+        .update(user)
+        .set({ mustChangePassword: false })
+        .where(eq(user.id, currentUser.id));
 }
 
 export async function createUser(data: AdminSignup) {
@@ -38,7 +72,10 @@ export async function createUser(data: AdminSignup) {
         if (response.user) {
             await db
                 .update(user)
-                .set({ role: parsedData.data.role })
+                .set({
+                    role: parsedData.data.role,
+                    mustChangePassword: true,
+                })
                 .where(eq(user.id, response.user.id));
         }
 
