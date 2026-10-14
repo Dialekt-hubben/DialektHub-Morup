@@ -61,24 +61,15 @@ export async function createUser(data: AdminSignup) {
     }
 
     try {
-        const response = await auth.api.signUpEmail({
+        await auth.api.signUpEmail({
             body: {
                 name: parsedData.data.name,
                 email: parsedData.data.email,
                 password: parsedData.data.password,
+                role: parsedData.data.role,
+                mustChangePassword: true,
             },
         });
-
-        if (response.user) {
-            await db
-                .update(user)
-                .set({
-                    role: parsedData.data.role,
-                    mustChangePassword: true,
-                })
-                .where(eq(user.id, response.user.id));
-        }
-
         return { email: parsedData.data.email, password: parsedData.data.password };
     } catch (error) {
         if (error instanceof Error) {
