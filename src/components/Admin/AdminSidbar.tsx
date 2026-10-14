@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import styles from "../../app/adminView/layout.module.css";
+import Link from "next/link";
 
 export function AdminSidebar() {
     const pathname = usePathname();
@@ -14,19 +15,27 @@ export function AdminSidebar() {
                 <ul>
                     <li
                         className={`${styles.navItem} ${pathname === "/adminView" ? styles.active : ""}`}>
-                        <a href="/adminView">AdminVy</a>
+                        <Link href="/adminView">AdminVy</Link>
                     </li>
+
                     <li
                         className={`${styles.navItem} ${pathname === "/adminView/importExcel" ? styles.active : ""}`}>
-                        <a href="/adminView/importExcel">Importera Excelfil</a>
+                        <Link href="/adminView/importExcel">Importera Excelfil</Link>
                     </li>
+
+                    <li
+                        className={`${styles.navItem} ${pathname === "/adminView/User" ? styles.active : ""}`}>
+                        <Link href="/adminView/User">Användare</Link>
+                    </li>
+
                     <li
                         className={`${styles.navItem} ${isSignupOpen ? styles.active : ""}`}>
-                        <a href="/adminView?signup=1">Lägg till användare</a>
+                        <Link href="/adminView?signup=1">Lägg till användare</Link>
                     </li>
+
                     <li
                         className={`${styles.navItem} ${pathname === "/adminView/userRoles" ? styles.active : ""}`}>
-                        <a href="/adminView/userRoles">Ändra användarroller</a>
+                        <Link href="/adminView/userRoles">Ändra användarroller</Link>
                     </li>
                 </ul>
             </nav>

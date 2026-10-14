@@ -1,14 +1,15 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import db from "@/Drizzle";
 import { user } from "@/Drizzle/models/auth-schema";
+import { auth } from "@/lib/auth"
 import { AdminSignup, Login, Signup } from "@/types/auth";
 import { headers } from "next/headers";
 import { getAdminSession } from "@/lib/auth";
 import { getActiveUserSession } from "@/lib/auth";
 import { randomBytes } from "crypto";
-import { eq } from "drizzle-orm";
+import { eq, like } from "drizzle-orm";
+import { cache } from "react";
 
 function generatePassword() {
     return randomBytes(9).toString("base64");
@@ -90,6 +91,7 @@ export async function signUp(data: Signup) {
         const response = await auth.api.signUpEmail({
             body: parsedData.data,
         });
+        refresh();
         return response;
     } catch (error) {
         if (error instanceof Error) {
@@ -125,4 +127,51 @@ export async function signOut() {
     await auth.api.signOut({
         headers: await headers(),
     });
+}
+
+export const getUsers = cache(async (limit: number, offset = 0, email?: string) => {
+    const emailFilterCaseInsensitive = email ? like(user.email, `%${email}%`) : undefined;
+    try {
+        const response = await db.query.user.findMany({
+            columns: {
+                id: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+            limit,
+            offset,
+            where: emailFilterCaseInsensitive,
+        });
+
+        const totalCount = await db.query.user.findMany({
+            columns: {
+                id: true,
+            },
+            where: emailFilterCaseInsensitive,
+        });
+
+        return { users: response, totalCount: totalCount.length };
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Ett okänt fel inträffade vid hämtning av användare");
+    }
+});
+
+export async function deleteUser(formdata: FormData) {
+    const userid = formdata.get("userId") as string;
+    if (!userid) {
+        throw new Error("User ID is required");
+    }
+
+    const deletedUser = await db.delete(user).where(eq(user.id, userid));
+
+    if (deletedUser[0].affectedRows === 0) {
+        throw new Error("Användaren kunde inte tas bort");
+    }
+
+    refresh();
 }

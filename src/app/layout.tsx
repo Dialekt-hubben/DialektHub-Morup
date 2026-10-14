@@ -6,6 +6,10 @@ import Footer from "@/components/Footer/Footer";
 import { getInactiveUserSession } from "@/lib/auth";
 import { ChangePasswordModal } from "@/components/Auth/ChangePasswordModal";
 
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
+
 const robotoMono = Roboto_Mono({
     subsets: ["latin"],
 });
