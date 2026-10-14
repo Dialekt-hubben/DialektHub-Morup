@@ -4,14 +4,9 @@ import { changeOwnPassword, signOut } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import styles from "./ChangePasswordModal.module.css";
+import { FeedbackMessage } from "../FeedbackMessage";
 
 type ChangePasswordModalProps = { email: string };
-
-type ChangePasswordData = {
-    currentPassword: string;
-    newPassword: string;
-    repeatedPassword: string;
-};
 
 export function ChangePasswordModal({ email }: ChangePasswordModalProps) {
     const router = useRouter();
@@ -19,6 +14,8 @@ export function ChangePasswordModal({ email }: ChangePasswordModalProps) {
     const [isPending, startTransition] = useTransition();
 
     const submit = (formData: FormData) => {
+        setError("");
+
         const currentPassword = String(formData.get("currentPassword") ?? "");
         const newPassword = String(formData.get("newPassword") ?? "");
         const repeatedPassword = String(formData.get("repeatedPassword") ?? "");
@@ -43,11 +40,16 @@ export function ChangePasswordModal({ email }: ChangePasswordModalProps) {
     };
 
     const cancel = () => {
+        setError("");
+
         startTransition(async () => {
-            await signOut();
-            router.push("/");
-            // router.push("/login");
-            router.refresh();
+            try {
+                await signOut();
+                router.push("/");
+                router.refresh();
+            } catch (error) {
+                setError(error instanceof Error ? error.message : "Kunde inte logga ut");
+            }
         });
     };
 
@@ -87,10 +89,15 @@ export function ChangePasswordModal({ email }: ChangePasswordModalProps) {
                     <button className="btn primary" type="submit" disabled={isPending}>
                         Byt lösenord
                     </button>
-                    <button className="btn" type="button" onClick={cancel} disabled={isPending}>
+                    <button
+                        className="btn"
+                        type="button"
+                        onClick={cancel}
+                        disabled={isPending}>
                         Avbryt
                     </button>
                 </div>
+                {isPending && <FeedbackMessage message="Lösenordet byts..." />}
             </form>
         </div>
     );
