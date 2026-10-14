@@ -19,6 +19,7 @@ export const user = mysqlTable("user", {
         .$type<UserRole>()
         .default("user")
         .notNull(),
+    mustChangePassword: boolean("must_change_password").default(false).notNull(),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { fsp: 3 })
         .defaultNow()

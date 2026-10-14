@@ -8,8 +8,10 @@ import { createUser, generateRandomPassword } from "@/actions/auth";
 import { useEffect, useState } from "react";
 import styles from "./SignupForm.module.css";
 import { redirect } from "next/navigation";
+import { FeedbackMessage } from "@/components/FeedbackMessage";
 
-// https://copychar.cc/arrows/
+// ICONS: https://copychar.cc/arrows/
+
 type SignupFormProps = { onClose?: () => void };
 
 export function SignupForm({
@@ -56,7 +58,7 @@ export function SignupForm({
 
     const copy = async (value: string, label: string) => {
         await navigator.clipboard.writeText(value);
-        setCopyMessage(`${label} kopierad`);
+        setCopyMessage(`${label} kopierat`);
         window.setTimeout(() => setCopyMessage(""), 1500);
     };
 
@@ -92,10 +94,7 @@ export function SignupForm({
                     <div className={styles.formGroup}>
                         <label htmlFor="email">E-post</label>
                         <div className={styles.inlineField}>
-                            <input 
-                            id="email" 
-                            type="email" 
-                            {...register("email")} />
+                            <input id="email" type="email" {...register("email")} />
                             <button
                                 type="button"
                                 className={styles.iconButton}
@@ -123,7 +122,9 @@ export function SignupForm({
                                 type="button"
                                 className={styles.iconButton}
                                 onClick={() => setShowPassword(!showPassword)}
-                                aria-label={showPassword ? "Dölj lösenord" : "Visa lösenord"}>
+                                aria-label={
+                                    showPassword ? "Dölj lösenord" : "Visa lösenord"
+                                }>
                                 {showPassword ? "⊚" : "⊝"}
                             </button>
                             <button
@@ -175,11 +176,7 @@ export function SignupForm({
                     </div>
                 </section>
 
-                {copyMessage && (
-                    <p className={styles.copyMessage} role="status" aria-live="polite">
-                        <span aria-hidden="true">✓</span> {copyMessage}
-                    </p>
-                )}
+                {copyMessage && <FeedbackMessage message={copyMessage} />}
             </form>
         </div>
     );
