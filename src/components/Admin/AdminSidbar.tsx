@@ -1,10 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import styles from "../../app/adminView/layout.module.css";
 
 export function AdminSidebar() {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const isSignupOpen = pathname === "/adminView" && searchParams.get("signup") === "1";
 
     return (
         <aside className={styles.sidebar}>
@@ -19,8 +21,8 @@ export function AdminSidebar() {
                         <a href="/adminView/importExcel">Importera Excelfil</a>
                     </li>
                     <li
-                        className={`${styles.navItem} ${pathname === "/adminView/signup" ? styles.active : ""}`}>
-                        <a href="/adminView/signup">Skapa ny användare</a>
+                        className={`${styles.navItem} ${isSignupOpen ? styles.active : ""}`}>
+                        <a href="/adminView?signup=1">Lägg till användare</a>
                     </li>
                     <li
                         className={`${styles.navItem} ${pathname === "/adminView/userRoles" ? styles.active : ""}`}>
