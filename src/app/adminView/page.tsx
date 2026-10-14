@@ -8,15 +8,16 @@ import { generateS3Urls } from "@/actions/soundfileUrl";
 
 type Params = {
     searchParams: Promise<{
-        query: string;
-        page: string;
+        query?: string;
+        page?: string;
+        signup?: string;
     }>;
 };
 
 export default async function AdminView({ searchParams }: Params) {
     await getAdminSession();
 
-    const { query = "", page = "1" } = await searchParams;
+    const { query = "", page = "1", signup } = await searchParams;
     const res = await GetAllDialectwords({
         query,
         page: +page,
@@ -26,17 +27,17 @@ export default async function AdminView({ searchParams }: Params) {
 
     // Generera URL:er bara för de ljudfiler som visas på den här sidan.
     const filenames = res.rawData
-            .map((item) => item.fileName)
-            .filter((fileName): fileName is string => Boolean(fileName));
-        const soundFileUrls = await generateS3Urls(filenames);
-    
-        // loopa igenom res.data och lägg till soundFileUrl för varje objekt som har en fileName
-        const tableDataWithUrls = res.rawData
-            // .filter((item) => item.fileName) // Filtrera bara de objekt som har en fileName
-            .map((item) => ({
-                ...item,
-                soundFileUrl: soundFileUrls[item.fileName as string] || null, // Lägg till soundFileUrl baserat på fileName
-            }));
+        .map((item) => item.fileName)
+        .filter((fileName): fileName is string => Boolean(fileName));
+    const soundFileUrls = await generateS3Urls(filenames);
+
+    // loopa igenom res.data och lägg till soundFileUrl för varje objekt som har en fileName
+    const tableDataWithUrls = res.rawData
+        // .filter((item) => item.fileName) // Filtrera bara de objekt som har en fileName
+        .map((item) => ({
+            ...item,
+            soundFileUrl: soundFileUrls[item.fileName as string] || null, // Lägg till soundFileUrl baserat på fileName
+        }));
 
     return (
         <main>
@@ -45,7 +46,10 @@ export default async function AdminView({ searchParams }: Params) {
                     <div className={styles.tableContainer}>
                         <SearchField />
                         <Pagination page={+page} totalPages={totalPages} />
-                        <AdminTable tableData={tableDataWithUrls} />
+                        <AdminTable
+                            tableData={tableDataWithUrls}
+                            initialSignupOpen={signup === "1"}
+                        />
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
                 </div>
