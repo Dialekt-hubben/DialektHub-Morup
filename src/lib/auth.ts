@@ -23,6 +23,9 @@ export const auth = betterAuth({
                 defaultValue: "user",
             },
         },
+        deleteUser: {
+            enabled: true,
+        },
     },
     emailAndPassword: {
         enabled: true,
@@ -71,3 +74,5 @@ export async function getInactiveUserSession(): Promise<AuthUser | null> {
     });
     return session?.user as AuthUser | null;
 }
+
+

@@ -1,8 +1,13 @@
 "use server";
 
+import db from "@/Drizzle";
+import { user } from "@/Drizzle/models/auth-schema";
 import { auth } from "@/lib/auth";
 import { Login, Signup } from "@/types/auth";
+import { eq, like } from "drizzle-orm";
+import { refresh } from "next/cache";
 import { headers } from "next/headers";
+import { cache } from "react";
 
 export async function signUp(data: Signup) {
     const parsedData = Signup.safeParse(data);
@@ -15,6 +20,7 @@ export async function signUp(data: Signup) {
         const response = await auth.api.signUpEmail({
             body: parsedData.data,
         });
+        refresh();
         return response;
     } catch (error) {
         if (error instanceof Error) {
@@ -52,6 +58,49 @@ export async function signOut() {
     });
 }
 
+export const getUsers = cache(async (limit: number, offset = 0, email?: string) => {
+    const emailFilterCaseInsensitive = email ? like(user.email, `%${email}%`) : undefined;
+    try {
+        const response = await db.query.user.findMany({
+            columns: {
+                id: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+            limit,
+            offset,
+            where: emailFilterCaseInsensitive,
+        });
 
+        const totalCount = await db.query.user.findMany({
+            columns: {
+                id: true,
+            },
+            where: emailFilterCaseInsensitive,
+        });
 
+        return { users: response, totalCount: totalCount.length };
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Ett okänt fel inträffade vid hämtning av användare");
+    }
+});
 
+export async function deleteUser(formdata: FormData) {
+    const userid = formdata.get("userId") as string;
+    if (!userid) {
+        throw new Error("User ID is required");
+    }
+
+    const deletedUser = await db.delete(user).where(eq(user.id, userid));
+
+    if (deletedUser[0].affectedRows === 0) {
+        throw new Error("Användaren kunde inte tas bort");
+    }
+
+    refresh();
+}
