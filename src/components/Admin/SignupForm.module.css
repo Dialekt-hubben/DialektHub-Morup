@@ -24,7 +24,9 @@
 }
 
 .formSection {
+    /* border: 5px solid red; */
     display: flex;
+    min-width: 100%;
     flex-direction: column;
     gap: 1.4rem;
 }
