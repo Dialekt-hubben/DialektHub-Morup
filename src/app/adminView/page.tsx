@@ -10,14 +10,13 @@ type Params = {
     searchParams: Promise<{
         query?: string;
         page?: string;
-        signup?: string;
     }>;
 };
 
 export default async function AdminView({ searchParams }: Params) {
     await getAdminSession();
 
-    const { query = "", page = "1", signup } = await searchParams;
+    const { query = "", page = "1" } = await searchParams;
     const res = await GetAllDialectwords({
         query,
         page: +page,
@@ -48,7 +47,6 @@ export default async function AdminView({ searchParams }: Params) {
                         <Pagination page={+page} totalPages={totalPages} />
                         <AdminTable
                             tableData={tableDataWithUrls}
-                            initialSignupOpen={signup === "1"}
                         />
                     </div>
                     <Pagination page={+page} totalPages={totalPages} />
