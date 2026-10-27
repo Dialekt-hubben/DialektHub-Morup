@@ -52,9 +52,12 @@ const ImportExcelSection = () => {
         const isImportInProgress =
             sessionStorage.getItem(EXCEL_IMPORT_IN_PROGRESS) === "true";
         if (isImportInProgress) {
-            setimportLock(true);
-            setMessage("Import pågår...");
-            return;
+            const timeoutId = window.setTimeout(() => {
+                setimportLock(true);
+                setMessage("Import pågår...");
+            }, 0);
+
+            return () => window.clearTimeout(timeoutId);
         }
     }, []);
 
@@ -128,7 +131,7 @@ const ImportExcelSection = () => {
         <div className={style.importExcelSection}>
             <h2>Läs in en Excel-fil</h2>
             <hr />
-            <p>
+            <div>
                 Se till att Excel-filen är i rätt format innan du importerar.
                 <p>
                     <strong>Första</strong> kolumnen ska innehålla det Morpekanska ordet.
@@ -145,7 +148,7 @@ const ImportExcelSection = () => {
                 </strong>
                 <br />
                 Tillåtet Format:<small>.xlsx,.xls,.csv</small>
-            </p>
+            </div>
             <br />
             <input
                 className={style.fileInput}
