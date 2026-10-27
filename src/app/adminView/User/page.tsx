@@ -12,6 +12,7 @@ import { AuthUser } from "@/types/auth";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import ConfirmUserDeletionDialog from "@/components/Admin/ConfirmUserDeletionDialog";
+import { UserSignupButton } from "@/components/Admin/UserSignupButton";
 import { translateRoleToSwedish } from "@/utils/role";
 
 const Params = z.object({
@@ -24,7 +25,7 @@ const Params = z.object({
 });
 
 type Params = z.infer<typeof Params>;
-type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
+type User = Omit<AuthUser, "image" | "emailVerified" | "name" | "mustChangePassword">;
 
 const formatDate = new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",
@@ -47,7 +48,9 @@ async function Page(params: Params) {
         const query = (await parsedParams?.data.searchParams)?.query;
 
         users = (await getUsers(10, (page - 1) * 10, query)).users;
-        totalCount = Math.ceil((await getUsers(10, (page - 1) * 10, query)).totalCount / 10);
+        totalCount = Math.ceil(
+            (await getUsers(10, (page - 1) * 10, query)).totalCount / 10,
+        );
     }
 
     const isActive = (user: User) => {
@@ -56,8 +59,6 @@ async function Page(params: Params) {
 
         return createdAt !== updatedAt;
     };
-
-    
 
     return (
         <main className={styles.main}>
@@ -74,14 +75,17 @@ async function Page(params: Params) {
                             />
                             {/* <button className="btn primary">Sök</button> */}
                         </form>
-
-                        <button className="btn primary">Lägg till användare</button>
+                        <UserSignupButton />
                     </div>
                 }>
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell>
-                            <Link className={styles.emailColumn} href={`mailto:${user.email}`}>{user.email}</Link>
+                            <Link
+                                className={styles.emailColumn}
+                                href={`mailto:${user.email}`}>
+                                {user.email}
+                            </Link>
                         </TableCell>
                         <TableCell>
                             <span

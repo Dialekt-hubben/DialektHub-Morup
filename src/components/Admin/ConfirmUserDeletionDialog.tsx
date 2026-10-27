@@ -7,7 +7,7 @@ import { useRef } from "react";
 import styles from "@/app/adminView/User/page.module.css";
 import { translateRoleToSwedish } from "@/utils/role";
 
-type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
+type User = Omit<AuthUser, "image" | "emailVerified" | "name" | "mustChangePassword">;
 
 function ConfirmUserDeletionDialog({
     user,
