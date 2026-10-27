@@ -11,26 +11,18 @@ import { UpdateDialectWordStatus } from "@/actions/dialectwords";
 import SoundButton from "../SoundButton";
 import EditWordForm from "./EditWordForm";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Table, TableCell, TableRow } from "../Table";
-import { SignupForm } from "./SignupForm";
 
 type AdminTableProps = {
     tableData: DialectWordTableResponse[] | null;
-    initialSignupOpen?: boolean;
 };
 
-export default function AdminTable({
-    tableData,
-    initialSignupOpen = false,
-}: AdminTableProps) {
-    const router = useRouter();
+export default function AdminTable({ tableData }: AdminTableProps) {
     const [rowOverrides, setRowOverrides] = useState<
         Record<number, Partial<DialectWordTableResponse>>
     >({});
     const [editingId, setEditingId] = useState<number | null>(null);
     const [savedRowId, setSavedRowId] = useState<number | null>(null);
-    const [isSignupOpen, setIsSignupOpen] = useState(initialSignupOpen);
 
     const rows = (tableData ?? []).map((row) => ({
         ...row,
@@ -172,14 +164,6 @@ export default function AdminTable({
                     </Fragment>
                 ))}
             </Table>
-            {isSignupOpen && (
-                <SignupForm
-                    onClose={() => {
-                        setIsSignupOpen(false);
-                        router.replace("/adminView");
-                    }}
-                />
-            )}
         </>
     );
 }
