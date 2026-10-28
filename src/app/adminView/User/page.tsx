@@ -25,7 +25,7 @@ const Params = z.object({
 });
 
 type Params = z.infer<typeof Params>;
-type User = Omit<AuthUser, "image" | "emailVerified" | "name" | "mustChangePassword">;
+type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
 
 const formatDate = new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",
@@ -54,11 +54,13 @@ async function Page(params: Params) {
     }
 
     const isActive = (user: User) => {
-        const createdAt = formatDate.format(new Date(user.createdAt));
-        const updatedAt = formatDate.format(new Date(user.updatedAt));
+        const createdAt = user.createdAt;
+        const updatedAt = user.updatedAt;
 
         return createdAt !== updatedAt;
     };
+
+    console.log({ users });
 
     return (
         <main className={styles.main}>
@@ -94,8 +96,9 @@ async function Page(params: Params) {
                             </span>
                         </TableCell>
                         <TableCell>
-                            <span className={`btn ${isActive(user) ? "primary" : ""}`}>
-                                {isActive(user) ? "Active" : "Inbjuden"}
+                            <span
+                                className={`btn ${!user.mustChangePassword ? "primary" : ""}`}>
+                                {!user.mustChangePassword ? "Active" : "Inbjuden"}
                             </span>
                         </TableCell>
                         <TableCell>

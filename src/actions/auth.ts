@@ -140,6 +140,7 @@ export const getUsers = cache(async (limit: number, offset = 0, email?: string) 
                 role: true,
                 createdAt: true,
                 updatedAt: true,
+                mustChangePassword: true,
             },
             limit,
             offset,
