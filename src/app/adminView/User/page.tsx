@@ -53,13 +53,6 @@ async function Page(params: Params) {
         );
     }
 
-    const isActive = (user: User) => {
-        const createdAt = user.createdAt;
-        const updatedAt = user.updatedAt;
-
-        return createdAt !== updatedAt;
-    };
-
     console.log({ users });
 
     return (
