@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import styles from "./SignupForm.module.css";
 import { redirect } from "next/navigation";
 import { FeedbackMessage } from "@/components/FeedbackMessage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy, faEye, faEyeSlash, faRedo } from "@fortawesome/free-solid-svg-icons";
 
 // ICONS: https://copychar.cc/arrows/
 
@@ -100,7 +102,7 @@ export function SignupForm({
                                 className={styles.iconButton}
                                 onClick={() => copy(email || "", "E-post")}
                                 aria-label="Kopiera e-post">
-                                ❐
+                                <FontAwesomeIcon icon={faCopy} />
                             </button>
                         </div>
                         {errors.email?.message && (
@@ -125,21 +127,23 @@ export function SignupForm({
                                 aria-label={
                                     showPassword ? "Dölj lösenord" : "Visa lösenord"
                                 }>
-                                {showPassword ? "⊚" : "⊝"}
+                                <FontAwesomeIcon
+                                    icon={showPassword ? faEye : faEyeSlash}
+                                />
                             </button>
                             <button
                                 type="button"
                                 className={styles.iconButton}
                                 onClick={generatePassword}
                                 aria-label="Generera nytt lösenord">
-                                ↻
+                                <FontAwesomeIcon icon={faRedo} />
                             </button>
                             <button
                                 type="button"
                                 className={styles.iconButton}
                                 onClick={() => copy(generatedPassword, "Lösenord")}
                                 aria-label="Kopiera lösenord">
-                                ❐
+                                <FontAwesomeIcon icon={faCopy} />
                             </button>
                         </div>
                     </div>
