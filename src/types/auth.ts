@@ -40,9 +40,12 @@ export const AdminSignup = AdminUserFields.extend({
 
 export const AdminUserUpdate = AdminUserFields.extend({
     id: z.string().min(1),
-    password: z.string().refine((value) => value.length === 0 || value.length >= 8, {
-        message: "Lösenordet måste vara minst 8 tecken långt",
-    }),
+    password: z
+        .string()
+        .min(8, {
+            message: "Lösenordet måste vara minst 8 tecken långt",
+        })
+        .optional(),
 });
 
 export const AdminUserForm = AdminUserUpdate.extend({
