@@ -42,20 +42,18 @@ services:
         depends_on:
             db:
                 condition: service_healthy
-    S3Ninja:
-        image: scireum/s3-ninja:latest
-        container_name: s3ninja
+    Garage:
+        image: dxflrs/garage:v2.5.0
+        # network_mode: "host"
+        restart: unless-stopped
         ports:
-            - "9000:9000"
+            - "3900:3900"
         volumes:
-            - ./s3data:/home/sirius/data
+            - ./garage/config/garage.toml:/etc/garage.toml:ro
+            - ./garage/meta:/var/lib/garage/meta
+            - ./garage/data:/var/lib/garage/data
         environment:
             - TZ=Europe/Stockholm
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9000/s3"]
-            interval: 10s
-            timeout: 5s
-            retries: 5
     Morpekanska:
         build:
             context: .
@@ -82,8 +80,8 @@ services:
         ports:
             - "3000:3000"
         depends_on:
-            S3Ninja:
-                condition: service_healthy
+            # S3Ninja:
+            #     condition: service_healthy
             migrator:
                 condition: service_completed_successfully
         command: ["node", "server.js"]

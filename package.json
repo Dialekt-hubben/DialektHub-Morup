@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "docker compose up -d db && docker compose up -d S3Ninja && next dev",
+        "dev": "docker compose up -d db && docker compose up -d Garage && next dev",
         "build": "next build",
         "start": "next start",
         "lint": "eslint",
