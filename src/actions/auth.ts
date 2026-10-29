@@ -1,16 +1,17 @@
 "use server";
 
 import db from "@/Drizzle";
-import { user } from "@/Drizzle/models/auth-schema";
-import { auth } from "@/lib/auth"
-import { AdminSignup, Login, Signup } from "@/types/auth";
+import { account, user } from "@/Drizzle/models/auth-schema";
+import { auth } from "@/lib/auth";
+import { AdminSignup, AdminUserUpdate, Login, Signup } from "@/types/auth";
 import { headers } from "next/headers";
 import { getAdminSession } from "@/lib/auth";
 import { getActiveUserSession } from "@/lib/auth";
 import { randomBytes } from "crypto";
-import { eq, like } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
 import { cache } from "react";
 import { refresh } from "next/cache";
+import { hashPassword } from "better-auth/crypto";
 
 function generatePassword() {
     return randomBytes(9).toString("base64");
@@ -81,6 +82,55 @@ export async function createUser(data: AdminSignup) {
     }
 }
 
+// Uppdaterar en användares uppgifter, inklusive lösenord om det anges.
+export async function updateUser(data: AdminUserUpdate) {
+    await getAdminSession();
+
+    const parsedData = AdminUserUpdate.safeParse(data);
+    if (!parsedData.success) {
+        throw new Error("Ogiltiga användaruppgifter");
+    }
+
+    const { id, name, role, password } = parsedData.data;
+    const existingUser = await db
+        .select({ id: user.id })
+        .from(user)
+        .where(eq(user.id, id))
+        .limit(1);
+
+    if (existingUser.length === 0) {
+        throw new Error("Användaren kunde inte uppdateras");
+    }
+
+    // Ett tomt lösenord ska inte påverka det befintliga lösenordet.
+    const hashedPassword = password ? await hashPassword(password) : undefined;
+
+    await db.transaction(async (tx) => {
+        await tx
+            .update(user)
+            .set({
+                name,
+                role,
+                // Sätter mustChangePassword till true om ett nytt lösenord sparas.
+                ...(hashedPassword ? { mustChangePassword: true } : {}),
+            })
+            .where(eq(user.id, id));
+
+        if (hashedPassword) {
+            const updatedAccount = await tx
+                .update(account)
+                .set({ password: hashedPassword })
+                .where(and(eq(account.userId, id), eq(account.providerId, "credential")));
+
+            if (updatedAccount[0].affectedRows === 0) {
+                throw new Error("Användarens lösenord kunde inte uppdateras");
+            }
+        }
+    });
+
+    refresh();
+}
+
 export async function signUp(data: Signup) {
     const parsedData = Signup.safeParse(data);
 
@@ -136,6 +186,7 @@ export const getUsers = cache(async (limit: number, offset = 0, email?: string) 
         const response = await db.query.user.findMany({
             columns: {
                 id: true,
+                name: true,
                 email: true,
                 role: true,
                 createdAt: true,
