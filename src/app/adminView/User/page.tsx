@@ -1,8 +1,6 @@
 import styles from "./page.module.css";
 
 import { InputGroup } from "@/components/InputGroup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { Table, TableCell, TableRow } from "@/components/Table";
 import Pagination from "@/components/Pagination";
 import Link from "next/link";
@@ -25,7 +23,7 @@ const Params = z.object({
 });
 
 type Params = z.infer<typeof Params>;
-type User = Omit<AuthUser, "image" | "emailVerified" | "name">;
+type User = Omit<AuthUser, "image" | "emailVerified">;
 
 const formatDate = new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",
@@ -57,6 +55,7 @@ async function Page(params: Params) {
 
     return (
         <main className={styles.main}>
+            <Pagination page={page} totalPages={totalCount} />
             <Table
                 headerColumns={["Email", "Roll", "Status", "Skapad", "Åtgärder"]} // Email, Role, Status, Created, Actions
                 title="Användarna"
@@ -68,7 +67,6 @@ async function Page(params: Params) {
                                 name="query"
                                 placeholder="Sök på email..."
                             />
-                            {/* <button className="btn primary">Sök</button> */}
                         </form>
                         <UserSignupButton />
                     </div>
@@ -98,10 +96,7 @@ async function Page(params: Params) {
                             {formatDate.format(new Date(user.createdAt))}
                         </TableCell>
                         <TableCell className={styles.actions}>
-                            <button>
-                                <span>Redigera användare</span>
-                                <FontAwesomeIcon size="xl" icon={faUserCog} />
-                            </button>
+                            <UserSignupButton user={user} />
                             {session && session.user.id !== user.id && (
                                 <ConfirmUserDeletionDialog
                                     user={user}
