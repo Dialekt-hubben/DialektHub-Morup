@@ -17,18 +17,13 @@ export function AdminSidebar() {
                     </li>
 
                     <li
-                        className={`${styles.navItem} ${pathname === "/adminView/importExcel" ? styles.active : ""}`}>
-                        <Link href="/adminView/importExcel">Importera Excelfil</Link>
-                    </li>
-
-                    <li
                         className={`${styles.navItem} ${pathname === "/adminView/User" ? styles.active : ""}`}>
                         <Link href="/adminView/User">Användare</Link>
                     </li>
 
                     <li
-                        className={`${styles.navItem} ${pathname === "/adminView/userRoles" ? styles.active : ""}`}>
-                        <Link href="/adminView/userRoles">Ändra användarroller</Link>
+                        className={`${styles.navItem} ${pathname === "/adminView/importExcel" ? styles.active : ""}`}>
+                        <Link href="/adminView/importExcel">Importera Excelfil</Link>
                     </li>
                 </ul>
             </nav>
