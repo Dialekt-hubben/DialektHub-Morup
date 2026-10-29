@@ -1,10 +1,10 @@
 "use client";
 
 import { InputGroup } from "@/components/InputGroup";
-import { AdminSignup, UserRole } from "@/types/auth";
+import { AdminSignup, AdminUserForm, AdminUserUpdate, UserRole } from "@/types/auth";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createUser, generateRandomPassword } from "@/actions/auth";
+import { createUser, generateRandomPassword, updateUser } from "@/actions/auth";
 import { useEffect, useState } from "react";
 import styles from "./SignupForm.module.css";
 import { redirect } from "next/navigation";
@@ -12,15 +12,18 @@ import { FeedbackMessage } from "@/components/FeedbackMessage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faEye, faEyeSlash, faRedo } from "@fortawesome/free-solid-svg-icons";
 
-// ICONS: https://copychar.cc/arrows/
-
-type SignupFormProps = { onClose?: () => void };
+// Pick only the fields needed for editing a user.
+type EditUser = Pick<AdminUserUpdate, "id" | "name" | "email" | "role">;
+type SignupFormProps = { onClose?: () => void; user?: EditUser };
 
 export function SignupForm({
     onClose = () => {
         redirect("/adminView");
     },
+    user,
 }: SignupFormProps) {
+    // Samma modal används för både registrering och redigering.
+    const isEditMode = Boolean(user);
     const [generatedPassword, setGeneratedPassword] = useState("");
     const [copyMessage, setCopyMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -31,23 +34,31 @@ export function SignupForm({
         formState: { errors, isSubmitting },
         setError,
         setValue,
-    } = useForm<AdminSignup>({
-        resolver: zodResolver(AdminSignup),
-        defaultValues: { role: UserRole.enum.user },
+    } = useForm<AdminUserForm>({
+        resolver: zodResolver(AdminUserForm),
+        // Om det finns en användare att redigera, fyller vi formuläret med dens data och ett tomt lösenord.
+        defaultValues: user
+            ? { ...user, password: "" }
+            : { id: "", name: "", email: "", password: "", role: UserRole.enum.user },
     });
 
-    // Håller e-postadressen synkroniserad med kopieringsfältet.
+    // Håller e-postadressen och lösenordet synkroniserad med formulärdatan för att kunna kopiera dem.
     const email = useWatch({ control, name: "email" });
+    const password = useWatch({ control, name: "password" });
 
+    // Nya användare får ett genererat lösenord, medan redigering börjar tomt.
     useEffect(() => {
-        generateRandomPassword()
-            .then((password) => {
-                setGeneratedPassword(password);
-                setValue("password", password, { shouldValidate: true });
-            })
-            .catch(() => setError("root", { message: "Kunde inte skapa lösenord" }));
-    }, [setError, setValue]);
+        if (!isEditMode) {
+            generateRandomPassword()
+                .then((password) => {
+                    setGeneratedPassword(password);
+                    setValue("password", password, { shouldValidate: true });
+                })
+                .catch(() => setError("root", { message: "Kunde inte skapa lösenord" }));
+        }
+    }, [isEditMode, setError, setValue]);
 
+    // Genererar ett nytt lösenord och sätter det som det aktuella lösenordet i formuläret.
     const generatePassword = async () => {
         try {
             const password = await generateRandomPassword();
@@ -58,22 +69,26 @@ export function SignupForm({
         }
     };
 
+    // Kopierar värdet till urklipp och visar ett meddelande.
     const copy = async (value: string, label: string) => {
         await navigator.clipboard.writeText(value);
         setCopyMessage(`${label} kopierat`);
         window.setTimeout(() => setCopyMessage(""), 1500);
     };
 
-    const onSubmit = async (data: AdminSignup) => {
+    const onSubmit = async (data: AdminUserForm) => {
         try {
-            await createUser(data);
+            if (isEditMode) {
+                await updateUser(AdminUserUpdate.parse(data));
+            } else {
+                await createUser(AdminSignup.parse(data));
+            }
             onClose();
         } catch (error) {
             if (error instanceof Error) {
                 setError("root", { message: error.message });
                 return;
             }
-
             setError("root", { message: "Inkorrekt e-post eller lösenord" });
         }
     };
@@ -85,7 +100,7 @@ export function SignupForm({
             <form className={styles.modal} onSubmit={handleSubmit(onSubmit)}>
                 {/* Registrera en ny användare */}
                 <section className={styles.formSection}>
-                    <h2>Registrera Användare</h2>
+                    <h2>{isEditMode ? "Redigera Användare" : "Registrera Användare"}</h2>
                     <InputGroup
                         label="Användarnamn"
                         type="text"
@@ -96,7 +111,12 @@ export function SignupForm({
                     <div className={styles.formGroup}>
                         <label htmlFor="email">E-post</label>
                         <div className={styles.inlineField}>
-                            <input id="email" type="email" {...register("email")} />
+                            <input
+                                id="email"
+                                type="email"
+                                {...register("email")}
+                                readOnly={isEditMode}
+                            />
                             <button
                                 type="button"
                                 className={styles.iconButton}
@@ -117,8 +137,13 @@ export function SignupForm({
                                 type={showPassword ? "text" : "password"}
                                 id="generated-password"
                                 {...register("password")}
-                                value={generatedPassword}
-                                readOnly
+                                value={isEditMode ? undefined : generatedPassword}
+                                readOnly={!isEditMode}
+                                placeholder={
+                                    isEditMode
+                                        ? "Lämna tomt för att behålla nuvarande lösenord"
+                                        : undefined
+                                }
                             />
                             <button
                                 type="button"
@@ -141,7 +166,7 @@ export function SignupForm({
                             <button
                                 type="button"
                                 className={styles.iconButton}
-                                onClick={() => copy(generatedPassword, "Lösenord")}
+                                onClick={() => copy(password || "", "Lösenord")}
                                 aria-label="Kopiera lösenord">
                                 <FontAwesomeIcon icon={faCopy} />
                             </button>
@@ -166,13 +191,17 @@ export function SignupForm({
                         </p>
                     )}
 
-                    {/* Skapa/Avbryt knappar */}
+                    {/* Skapa/uppdatera/avbryt knappar */}
                     <div className={styles.buttonGroup}>
                         <button
                             type="submit"
                             className="btn primary"
-                            disabled={isSubmitting || !generatedPassword || !email}>
-                            Skapa
+                            disabled={
+                                isSubmitting ||
+                                !email ||
+                                (!isEditMode && !generatedPassword)
+                            }>
+                            {isEditMode ? "Uppdatera" : "Skapa"}
                         </button>
                         <button type="button" className="btn secondary" onClick={onClose}>
                             Avbryt
